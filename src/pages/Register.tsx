@@ -2,18 +2,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { ArrowLeft, Smartphone } from "lucide-react";
+import { ArrowLeft, Mail, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import apoorvLogo from "@/assets/apoorv-logo.png";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { signInWithGoogle, signInWithApple, sendOTP, verifyOTP, user } = useAuth();
-  const [step, setStep] = useState<'method' | 'mobile' | 'otp'>('method');
-  const [mobileNumber, setMobileNumber] = useState('');
-  const [otp, setOtp] = useState('');
+  const { signUp, signInWithGoogle, signInWithApple, user } = useAuth();
+  const [step, setStep] = useState<'method' | 'email'>('method');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Redirect if already authenticated
@@ -22,26 +22,14 @@ const Register = () => {
     return null;
   }
 
-  const handleMobileSubmit = async () => {
-    if (mobileNumber.length === 10) {
+  const handleEmailSubmit = async () => {
+    if (email && password.length >= 6) {
       setLoading(true);
-      const { error } = await sendOTP(mobileNumber);
+      const { error } = await signUp(email, password);
       setLoading(false);
       
       if (!error) {
-        setStep('otp');
-      }
-    }
-  };
-
-  const handleOtpSubmit = async () => {
-    if (otp.length === 6) {
-      setLoading(true);
-      const { error } = await verifyOTP(mobileNumber, otp);
-      setLoading(false);
-      
-      if (!error) {
-        navigate('/home');
+        // User will need to verify email before they can login
       }
     }
   };
@@ -64,7 +52,7 @@ const Register = () => {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => step === 'method' ? navigate('/') : setStep(step === 'otp' ? 'mobile' : 'method')}
+          onClick={() => step === 'method' ? navigate('/') : setStep('method')}
           className="p-2"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -88,12 +76,12 @@ const Register = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <Button
-                onClick={() => setStep('mobile')}
+                onClick={() => setStep('email')}
                 className="w-full h-12 bg-gradient-medical"
                 size="lg"
               >
-                <Smartphone className="w-5 h-5 mr-2" />
-                Continue with Mobile
+                <Mail className="w-5 h-5 mr-2" />
+                Continue with Email
               </Button>
               
               <Button
@@ -128,79 +116,66 @@ const Register = () => {
           </Card>
         )}
 
-        {step === 'mobile' && (
+        {step === 'email' && (
           <Card className="w-full max-w-sm">
             <CardHeader className="text-center">
-              <CardTitle>Enter Mobile Number</CardTitle>
+              <CardTitle>Create Account</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Input
-                  type="tel"
-                  placeholder="Enter 10-digit mobile number"
-                  value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="text-center text-lg"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="text-lg"
                 />
               </div>
               
-              <Button
-                onClick={handleMobileSubmit}
-                disabled={mobileNumber.length !== 10}
-                className="w-full h-12 bg-gradient-medical"
-                size="lg"
-              >
-                Verify with OTP
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {step === 'otp' && (
-          <Card className="w-full max-w-sm">
-            <CardHeader className="text-center">
-              <CardTitle>Enter OTP</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                OTP sent to +91 {mobileNumber}
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-center">
-                <InputOTP
-                  maxLength={6}
-                  value={otp}
-                  onChange={setOtp}
+              <div className="space-y-2 relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create password (min 6 characters)"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="text-lg pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
               
               <Button
-                onClick={handleOtpSubmit}
-                disabled={otp.length !== 6}
+                onClick={handleEmailSubmit}
+                disabled={!email || password.length < 6 || loading}
                 className="w-full h-12 bg-gradient-medical"
                 size="lg"
               >
-                Verify & Create Account
+                {loading ? "Creating Account..." : "Create Account"}
               </Button>
 
-              <Button
-                variant="ghost"
-                className="w-full"
-                onClick={() => {
-                  // TODO: Implement resend OTP
-                  console.log('Resend OTP');
-                }}
-              >
-                Resend OTP
-              </Button>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Already have an account?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-primary"
+                    onClick={() => navigate('/signin')}
+                  >
+                    Sign in
+                  </Button>
+                </p>
+              </div>
             </CardContent>
           </Card>
         )}

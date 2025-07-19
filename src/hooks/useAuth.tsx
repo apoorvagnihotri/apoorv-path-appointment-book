@@ -12,8 +12,6 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error: any }>;
   signInWithApple: () => Promise<{ error: any }>;
-  sendOTP: (phone: string) => Promise<{ error: any }>;
-  verifyOTP: (phone: string, token: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -143,39 +141,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const sendOTP = async (phone: string) => {
-    const { error } = await supabase.auth.signInWithOtp({
-      phone: `+91${phone}`,
-    });
-
-    if (error) {
-      toast({
-        title: "OTP Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-
-    return { error };
-  };
-
-  const verifyOTP = async (phone: string, token: string) => {
-    const { error } = await supabase.auth.verifyOtp({
-      phone: `+91${phone}`,
-      token,
-      type: 'sms'
-    });
-
-    if (error) {
-      toast({
-        title: "OTP Verification Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-
-    return { error };
-  };
 
   return (
     <AuthContext.Provider value={{
@@ -187,8 +152,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signOut,
       signInWithGoogle,
       signInWithApple,
-      sendOTP,
-      verifyOTP,
     }}>
       {children}
     </AuthContext.Provider>
