@@ -1,0 +1,136 @@
+import { User, FileText, Calendar, LogOut, Phone, MapPin, Edit } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
+import { Separator } from "@/components/ui/separator";
+
+const Account = () => {
+  const user = {
+    name: "John Doe",
+    phone: "+91 9876543210",
+    email: "john.doe@example.com",
+    address: "123 Main Street, Sneh Nagar, Jabalpur"
+  };
+
+  const menuItems = [
+    {
+      icon: User,
+      title: "My Profile",
+      subtitle: "Personal information",
+      onClick: () => console.log("Navigate to profile")
+    },
+    {
+      icon: Calendar,
+      title: "My Bookings", 
+      subtitle: "View appointment history",
+      onClick: () => console.log("Navigate to bookings")
+    },
+    {
+      icon: FileText,
+      title: "My Reports",
+      subtitle: "Download test reports",
+      onClick: () => console.log("Navigate to reports")
+    },
+    {
+      icon: Phone,
+      title: "Contact Support",
+      subtitle: "Get help and support",
+      onClick: () => window.open("tel:+917000000000", "_self")
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      {/* Header */}
+      <div className="bg-gradient-medical text-primary-foreground">
+        <div className="px-6 py-4">
+          <h1 className="text-lg font-semibold">My Account</h1>
+        </div>
+      </div>
+
+      {/* Profile Section */}
+      <div className="px-6 py-4">
+        <Card className="p-4 shadow-card">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="w-16 h-16 bg-gradient-medical rounded-full flex items-center justify-center">
+              <User className="h-8 w-8 text-primary-foreground" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-foreground">{user.name}</h2>
+              <p className="text-sm text-muted-foreground">{user.phone}</p>
+            </div>
+            <Button size="sm" variant="outline">
+              <Edit className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center space-x-2 text-muted-foreground">
+              <Phone className="h-4 w-4" />
+              <span>{user.phone}</span>
+            </div>
+            <div className="flex items-center space-x-2 text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>{user.address}</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Menu Items */}
+      <div className="px-6">
+        <Card className="shadow-card overflow-hidden">
+          {menuItems.map((item, index) => (
+            <div key={item.title}>
+              <button
+                onClick={item.onClick}
+                className="w-full p-4 flex items-center space-x-4 hover:bg-muted transition-colors text-left"
+              >
+                <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
+                  <item.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-foreground">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                </div>
+              </button>
+              {index < menuItems.length - 1 && <Separator />}
+            </div>
+          ))}
+        </Card>
+      </div>
+
+      {/* Lab Information */}
+      <div className="px-6 py-6">
+        <Card className="p-4 shadow-card">
+          <h3 className="font-medium text-foreground mb-3">Lab Information</h3>
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-2">
+              <MapPin className="h-4 w-4" />
+              <span>Apoorv Pathology Lab, Sneh Nagar, Jabalpur</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Phone className="h-4 w-4" />
+              <span>+91 70000 00000</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Logout */}
+      <div className="px-6">
+        <Button 
+          variant="outline" 
+          className="w-full border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Log Out
+        </Button>
+      </div>
+
+      <BottomNavigation />
+    </div>
+  );
+};
+
+export default Account;
