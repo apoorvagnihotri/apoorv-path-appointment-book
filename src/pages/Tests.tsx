@@ -1,68 +1,54 @@
-import { useState } from "react";
-import { ArrowLeft, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Search, Plus, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useCart } from "@/hooks/useCart";
 
 interface Test {
   id: string;
   name: string;
   price: number;
-  reportTime: string;
   description: string;
+  category: string;
 }
 
 const Tests = () => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
+  const [tests, setTests] = useState<Test[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const tests: Test[] = [
-    {
-      id: "1",
-      name: "Complete Blood Count (CBC)",
-      price: 200,
-      reportTime: "6 hours",
-      description: "Comprehensive blood analysis including RBC, WBC, platelets count"
-    },
-    {
-      id: "2", 
-      name: "Lipid Profile",
-      price: 400,
-      reportTime: "12 hours",
-      description: "Cholesterol, triglycerides, HDL, LDL analysis"
-    },
-    {
-      id: "3",
-      name: "Blood Sugar (Fasting)",
-      price: 80,
-      reportTime: "2 hours",
-      description: "Fasting glucose levels measurement"
-    },
-    {
-      id: "4",
-      name: "Thyroid Profile (T3, T4, TSH)",
-      price: 600,
-      reportTime: "24 hours",
-      description: "Complete thyroid function assessment"
-    },
-    {
-      id: "5",
-      name: "Liver Function Test",
-      price: 500,
-      reportTime: "12 hours", 
-      description: "SGPT, SGOT, bilirubin, protein levels"
+  useEffect(() => {
+    fetchTests();
+  }, []);
+
+  const fetchTests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tests')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      setTests(data || []);
+    } catch (error) {
+      console.error('Error fetching tests:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const filteredTests = tests.filter(test =>
     test.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleBookTest = (test: Test) => {
-    // Add to cart logic will be implemented later
-    console.log("Adding to cart:", test);
+  const handleAddToCart = async (test: Test) => {
+    await addToCart(test.id);
   };
 
   return (
@@ -102,10 +88,12 @@ const Tests = () => {
         {filteredTests.map((test) => (
           <Card key={test.id} className="p-4 shadow-card">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-medium text-foreground pr-2">{test.name}</h3>
+              <div className="flex-1">
+                <h3 className="font-medium text-foreground pr-2">{test.name}</h3>
+                <p className="text-xs text-muted-foreground">{test.category}</p>
+              </div>
               <div className="text-right">
                 <p className="text-lg font-semibold text-primary">₹{test.price}</p>
-                <p className="text-xs text-muted-foreground">{test.reportTime}</p>
               </div>
             </div>
             
@@ -115,11 +103,12 @@ const Tests = () => {
             
             <div className="flex space-x-2">
               <Button
-                onClick={() => handleBookTest(test)}
+                onClick={() => handleAddToCart(test)}
                 className="flex-1 bg-gradient-medical hover:shadow-button"
                 size="sm"
               >
-                Book Now
+                <Plus className="h-4 w-4 mr-2" />
+                Add to Cart
               </Button>
               <Button
                 variant="outline"

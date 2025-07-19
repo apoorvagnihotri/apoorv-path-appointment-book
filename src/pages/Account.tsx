@@ -3,13 +3,16 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Account = () => {
-  const user = {
-    name: "John Doe",
-    phone: "+91 9876543210",
-    email: "john.doe@example.com",
-    address: "123 Main Street, Sneh Nagar, Jabalpur"
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
   };
 
   const menuItems = [
