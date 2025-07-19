@@ -9,7 +9,7 @@ interface BottomNavigationProps {
 const navigationItems = [
   {
     name: "Home",
-    href: "/",
+    href: "/home",
     icon: Home,
   },
   {

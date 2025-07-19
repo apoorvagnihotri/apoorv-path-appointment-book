@@ -45,7 +45,7 @@ const Welcome = () => {
         {/* Action Buttons */}
         <div className="w-full max-w-sm space-y-4">
           <Button 
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/register")}
             className="w-full h-12 bg-gradient-medical hover:shadow-button"
             size="lg"
           >
