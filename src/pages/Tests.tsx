@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Search, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Search, Plus, ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -18,7 +18,7 @@ interface Test {
 
 const Tests = () => {
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, items: cartItems } = useCart();
   const [searchQuery, setSearchQuery] = useState("");
   const [tests, setTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +49,10 @@ const Tests = () => {
 
   const handleAddToCart = async (test: Test) => {
     await addToCart(test.id);
+  };
+
+  const isTestInCart = (testId: string) => {
+    return cartItems.some(item => item.test_id === testId);
   };
 
   return (
@@ -102,18 +106,31 @@ const Tests = () => {
             </p>
             
             <div className="flex space-x-2">
-              <Button
-                onClick={() => handleAddToCart(test)}
-                className="flex-1 bg-gradient-medical hover:shadow-button"
-                size="sm"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add to Cart
-              </Button>
+              {isTestInCart(test.id) ? (
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  size="sm"
+                  disabled
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  Added to Cart
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => handleAddToCart(test)}
+                  className="flex-1 bg-gradient-medical hover:shadow-button"
+                  size="sm"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add to Cart
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
                 className="px-6"
+                onClick={() => navigate(`/test/${test.id}`)}
               >
                 Details
               </Button>

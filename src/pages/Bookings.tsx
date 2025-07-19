@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
+import { useNavigate } from "react-router-dom";
 
 interface Booking {
   id: string;
@@ -15,6 +16,7 @@ interface Booking {
 }
 
 const Bookings = () => {
+  const navigate = useNavigate();
   const bookings: Booking[] = [
     {
       id: "1",
@@ -138,6 +140,7 @@ const Bookings = () => {
                   variant="outline"
                   size="sm"
                   className="px-6"
+                  onClick={() => navigate(`/booking/${booking.id}`)}
                 >
                   Details
                 </Button>

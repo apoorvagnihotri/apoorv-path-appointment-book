@@ -25,10 +25,13 @@ const Register = () => {
   const handleEmailSubmit = async () => {
     if (email && password.length >= 6) {
       setLoading(true);
-      const { error } = await signUp(email, password);
+      const { error, userExists } = await signUp(email, password);
       setLoading(false);
       
-      if (!error) {
+      if (userExists) {
+        // User already exists, redirect to sign in with prefilled details
+        navigate('/signin', { state: { email, password, fromRegister: true } });
+      } else if (!error) {
         // User will need to verify email before they can login
       }
     }

@@ -10,9 +10,12 @@ import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
 import Home from "./pages/Home";
 import Tests from "./pages/Tests";
+import TestDetails from "./pages/TestDetails";
 import Bookings from "./pages/Bookings";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
+import Payment from "./pages/Payment";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,9 +32,12 @@ const App = () => (
               <Route path="/" element={<Welcome />} />
               <Route path="/register" element={<Register />} />
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/home" element={<Home />} />
               <Route path="/tests" element={<Tests />} />
+              <Route path="/test/:testId" element={<TestDetails />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/payment" element={<Payment />} />
               <Route path="/bookings" element={<Bookings />} />
               <Route path="/account" element={<Account />} />
               <Route path="*" element={<NotFound />} />

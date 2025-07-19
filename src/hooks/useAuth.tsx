@@ -7,11 +7,12 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any; userExists?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error: any }>;
   signInWithApple: () => Promise<{ error: any }>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,6 +54,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         data: metadata
       }
     });
+
+    // Check if user already exists
+    if (error && error.message.includes('already registered')) {
+      return { error, userExists: true };
+    }
 
     if (error) {
       toast({
@@ -141,6 +147,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) {
+      toast({
+        title: "Password Reset Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Password Reset Email Sent",
+        description: "Please check your email for reset instructions.",
+      });
+    }
+
+    return { error };
+  };
+
 
   return (
     <AuthContext.Provider value={{
@@ -152,6 +179,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signOut,
       signInWithGoogle,
       signInWithApple,
+      resetPassword,
     }}>
       {children}
     </AuthContext.Provider>

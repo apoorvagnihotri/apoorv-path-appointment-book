@@ -90,39 +90,14 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      onClick={() => updateQuantity(item.test_id, item.quantity - 1)}
-                      size="sm"
-                      variant="outline"
-                      className="h-8 w-8 p-0"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <span className="text-lg font-medium w-8 text-center">{item.quantity}</span>
-                    <Button
-                      onClick={() => updateQuantity(item.test_id, item.quantity + 1)}
-                      size="sm"
-                      variant="outline"
-                      className="h-8 w-8 p-0"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center space-x-4">
-                    <p className="text-lg font-semibold">₹{item.test.price * item.quantity}</p>
-                    <Button
-                      onClick={() => removeFromCart(item.test_id)}
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                <Button
+                  onClick={() => removeFromCart(item.test_id)}
+                  size="sm"
+                  variant="ghost"
+                  className="text-destructive hover:text-destructive ml-auto"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </Card>
             ))}
 
@@ -151,10 +126,7 @@ const Cart = () => {
               <Button 
                 className="w-full mt-4 bg-gradient-medical hover:shadow-button"
                 size="lg"
-                onClick={() => {
-                  // TODO: Navigate to booking/checkout
-                  console.log('Proceed to booking');
-                }}
+                onClick={() => navigate('/payment')}
               >
                 Proceed to Book
               </Button>
