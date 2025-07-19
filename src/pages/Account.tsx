@@ -59,8 +59,8 @@ const Account = () => {
               <User className="h-8 w-8 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-foreground">{user.name}</h2>
-              <p className="text-sm text-muted-foreground">{user.phone}</p>
+              <h2 className="text-lg font-semibold text-foreground">{user?.email || "Guest User"}</h2>
+              <p className="text-sm text-muted-foreground">{user?.phone || "Phone not added"}</p>
             </div>
             <Button size="sm" variant="outline">
               <Edit className="h-4 w-4" />
@@ -70,11 +70,11 @@ const Account = () => {
           <div className="space-y-2 text-sm">
             <div className="flex items-center space-x-2 text-muted-foreground">
               <Phone className="h-4 w-4" />
-              <span>{user.phone}</span>
+              <span>{user?.phone || "Phone not added"}</span>
             </div>
             <div className="flex items-center space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>{user.address}</span>
+              <span>Address not added</span>
             </div>
           </div>
         </Card>
@@ -123,6 +123,7 @@ const Account = () => {
       {/* Logout */}
       <div className="px-6">
         <Button 
+          onClick={handleLogout}
           variant="outline" 
           className="w-full border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
         >
