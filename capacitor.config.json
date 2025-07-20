@@ -1,0 +1,19 @@
+{
+  "appId": "com.example.appointmentbook",
+  "appName": "Appointment Book",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    }
+  },
+  "server": {
+    "allowNavigation": ["*"],
+    "cleartext": true
+  }
+}

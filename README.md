@@ -71,3 +71,58 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+
+## Android APK Generation
+
+Follow these steps to generate an Android APK:
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Initialize Capacitor
+```bash
+npm run cap:init
+```
+- When prompted:
+  - App name: `AppointmentBook`
+  - App ID: `com.example.appointmentbook`
+  - Web asset directory: `dist`
+
+### 3. Add Android Platform
+```bash
+npm run cap:android
+```
+
+### 4. Build Web Assets
+```bash
+npm run build
+```
+
+### 5. Sync Assets to Android Project
+```bash
+npm run cap:sync
+```
+
+### 6. Open Android Studio
+```bash
+npx cap open android
+```
+
+### 7. Build Signed APK in Android Studio
+1. Select **Build > Generate Signed Bundle / APK**
+2. Create a new keystore (or use existing)
+3. Select APK format
+4. Complete the signing process
+5. The APK will be generated at:  
+   `android/app/build/outputs/apk/release/app-release.apk`
+
+### 8. Install on Device
+Transfer the APK to an Android device and install it.
+
+### Troubleshooting:
+- Ensure Android SDK is installed
+- Set `JAVA_HOME` environment variable
+- Minimum SDK version: 22 (set in `android/variables.gradle`)
