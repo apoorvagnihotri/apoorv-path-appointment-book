@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,7 +12,6 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error: any }>;
-  signInWithApple: () => Promise<{ error: any }>;
   resetPassword: (email: string) => Promise<{ error: any }>;
 }
 
@@ -128,25 +128,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const signInWithApple = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: {
-        redirectTo: `${window.location.origin}/home`
-      }
-    });
-
-    if (error) {
-      toast({
-        title: "Apple Sign In Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-
-    return { error };
-  };
-
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -168,7 +149,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-
   return (
     <AuthContext.Provider value={{
       user,
@@ -178,7 +158,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signIn,
       signOut,
       signInWithGoogle,
-      signInWithApple,
       resetPassword,
     }}>
       {children}

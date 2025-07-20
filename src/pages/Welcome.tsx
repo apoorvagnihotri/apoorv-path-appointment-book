@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import apoorvLogo from "@/assets/apoorv-logo.png";
@@ -42,23 +43,14 @@ const Welcome = () => {
           />
         </Card>
 
-        {/* Action Buttons */}
-        <div className="w-full max-w-sm space-y-4">
+        {/* Action Button */}
+        <div className="w-full max-w-sm">
           <Button 
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/auth")}
             className="w-full h-12 bg-gradient-medical hover:shadow-button"
             size="lg"
           >
             Get Started
-          </Button>
-          
-          <Button 
-            onClick={() => navigate("/signin")}
-            variant="outline"
-            className="w-full h-12"
-            size="lg"
-          >
-            Sign In
           </Button>
         </div>
       </div>

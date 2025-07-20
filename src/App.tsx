@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,8 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { CartProvider } from "./hooks/useCart";
 import Welcome from "./pages/Welcome";
-import Register from "./pages/Register";
-import SignIn from "./pages/SignIn";
+import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import Tests from "./pages/Tests";
 import TestDetails from "./pages/TestDetails";
@@ -30,8 +30,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Welcome />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/signin" element={<SignIn />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/home" element={<Home />} />
               <Route path="/tests" element={<Tests />} />
