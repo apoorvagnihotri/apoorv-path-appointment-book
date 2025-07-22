@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,13 +6,72 @@ import { Card } from "@/components/ui/card";
 import { ServiceCard, ServiceGrid } from "@/components/ui/service-card";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+interface Test {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+}
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Test[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleCall = () => {
     window.open("tel:+917000000000", "_self");
+  };
+
+  const searchTests = async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('tests')
+      .select('id, name, price, category')
+      .ilike('name', `%${query}%`)
+      .limit(10);
+
+    if (!error && data) {
+      setSearchResults(data);
+      setShowSearchResults(true);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      searchTests(searchQuery);
+    }, 300); // Debounce search
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  const handleTestSelect = (test: Test) => {
+    navigate(`/test-details/${test.id}`);
+    setSearchQuery("");
+    setShowSearchResults(false);
   };
 
   const services = [
@@ -70,15 +129,52 @@ const Home = () => {
       {/* Search Section */}
       <div className="px-6 -mt-6 mb-6">
         <Card className="p-4 shadow-card">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search for Tests..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-12 border-border focus:ring-primary"
-            />
-          </div>
+          <Popover open={showSearchResults} onOpenChange={setShowSearchResults}>
+            <PopoverTrigger asChild>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search for Tests..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (e.target.value.length < 2) {
+                      setShowSearchResults(false);
+                    }
+                  }}
+                  className="pl-10 h-12 border-border focus:ring-primary"
+                />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandList>
+                  {loading ? (
+                    <CommandEmpty>Searching...</CommandEmpty>
+                  ) : searchResults.length === 0 ? (
+                    <CommandEmpty>No tests found.</CommandEmpty>
+                  ) : (
+                    <CommandGroup>
+                      {searchResults.map((test) => (
+                        <CommandItem
+                          key={test.id}
+                          onSelect={() => handleTestSelect(test)}
+                        >
+                          <div className="flex justify-between items-center w-full">
+                            <div>
+                              <p className="font-medium">{test.name}</p>
+                              <p className="text-sm text-muted-foreground">{test.category}</p>
+                            </div>
+                            <p className="font-semibold">₹{test.price}</p>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </Card>
       </div>
 
