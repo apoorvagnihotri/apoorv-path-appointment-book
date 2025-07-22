@@ -73,9 +73,23 @@ const Home = () => {
   }, [searchQuery]);
 
   const handleTestSelect = (test: Test) => {
-    navigate(`/test-details/${test.id}`);
+    navigate(`/tests?search=${encodeURIComponent(test.name)}`);
     setSearchQuery("");
     setShowSearchResults(false);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchQuery.trim()) {
+      navigate(`/tests?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit();
+    }
   };
 
   const services = [
@@ -164,6 +178,7 @@ const Home = () => {
                       setShowSearchResults(true);
                     }
                   }}
+                  onKeyPress={handleKeyPress}
                   className="pl-10 h-12 border-border focus:ring-primary"
                 />
               </div>

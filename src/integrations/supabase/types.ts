@@ -46,6 +46,126 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          icon_name: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          icon_name: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          icon_name?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      package_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          package_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          package_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          package_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_categories_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      package_tests: {
+        Row: {
+          created_at: string
+          id: string
+          package_id: string
+          test_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          package_id: string
+          test_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          package_id?: string
+          test_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_tests_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_tests_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      packages: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -69,6 +189,42 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      test_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          test_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          test_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          test_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_categories_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tests: {
         Row: {

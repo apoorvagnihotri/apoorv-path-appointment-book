@@ -11,6 +11,7 @@ import Welcome from "./pages/Welcome";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import Tests from "./pages/Tests";
+import Packages from "./pages/Packages";
 import TestDetails from "./pages/TestDetails";
 import Bookings from "./pages/Bookings";
 import Account from "./pages/Account";
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/home" element={<Home />} />
               <Route path="/tests" element={<Tests />} />
+              <Route path="/packages" element={<Packages />} />
               <Route path="/test/:testId" element={<TestDetails />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/payment" element={<Payment />} />
