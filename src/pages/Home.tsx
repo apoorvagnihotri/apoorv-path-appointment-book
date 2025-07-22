@@ -235,47 +235,42 @@ const Home = () => {
 
       {/* Why Choose Section */}
       <div className="px-6 mb-8">
-        <h2 className="text-2xl font-bold text-center text-foreground mb-8">
+        <h2 className="text-xl font-semibold text-center text-foreground mb-6">
           Why choose Apoorv Pathology
         </h2>
         
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-4 gap-4">
           {/* Trusted by Doctors */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2">
+              <Shield className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="font-semibold text-foreground mb-1">Trusted by</h3>
-            <p className="text-foreground font-medium">Doctors</p>
+            <p className="text-xs font-medium text-muted-foreground leading-tight">Trusted by<br />Doctors</p>
           </div>
 
           {/* 100% Report Accuracy */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <ThumbsUp className="h-8 w-8 text-primary" />
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2">
+              <ThumbsUp className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="font-semibold text-foreground mb-1">100% report</h3>
-            <p className="text-foreground font-medium">accuracy</p>
-            <p className="text-foreground font-medium">guaranteed</p>
+            <p className="text-xs font-medium text-muted-foreground leading-tight">100% report<br />accuracy<br />guaranteed</p>
           </div>
 
           {/* Save Money */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <DollarSign className="h-8 w-8 text-primary" />
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2">
+              <DollarSign className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h3 className="font-semibold text-foreground mb-1">Save Money</h3>
+            <p className="text-xs font-medium text-muted-foreground leading-tight">Save Money</p>
           </div>
 
           {/* 25+ Years Experience */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 relative">
-              <Award className="h-8 w-8 text-primary" />
-              <span className="absolute text-xs font-bold text-primary">25</span>
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2 relative">
+              <Award className="h-6 w-6 text-muted-foreground" />
+              <span className="absolute text-[8px] font-bold text-muted-foreground">25</span>
             </div>
-            <h3 className="font-semibold text-foreground mb-1">More than</h3>
-            <p className="text-foreground font-medium">25 years</p>
-            <p className="text-foreground font-medium">experience</p>
+            <p className="text-xs font-medium text-muted-foreground leading-tight">More than<br />25 years<br />experience</p>
           </div>
         </div>
       </div>

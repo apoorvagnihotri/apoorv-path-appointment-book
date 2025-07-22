@@ -22,7 +22,7 @@ export type Database = {
           package_id: string | null
           quantity: number
           service_id: string | null
-          test_id: string
+          test_id: string | null
           user_id: string
         }
         Insert: {
@@ -32,7 +32,7 @@ export type Database = {
           package_id?: string | null
           quantity?: number
           service_id?: string | null
-          test_id: string
+          test_id?: string | null
           user_id: string
         }
         Update: {
@@ -42,7 +42,7 @@ export type Database = {
           package_id?: string | null
           quantity?: number
           service_id?: string | null
-          test_id?: string
+          test_id?: string | null
           user_id?: string
         }
         Relationships: [
