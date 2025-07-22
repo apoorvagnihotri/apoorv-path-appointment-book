@@ -18,21 +18,30 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          item_type: string | null
+          package_id: string | null
           quantity: number
+          service_id: string | null
           test_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          item_type?: string | null
+          package_id?: string | null
           quantity?: number
+          service_id?: string | null
           test_id: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          item_type?: string | null
+          package_id?: string | null
           quantity?: number
+          service_id?: string | null
           test_id?: string
           user_id?: string
         }
@@ -186,6 +195,36 @@ export type Database = {
           full_name?: string | null
           id?: string
           mobile_number?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon_name: string
+          id: string
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon_name: string
+          id?: string
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon_name?: string
+          id?: string
+          name?: string
+          price?: number
           updated_at?: string
         }
         Relationships: []

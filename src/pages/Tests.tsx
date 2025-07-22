@@ -114,12 +114,12 @@ const Tests = () => {
     pkg.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddToCart = async (test: Test): Promise<void> => {
+  const handleAddToCart = async (itemId: string, itemType: 'test' | 'package' = 'test', name: string): Promise<void> => {
     try {
-      await addToCart(test.id);
+      await addToCart(itemId, itemType);
       toast({
         title: "Added to cart",
-        description: `${test.name} has been added to your cart.`,
+        description: `${name} has been added to your cart.`,
       });
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -131,8 +131,13 @@ const Tests = () => {
     }
   };
 
-  const isTestInCart = (testId: string): boolean => {
-    return cartItems.some(item => item.test_id === testId);
+  const isItemInCart = (itemId: string, itemType: 'test' | 'package' = 'test'): boolean => {
+    if (itemType === 'test') {
+      return cartItems.some(item => item.test_id === itemId);
+    } else if (itemType === 'package') {
+      return cartItems.some(item => item.package_id === itemId);
+    }
+    return false;
   };
 
   const handleSearch = () => {
@@ -191,19 +196,26 @@ const Tests = () => {
           </h2>
           <div className="space-y-4">
             {filteredPackages.map((pkg) => (
-              <Card key={pkg.id} className="p-4 shadow-card border-l-4 border-l-accent">
-                <div className="flex justify-between items-start">
+              <Card key={pkg.id} className="p-4 shadow-card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 relative">
+                <div className="absolute top-3 right-3">
+                  <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full font-medium">
+                    PACKAGE
+                  </span>
+                </div>
+                <div className="flex justify-between items-start pr-16">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{pkg.name}</h3>
+                    <h3 className="font-semibold text-foreground mb-1">{pkg.name}</h3>
                     <p className="text-sm text-muted-foreground mb-3">{pkg.description}</p>
                     <p className="text-lg font-bold text-primary">₹{pkg.price}</p>
                   </div>
                   <Button
-                    variant="outline"
+                    onClick={() => handleAddToCart(pkg.id, 'package', pkg.name)}
+                    disabled={isItemInCart(pkg.id, 'package')}
+                    variant={isItemInCart(pkg.id, 'package') ? "secondary" : "default"}
                     size="sm"
                     className="ml-4"
                   >
-                    View Details
+                    {isItemInCart(pkg.id, 'package') ? "Added" : "Add to Cart"}
                   </Button>
                 </div>
               </Card>
@@ -235,13 +247,13 @@ const Tests = () => {
                     <p className="text-lg font-bold text-primary">₹{test.price}</p>
                   </div>
                   <Button
-                    onClick={() => handleAddToCart(test)}
-                    disabled={isTestInCart(test.id)}
-                    variant={isTestInCart(test.id) ? "secondary" : "default"}
+                    onClick={() => handleAddToCart(test.id, 'test', test.name)}
+                    disabled={isItemInCart(test.id, 'test')}
+                    variant={isItemInCart(test.id, 'test') ? "secondary" : "default"}
                     size="sm"
                     className="ml-4"
                   >
-                    {isTestInCart(test.id) ? "Added" : "Add to Cart"}
+                    {isItemInCart(test.id, 'test') ? "Added" : "Add to Cart"}
                   </Button>
                 </div>
               </Card>
