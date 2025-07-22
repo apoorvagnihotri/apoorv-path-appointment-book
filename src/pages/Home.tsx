@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera, MessageCircle } from "lucide-react";
+import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera, MessageCircle, Shield, ThumbsUp, DollarSign, Award } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -233,27 +233,51 @@ const Home = () => {
         </ServiceGrid>
       </div>
 
-      {/* Quick Info Section */}
+      {/* Why Choose Section */}
       <div className="px-6 mb-8">
-        <Card className="p-4 shadow-card">
-          <h3 className="font-medium text-foreground mb-2">
-            Why Choose Apoorv Pathology?
-          </h3>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <div className="w-1.5 h-1.5 bg-accent rounded-full"></div>
-              <span>Accurate & Fast Results</span>
+        <h2 className="text-2xl font-bold text-center text-foreground mb-8">
+          Why choose Apoorv Pathology
+        </h2>
+        
+        <div className="grid grid-cols-2 gap-6">
+          {/* Trusted by Doctors */}
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Shield className="h-8 w-8 text-primary" />
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-1.5 h-1.5 bg-accent rounded-full"></div>
-              <span>Home Sample Collection Available</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-1.5 h-1.5 bg-accent rounded-full"></div>
-              <span>Professional Lab in Sneh Nagar</span>
-            </div>
+            <h3 className="font-semibold text-foreground mb-1">Trusted by</h3>
+            <p className="text-foreground font-medium">Doctors</p>
           </div>
-        </Card>
+
+          {/* 100% Report Accuracy */}
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <ThumbsUp className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="font-semibold text-foreground mb-1">100% report</h3>
+            <p className="text-foreground font-medium">accuracy</p>
+            <p className="text-foreground font-medium">guaranteed</p>
+          </div>
+
+          {/* Save Money */}
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <DollarSign className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="font-semibold text-foreground mb-1">Save Money</h3>
+          </div>
+
+          {/* 25+ Years Experience */}
+          <div className="flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 relative">
+              <Award className="h-8 w-8 text-primary" />
+              <span className="absolute text-xs font-bold text-primary">25</span>
+            </div>
+            <h3 className="font-semibold text-foreground mb-1">More than</h3>
+            <p className="text-foreground font-medium">25 years</p>
+            <p className="text-foreground font-medium">experience</p>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Navigation */}
