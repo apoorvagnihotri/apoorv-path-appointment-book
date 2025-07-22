@@ -61,20 +61,26 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase
         .from('cart_items')
-        .select(`
-          id,
-          test_id,
-          package_id,
-          service_id,
-          item_type,
-          quantity,
-          test:tests(id, name, description, price, category),
-          package:packages(id, name, description, price),
-          service:services(id, name, description, price, icon_name)
-        `)
+        .select('*')
         .eq('user_id', user.id);
 
       if (error) throw error;
+      
+      // Fetch related data separately
+      const testIds = data?.filter(item => item.test_id).map(item => item.test_id) || [];
+      const packageIds = data?.filter(item => item.package_id).map(item => item.package_id) || [];
+      const serviceIds = data?.filter(item => item.service_id).map(item => item.service_id) || [];
+      
+      const [testsData, packagesData, servicesData] = await Promise.all([
+        testIds.length > 0 ? supabase.from('tests').select('*').in('id', testIds) : { data: [] },
+        packageIds.length > 0 ? supabase.from('packages').select('*').in('id', packageIds) : { data: [] },
+        serviceIds.length > 0 ? supabase.from('services').select('*').in('id', serviceIds) : { data: [] }
+      ]);
+
+      // Create lookup maps for related data
+      const testsMap = new Map((testsData.data || []).map(test => [test.id, test]));
+      const packagesMap = new Map((packagesData.data || []).map(pkg => [pkg.id, pkg]));
+      const servicesMap = new Map((servicesData.data || []).map(service => [service.id, service]));
       
       // Filter out malformed items and type properly
       const validItems = (data || []).filter(item => {
@@ -87,9 +93,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         service_id: item.service_id || undefined,
         item_type: item.item_type as 'test' | 'package' | 'service',
         quantity: item.quantity,
-        test: item.test && item.test !== null && typeof item.test === 'object' && !('error' in item.test) ? item.test as any : undefined,
-        package: item.package && item.package !== null && typeof item.package === 'object' && !('error' in (item.package as any)) ? item.package as any : undefined,
-        service: item.service && item.service !== null && typeof item.service === 'object' && !('error' in (item.service as any)) ? item.service as any : undefined,
+        test: item.test_id ? testsMap.get(item.test_id) : undefined,
+        package: item.package_id ? packagesMap.get(item.package_id) : undefined,
+        service: item.service_id ? servicesMap.get(item.service_id) : undefined,
       })) as CartItem[];
       
       setItems(validItems);

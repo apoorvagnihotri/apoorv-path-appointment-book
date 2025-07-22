@@ -26,7 +26,7 @@ const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, items: cartItems } = useCart();
 
   useEffect(() => {
     fetchServices();
@@ -54,6 +54,10 @@ const Services = () => {
 
   const handleAddToCart = async (serviceId: string) => {
     await addToCart(serviceId, 'service');
+  };
+
+  const isServiceInCart = (serviceId: string): boolean => {
+    return cartItems.some(item => item.service_id === serviceId);
   };
 
   if (loading) {
@@ -115,10 +119,12 @@ const Services = () => {
                       </span>
                       <Button
                         onClick={() => handleAddToCart(service.id)}
+                        disabled={isServiceInCart(service.id)}
+                        variant={isServiceInCart(service.id) ? "secondary" : "default"}
                         size="sm"
                         className="bg-primary hover:bg-primary/90"
                       >
-                        Add to Cart
+                        {isServiceInCart(service.id) ? "Added" : "Add to Cart"}
                       </Button>
                     </div>
                   </div>

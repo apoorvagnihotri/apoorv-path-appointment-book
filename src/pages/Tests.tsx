@@ -198,25 +198,26 @@ const Tests = () => {
             {filteredPackages.map((pkg) => (
               <Card key={pkg.id} className="p-4 shadow-card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 relative">
                 <div className="absolute top-3 right-3">
-                  <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full font-medium">
-                    PACKAGE
-                  </span>
-                </div>
-                <div className="flex justify-between items-start pr-16">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">{pkg.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{pkg.description}</p>
-                    <p className="text-lg font-bold text-primary">₹{pkg.price}</p>
-                  </div>
                   <Button
                     onClick={() => handleAddToCart(pkg.id, 'package', pkg.name)}
                     disabled={isItemInCart(pkg.id, 'package')}
                     variant={isItemInCart(pkg.id, 'package') ? "secondary" : "default"}
                     size="sm"
-                    className="ml-4"
                   >
                     {isItemInCart(pkg.id, 'package') ? "Added" : "Add to Cart"}
                   </Button>
+                </div>
+                <div className="absolute bottom-3 right-3">
+                  <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full font-medium">
+                    PACKAGE
+                  </span>
+                </div>
+                <div className="flex justify-between items-start pr-16 pb-8">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">{pkg.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{pkg.description}</p>
+                    <p className="text-lg font-bold text-primary">₹{pkg.price}</p>
+                  </div>
                 </div>
               </Card>
             ))}
