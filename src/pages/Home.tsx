@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera } from "lucide-react";
+import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -36,11 +36,15 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleCall = () => {
-    window.open("tel:+917000000000", "_self");
+    window.open("tel:+919993522579", "_self");
+  };
+
+  const handleWhatsApp = () => {
+    window.open("https://wa.me/919993522579", "_blank");
   };
 
   const searchTests = async (query: string) => {
-    if (query.length < 2) {
+    if (query.length < 3) {
       setSearchResults([]);
       setShowSearchResults(false);
       return;
@@ -113,15 +117,27 @@ const Home = () => {
               </div>
             </div>
             
-            <Button
-              onClick={handleCall}
-              size="sm"
-              variant="secondary"
-              className="bg-white/20 hover:bg-white/30 border-white/30"
-            >
-              <Phone className="h-4 w-4 mr-2" />
-              Call Us
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={handleCall}
+                size="sm"
+                variant="secondary"
+                className="bg-white/20 hover:bg-white/30 border-white/30"
+              >
+                <Phone className="h-4 w-4 mr-2" />
+                Call Us
+              </Button>
+              
+              <Button
+                onClick={handleWhatsApp}
+                size="sm"
+                variant="secondary"
+                className="bg-white/20 hover:bg-white/30 border-white/30"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                WA
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -129,7 +145,7 @@ const Home = () => {
       {/* Search Section */}
       <div className="px-6 -mt-6 mb-6">
         <Card className="p-4 shadow-card">
-          <Popover open={showSearchResults} onOpenChange={setShowSearchResults}>
+          <Popover open={showSearchResults && searchQuery.length >= 3} onOpenChange={setShowSearchResults}>
             <PopoverTrigger asChild>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -138,15 +154,21 @@ const Home = () => {
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
-                    if (e.target.value.length < 2) {
+                    if (e.target.value.length < 3) {
                       setShowSearchResults(false);
+                    }
+                  }}
+                  onFocus={(e) => {
+                    e.target.focus();
+                    if (searchQuery.length >= 3 && searchResults.length > 0) {
+                      setShowSearchResults(true);
                     }
                   }}
                   className="pl-10 h-12 border-border focus:ring-primary"
                 />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0" align="start">
+            <PopoverContent className="w-full p-0" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
               <Command>
                 <CommandList>
                   {loading ? (
