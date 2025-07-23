@@ -131,16 +131,10 @@ const Cart = () => {
                   <span>₹{totalPrice}</span>
                 </div>
                 {totalPrice < 1000 && (
-                  <>
-                    <div className="flex justify-between text-sm">
-                      <span>Lab charges</span>
-                      <span>₹50</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Home collection</span>
-                      <span>₹100</span>
-                    </div>
-                  </>
+                  <div className="flex justify-between text-sm">
+                    <span>Home collection</span>
+                    <span>₹100</span>
+                  </div>
                 )}
                 {totalPrice >= 1000 && (
                   <div className="flex justify-between text-sm">
@@ -151,7 +145,7 @@ const Cart = () => {
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-primary">₹{totalPrice >= 1000 ? totalPrice : totalPrice + 150}</span>
+                  <span className="text-primary">₹{totalPrice >= 1000 ? totalPrice : totalPrice + 100}</span>
                 </div>
               </div>
 
