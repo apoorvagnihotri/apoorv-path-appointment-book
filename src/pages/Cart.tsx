@@ -103,7 +103,7 @@ const Cart = () => {
                       <p className="text-xs text-muted-foreground">
                         {itemType === 'test' ? (itemData as any)?.category : itemType.charAt(0).toUpperCase() + itemType.slice(1)}
                       </p>
-                      <p className="text-sm text-muted-foreground mt-1">{itemData?.description}</p>
+                      
                     </div>
                     <div className="text-right ml-4">
                       <p className="text-lg font-semibold text-primary">₹{itemData?.price}</p>
@@ -130,25 +130,35 @@ const Cart = () => {
                   <span>Subtotal ({totalItems} items)</span>
                   <span>₹{totalPrice}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span>Lab charges</span>
-                  <span>₹50</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Home collection</span>
-                  <span className="text-green-600">Free</span>
-                </div>
+                {totalPrice < 1000 && (
+                  <>
+                    <div className="flex justify-between text-sm">
+                      <span>Lab charges</span>
+                      <span>₹50</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Home collection</span>
+                      <span>₹100</span>
+                    </div>
+                  </>
+                )}
+                {totalPrice >= 1000 && (
+                  <div className="flex justify-between text-sm">
+                    <span>Home collection</span>
+                    <span className="text-green-600">Free</span>
+                  </div>
+                )}
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-primary">₹{totalPrice + 50}</span>
+                  <span className="text-primary">₹{totalPrice >= 1000 ? totalPrice : totalPrice + 150}</span>
                 </div>
               </div>
 
               <Button 
                 className="w-full mt-4 bg-gradient-medical hover:shadow-button"
                 size="lg"
-                onClick={() => navigate('/payment')}
+                onClick={() => navigate('/members')}
               >
                 Proceed to Book
               </Button>

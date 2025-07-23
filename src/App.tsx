@@ -18,6 +18,8 @@ import TestDetails from "./pages/TestDetails";
 import Bookings from "./pages/Bookings";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
+import Members from "./pages/Members";
+import Schedule from "./pages/Schedule";
 import Payment from "./pages/Payment";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
@@ -43,6 +45,8 @@ const App = () => (
               <Route path="/prescription" element={<Prescription />} />
               <Route path="/test/:testId" element={<TestDetails />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/members" element={<Members />} />
+              <Route path="/schedule" element={<Schedule />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/bookings" element={<Bookings />} />
               <Route path="/account" element={<Account />} />

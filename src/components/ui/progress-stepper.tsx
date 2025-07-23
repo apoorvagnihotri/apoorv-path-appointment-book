@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, TestTube, Users, Calendar, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Step {
@@ -14,6 +14,17 @@ interface ProgressStepperProps {
 }
 
 export const ProgressStepper = ({ steps, currentStep, className }: ProgressStepperProps) => {
+  const getStepIcon = (stepId: number, isCompleted: boolean) => {
+    if (isCompleted) return <Check className="h-4 w-4" />;
+    
+    switch (stepId) {
+      case 1: return <TestTube className="h-4 w-4" />;
+      case 2: return <Users className="h-4 w-4" />;
+      case 3: return <Calendar className="h-4 w-4" />;
+      case 4: return <CreditCard className="h-4 w-4" />;
+      default: return stepId;
+    }
+  };
   return (
     <div className={cn("w-full", className)}>
       <div className="flex items-center justify-between">
@@ -36,11 +47,7 @@ export const ProgressStepper = ({ steps, currentStep, className }: ProgressStepp
                     }
                   )}
                 >
-                  {isCompleted ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    step.id
-                  )}
+                  {getStepIcon(step.id, isCompleted)}
                 </div>
 
                 {/* Connecting Line */}
