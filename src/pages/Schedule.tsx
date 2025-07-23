@@ -90,12 +90,12 @@ const Schedule = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-2 sm:gap-3">
               {getNextSevenDays().map((day) => (
                 <button
                   key={day.date}
                   onClick={() => setSelectedDate(day.date)}
-                  className={`p-3 text-center rounded-lg border transition-colors ${
+                  className={`p-2 sm:p-3 text-center rounded-lg border transition-colors min-h-[60px] flex flex-col justify-center ${
                     selectedDate === day.date
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:border-primary/50'
@@ -104,7 +104,7 @@ const Schedule = () => {
                   <div className="text-xs font-medium">{day.display.split(' ')[0]}</div>
                   <div className="text-sm">{day.display.split(' ')[1]} {day.display.split(' ')[2]}</div>
                   {day.isToday && (
-                    <div className="text-xs text-primary mt-1">Today</div>
+                    <div className={`text-xs mt-1 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
                   )}
                 </button>
               ))}
@@ -121,18 +121,18 @@ const Schedule = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {timeSlots.map((slot) => (
                 <button
                   key={slot}
                   onClick={() => setSelectedTime(slot)}
-                  className={`p-3 text-center rounded-lg border transition-colors ${
+                  className={`p-3 text-center rounded-lg border transition-colors min-h-[48px] flex items-center justify-center ${
                     selectedTime === slot
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
-                  {slot}
+                  <span className="text-sm font-medium">{slot}</span>
                 </button>
               ))}
             </div>

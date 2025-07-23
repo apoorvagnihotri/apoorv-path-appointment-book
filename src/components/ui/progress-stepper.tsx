@@ -27,16 +27,17 @@ export const ProgressStepper = ({ steps, currentStep, className }: ProgressStepp
   };
   return (
     <div className={cn("w-full", className)}>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         {steps.map((step, index) => {
           const isCompleted = step.id < currentStep;
           const isCurrent = step.id === currentStep;
           const isUpcoming = step.id > currentStep;
 
           return (
-            <div key={step.id} className="flex-1 relative">
-              {/* Step Circle */}
-              <div className="flex items-center">
+            <div key={step.id} className="flex items-center flex-1">
+              {/* Step Container */}
+              <div className="flex flex-col items-center flex-shrink-0">
+                {/* Step Circle */}
                 <div
                   className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors",
@@ -50,38 +51,38 @@ export const ProgressStepper = ({ steps, currentStep, className }: ProgressStepp
                   {getStepIcon(step.id, isCompleted)}
                 </div>
 
-                {/* Connecting Line */}
-                {index < steps.length - 1 && (
-                  <div className="flex-1 h-px mx-2">
-                    <div
-                      className={cn(
-                        "h-full transition-colors",
-                        isCompleted || isCurrent ? "bg-primary" : "bg-muted"
-                      )}
-                    />
-                  </div>
-                )}
+                {/* Step Label */}
+                <div className="mt-2 text-center min-w-0">
+                  <p
+                    className={cn(
+                      "text-xs font-medium",
+                      (isCompleted || isCurrent) ? "text-foreground" : "text-muted-foreground"
+                    )}
+                  >
+                    {step.title}
+                  </p>
+                  <p
+                    className={cn(
+                      "text-xs mt-1",
+                      (isCompleted || isCurrent) ? "text-muted-foreground" : "text-muted-foreground/70"
+                    )}
+                  >
+                    {step.description}
+                  </p>
+                </div>
               </div>
 
-              {/* Step Label */}
-              <div className="mt-2 text-center">
-                <p
-                  className={cn(
-                    "text-xs font-medium",
-                    (isCompleted || isCurrent) ? "text-foreground" : "text-muted-foreground"
-                  )}
-                >
-                  {step.title}
-                </p>
-                <p
-                  className={cn(
-                    "text-xs mt-1",
-                    (isCompleted || isCurrent) ? "text-muted-foreground" : "text-muted-foreground/70"
-                  )}
-                >
-                  {step.description}
-                </p>
-              </div>
+              {/* Connecting Line */}
+              {index < steps.length - 1 && (
+                <div className="flex-1 h-px mx-3 mt-[-24px]">
+                  <div
+                    className={cn(
+                      "h-full transition-colors",
+                      isCompleted || isCurrent ? "bg-primary" : "bg-muted"
+                    )}
+                  />
+                </div>
+              )}
             </div>
           );
         })}
