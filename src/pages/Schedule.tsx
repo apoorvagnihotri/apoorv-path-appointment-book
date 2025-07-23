@@ -40,13 +40,9 @@ const Schedule = () => {
   };
 
   const timeSlots = [
-    "6:00 AM - 8:00 AM",
-    "8:00 AM - 10:00 AM", 
-    "10:00 AM - 12:00 PM",
-    "12:00 PM - 2:00 PM",
-    "2:00 PM - 4:00 PM",
-    "4:00 PM - 6:00 PM",
-    "6:00 PM - 8:00 PM"
+    "7:00 AM - 12:00 PM",
+    "12:00 PM - 5:00 PM",
+    "5:00 PM - 9:00 PM"
   ];
 
   if (!user) {
@@ -90,21 +86,22 @@ const Schedule = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-7 gap-2 sm:gap-3">
+            <div className="grid grid-cols-7 gap-1 sm:gap-3">
               {getNextSevenDays().map((day) => (
                 <button
                   key={day.date}
                   onClick={() => setSelectedDate(day.date)}
-                  className={`p-2 sm:p-3 text-center rounded-lg border transition-colors min-h-[60px] flex flex-col justify-center ${
+                  className={`p-1.5 sm:p-3 text-center rounded-lg border transition-colors min-h-[65px] sm:min-h-[70px] flex flex-col justify-center ${
                     selectedDate === day.date
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
-                  <div className="text-xs font-medium">{day.display.split(' ')[0]}</div>
-                  <div className="text-sm">{day.display.split(' ')[1]} {day.display.split(' ')[2]}</div>
+                  <div className="text-xs font-medium truncate">{day.display.split(' ')[0]}</div>
+                  <div className="text-xs sm:text-sm font-medium">{day.display.split(' ')[1]}</div>
+                  <div className="text-xs sm:text-sm">{day.display.split(' ')[2]}</div>
                   {day.isToday && (
-                    <div className={`text-xs mt-1 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
+                    <div className={`text-xs mt-0.5 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
                   )}
                 </button>
               ))}
@@ -121,12 +118,12 @@ const Schedule = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               {timeSlots.map((slot) => (
                 <button
                   key={slot}
                   onClick={() => setSelectedTime(slot)}
-                  className={`p-3 text-center rounded-lg border transition-colors min-h-[48px] flex items-center justify-center ${
+                  className={`p-4 text-center rounded-lg border transition-colors min-h-[56px] flex items-center justify-center ${
                     selectedTime === slot
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:border-primary/50'
