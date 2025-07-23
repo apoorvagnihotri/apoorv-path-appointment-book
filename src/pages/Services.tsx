@@ -98,6 +98,11 @@ const Services = () => {
             return (
               <Card key={service.id} className="p-4 shadow-card bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 relative">
                 <div className="absolute top-3 right-3">
+                  <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-medium">
+                    SERVICE
+                  </span>
+                </div>
+                <div className="absolute bottom-3 right-3">
                   <Button
                     onClick={() => handleAddToCart(service.id)}
                     disabled={isServiceInCart(service.id)}
@@ -108,16 +113,13 @@ const Services = () => {
                     {isServiceInCart(service.id) ? "Added" : "Add to Cart"}
                   </Button>
                 </div>
-                <div className="absolute bottom-3 right-3">
-                  <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-medium">
-                    SERVICE
-                  </span>
+                <div className="absolute bottom-3 left-3">
+                  <p className="text-lg font-bold text-primary">₹{service.price}</p>
                 </div>
-                <div className="flex justify-between items-start pr-16 pb-8">
+                <div className="flex justify-between items-start pr-16 pb-16">
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground mb-1">{service.name}</h3>
                     <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
-                    <p className="text-lg font-bold text-primary">₹{service.price}</p>
                   </div>
                 </div>
               </Card>

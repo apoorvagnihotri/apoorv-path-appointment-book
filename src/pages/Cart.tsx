@@ -90,7 +90,7 @@ const Cart = () => {
             </Card>
 
             {/* Your Cart heading */}
-            <h2 className="text-xl font-semibold text-foreground mb-4">Your Cart</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-4">Review your cart</h2>
             
             <div className="space-y-4">
             {items.map((item) => {
@@ -171,7 +171,7 @@ const Cart = () => {
                 size="lg"
                 onClick={() => navigate('/members')}
               >
-                Proceed to Book
+                Proceed
               </Button>
             </Card>
             </div>
