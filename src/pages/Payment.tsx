@@ -109,15 +109,22 @@ const Payment = () => {
             <CardTitle>Order Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {cartItems.map((item) => (
-              <div key={item.test.id} className="flex justify-between items-center">
-                <div>
-                  <p className="font-medium">{item.test.name}</p>
-                  <p className="text-sm text-muted-foreground">{item.test.category}</p>
+            {cartItems.map((item) => {
+              const displayItem = item.test || item.package || item.service;
+              if (!displayItem) return null;
+              
+              return (
+                <div key={displayItem.id} className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{displayItem.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {item.test?.category || (item.package ? 'Package' : 'Service')}
+                    </p>
+                  </div>
+                  <p className="font-semibold">₹{displayItem.price}</p>
                 </div>
-                <p className="font-semibold">₹{item.test.price}</p>
-              </div>
-            ))}
+              );
+            })}
             
             <div className="border-t pt-3 space-y-2">
               <div className="flex justify-between">
