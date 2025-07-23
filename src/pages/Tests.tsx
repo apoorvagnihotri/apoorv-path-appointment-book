@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
+import { ItemCard } from "@/components/ui/item-card";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
@@ -196,33 +197,13 @@ const Tests = () => {
           </h2>
           <div className="space-y-4">
             {filteredPackages.map((pkg) => (
-              <Card key={pkg.id} className="p-4 shadow-card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 relative">
-                <div className="absolute top-3 right-3">
-                  <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full font-medium">
-                    PACKAGE
-                  </span>
-                </div>
-                <div className="absolute bottom-3 right-3">
-                  <Button
-                    onClick={() => handleAddToCart(pkg.id, 'package', pkg.name)}
-                    disabled={isItemInCart(pkg.id, 'package')}
-                    variant={isItemInCart(pkg.id, 'package') ? "secondary" : "default"}
-                    size="sm"
-                    className={isItemInCart(pkg.id, 'package') ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
-                  >
-                    {isItemInCart(pkg.id, 'package') ? "Added" : "Add to Cart"}
-                  </Button>
-                </div>
-                <div className="absolute bottom-3 left-3">
-                  <p className="text-lg font-bold text-primary">₹{pkg.price}</p>
-                </div>
-                <div className="flex justify-between items-start pr-16 pb-16">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">{pkg.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{pkg.description}</p>
-                  </div>
-                </div>
-              </Card>
+              <ItemCard
+                key={pkg.id}
+                item={pkg}
+                itemType="package"
+                isInCart={isItemInCart(pkg.id, 'package')}
+                onAddToCart={() => handleAddToCart(pkg.id, 'package', pkg.name)}
+              />
             ))}
           </div>
         </div>
@@ -242,34 +223,13 @@ const Tests = () => {
         ) : (
           <div className="space-y-4">
             {filteredTests.map((test) => (
-              <Card key={test.id} className="p-4 shadow-card bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200 relative">
-                <div className="absolute top-3 right-3">
-                  <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
-                    TEST
-                  </span>
-                </div>
-                <div className="absolute bottom-3 right-3">
-                  <Button
-                    onClick={() => handleAddToCart(test.id, 'test', test.name)}
-                    disabled={isItemInCart(test.id, 'test')}
-                    variant={isItemInCart(test.id, 'test') ? "secondary" : "default"}
-                    size="sm"
-                    className={isItemInCart(test.id, 'test') ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
-                  >
-                    {isItemInCart(test.id, 'test') ? "Added" : "Add to Cart"}
-                  </Button>
-                </div>
-                <div className="absolute bottom-3 left-3">
-                  <p className="text-lg font-bold text-primary">₹{test.price}</p>
-                </div>
-                <div className="flex justify-between items-start pr-16 pb-16">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">{test.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{test.category}</p>
-                    <p className="text-sm text-muted-foreground mb-3">{test.description}</p>
-                  </div>
-                </div>
-              </Card>
+              <ItemCard
+                key={test.id}
+                item={test}
+                itemType="test"
+                isInCart={isItemInCart(test.id, 'test')}
+                onAddToCart={() => handleAddToCart(test.id, 'test', test.name)}
+              />
             ))}
           </div>
         )}

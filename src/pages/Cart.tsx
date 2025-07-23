@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
-import { CartItem } from "@/components/ui/cart-item";
+import { ItemCard } from "@/components/ui/item-card";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -100,13 +100,12 @@ const Cart = () => {
               const itemId = item.test_id || item.package_id || item.service_id;
               
               return (
-                <CartItem
+                <ItemCard
                   key={item.id}
-                  id={item.id}
-                  itemData={itemData}
+                  item={itemData}
                   itemType={itemType}
-                  itemId={itemId}
-                  onRemove={removeFromCart}
+                  isCartView={true}
+                  onRemove={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
                 />
               );
             })}

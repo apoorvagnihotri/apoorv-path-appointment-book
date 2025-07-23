@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Syringe, Heart, Calculator, Activity } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
+import { ItemCard } from "@/components/ui/item-card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
@@ -14,13 +13,6 @@ interface Service {
   price: number;
   icon_name: string;
 }
-
-const iconMap = {
-  Syringe,
-  Heart,
-  Calculator,
-  Activity,
-};
 
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -92,39 +84,15 @@ const Services = () => {
         </h2>
         
         <div className="space-y-4">
-          {services.map((service) => {
-            const IconComponent = iconMap[service.icon_name as keyof typeof iconMap];
-            
-            return (
-              <Card key={service.id} className="p-4 shadow-card bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 relative">
-                <div className="absolute top-3 right-3">
-                  <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-medium">
-                    SERVICE
-                  </span>
-                </div>
-                <div className="absolute bottom-3 right-3">
-                  <Button
-                    onClick={() => handleAddToCart(service.id)}
-                    disabled={isServiceInCart(service.id)}
-                    variant={isServiceInCart(service.id) ? "secondary" : "default"}
-                    size="sm"
-                    className={isServiceInCart(service.id) ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
-                  >
-                    {isServiceInCart(service.id) ? "Added" : "Add to Cart"}
-                  </Button>
-                </div>
-                <div className="absolute bottom-3 left-3">
-                  <p className="text-lg font-bold text-primary">₹{service.price}</p>
-                </div>
-                <div className="flex justify-between items-start pr-16 pb-16">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">{service.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+          {services.map((service) => (
+            <ItemCard
+              key={service.id}
+              item={service}
+              itemType="service"
+              isInCart={isServiceInCart(service.id)}
+              onAddToCart={() => handleAddToCart(service.id)}
+            />
+          ))}
         </div>
       </div>
 
