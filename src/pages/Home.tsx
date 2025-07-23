@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera, MessageCircle, Shield, ThumbsUp, DollarSign, Award } from "lucide-react";
+import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera, MessageCircle, Shield, ThumbsUp, DollarSign, Award, User, Thermometer, Heart, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,10 +28,34 @@ interface Test {
   category: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  icon_name: string;
+}
+
+const iconMap = {
+  User,
+  Thermometer,
+  Heart,
+  Pill,
+  Droplets,
+  Shield,
+  Activity,
+  Ribbon,
+  Dumbbell,
+  Baby,
+  Egg,
+  AlertTriangle,
+  Bone,
+  Droplet,
+};
+
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Test[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -72,6 +96,29 @@ const Home = () => {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name')
+        .limit(6); // Only show first 6 categories on home page
+
+      if (error) {
+        console.error('Error fetching categories:', error);
+        return;
+      }
+
+      setCategories(data || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
   const handleTestSelect = (test: Test) => {
     navigate(`/tests?search=${encodeURIComponent(test.name)}`);
     setSearchQuery("");
@@ -90,6 +137,10 @@ const Home = () => {
     if (e.key === 'Enter') {
       handleSearchSubmit();
     }
+  };
+
+  const handleCategoryClick = (categoryName: string) => {
+    navigate(`/tests?category=${encodeURIComponent(categoryName)}`);
   };
 
   const services = [
@@ -232,6 +283,40 @@ const Home = () => {
           ))}
         </ServiceGrid>
       </div>
+
+      {/* Categories Section */}
+      {categories.length > 0 && (
+        <div className="px-6 mb-8">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
+            Find Tests By Category
+          </h2>
+          
+          <div className="grid grid-cols-3 gap-4">
+            {categories.map((category) => {
+              const IconComponent = iconMap[category.icon_name as keyof typeof iconMap];
+              
+              return (
+                <Card
+                  key={category.id}
+                  className="p-4 text-center cursor-pointer hover:shadow-lg transition-shadow bg-card border-border"
+                  onClick={() => handleCategoryClick(category.name)}
+                >
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      {IconComponent && (
+                        <IconComponent className="h-6 w-6 text-primary" />
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-foreground">
+                      {category.name}
+                    </span>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Why Choose Section */}
       <div className="px-6 mb-8">

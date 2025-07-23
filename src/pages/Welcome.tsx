@@ -34,17 +34,8 @@ const Welcome = () => {
           </p>
         </div>
 
-        {/* Hero Image */}
-        <Card className="w-full max-w-sm mb-8 overflow-hidden shadow-card">
-          <img 
-            src={medicalHero} 
-            alt="Modern Medical Laboratory" 
-            className="w-full h-48 object-cover"
-          />
-        </Card>
-
         {/* Action Button */}
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-sm mb-8">
           <Button 
             onClick={() => navigate("/auth")}
             className="w-full h-12 bg-gradient-medical hover:shadow-button"
@@ -53,6 +44,15 @@ const Welcome = () => {
             Get Started
           </Button>
         </div>
+
+        {/* Hero Image */}
+        <Card className="w-full max-w-sm overflow-hidden shadow-card">
+          <img 
+            src={medicalHero} 
+            alt="Modern Medical Laboratory" 
+            className="w-full h-48 object-cover"
+          />
+        </Card>
       </div>
 
       {/* Footer */}

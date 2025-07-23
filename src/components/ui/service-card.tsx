@@ -22,7 +22,7 @@ export function ServiceCard({ title, icon: Icon, onClick, className }: ServiceCa
         className
       )}
     >
-      <Icon className="h-8 w-8 text-primary mb-3" />
+      <Icon className="h-12 w-12 text-primary mb-3" />
       <span className="text-sm font-medium text-foreground text-center leading-tight">
         {title}
       </span>
