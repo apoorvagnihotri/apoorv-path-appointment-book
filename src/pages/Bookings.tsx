@@ -1,42 +1,68 @@
+import { useState, useEffect } from "react";
 import { Calendar, Clock, MapPin, Phone } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
-interface Booking {
+interface Order {
   id: string;
-  testName: string;
-  date: string;
-  time: string;
-  type: "home" | "lab";
-  status: "confirmed" | "pending" | "completed";
-  amount: number;
+  order_number: string;
+  status: string;
+  payment_method: string;
+  payment_status: string;
+  total_amount: number;
+  appointment_date: string;
+  appointment_time: string;
+  collection_type: string;
+  created_at: string;
+  order_items: {
+    item_name: string;
+    item_type: string;
+    item_price: number;
+    quantity: number;
+  }[];
 }
 
 const Bookings = () => {
   const navigate = useNavigate();
-  const bookings: Booking[] = [
-    {
-      id: "1",
-      testName: "Complete Blood Count (CBC)",
-      date: "25 Jul 2024",
-      time: "09:00 AM",
-      type: "home",
-      status: "confirmed",
-      amount: 200
-    },
-    {
-      id: "2", 
-      testName: "Lipid Profile",
-      date: "22 Jul 2024",
-      time: "02:00 PM",
-      type: "lab",
-      status: "completed",
-      amount: 400
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchOrders();
     }
-  ];
+  }, [user]);
+
+  const fetchOrders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (
+            item_name,
+            item_type,
+            item_price,
+            quantity
+          )
+        `)
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setOrders(data || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -56,6 +82,12 @@ const Bookings = () => {
     }
   };
 
+  // Redirect if not authenticated
+  if (!user) {
+    navigate('/signin');
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -67,86 +99,111 @@ const Bookings = () => {
 
       {/* Bookings List */}
       <div className="px-6 py-4 space-y-4">
-        {bookings.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your bookings...</p>
+          </div>
+        ) : orders.length === 0 ? (
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">No bookings yet</p>
-            <Button className="bg-gradient-medical">Book Your First Test</Button>
+            <Button 
+              className="bg-gradient-medical"
+              onClick={() => navigate('/tests')}
+            >
+              Book Your First Test
+            </Button>
           </div>
         ) : (
-          bookings.map((booking) => (
-            <Card key={booking.id} className="p-4 shadow-card">
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
-                  <h3 className="font-medium text-foreground mb-1">
-                    {booking.testName}
-                  </h3>
-                  <Badge className={getStatusColor(booking.status)}>
-                    {getStatusText(booking.status)}
-                  </Badge>
-                </div>
-                <div className="text-right">
-                  <p className="text-lg font-semibold text-primary">
-                    ₹{booking.amount}
-                  </p>
-                </div>
-              </div>
+          orders.map((order) => {
+            const appointmentDate = order.appointment_date ? 
+              new Date(order.appointment_date).toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+              }) : 
+              new Date(order.created_at).toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+              });
 
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>{booking.date}</span>
+            const testNames = order.order_items.map(item => item.item_name).join(', ');
+            const displayName = testNames.length > 50 ? testNames.substring(0, 50) + '...' : testNames;
+
+            return (
+              <Card key={order.id} className="p-4 shadow-card">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-foreground mb-1">
+                      {displayName}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Order #{order.order_number}
+                    </p>
+                    <Badge className={getStatusColor(order.status)}>
+                      {getStatusText(order.status)}
+                    </Badge>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-semibold text-primary">
+                      ₹{order.total_amount}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4" />
-                  <span>{booking.time}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  {booking.type === "home" ? (
-                    <>
-                      <MapPin className="h-4 w-4" />
-                      <span>Home Collection</span>
-                    </>
-                  ) : (
-                    <>
-                      <MapPin className="h-4 w-4" />
-                      <span>Lab Visit - Sneh Nagar</span>
-                    </>
+
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>{appointmentDate}</span>
+                  </div>
+                  {order.appointment_time && (
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      <span>{order.appointment_time}</span>
+                    </div>
                   )}
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4" />
+                    <span>
+                      {order.collection_type === "home" ? "Home Collection" : "Lab Visit - Sneh Nagar"}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex space-x-2">
-                {booking.status === "confirmed" && (
+                <div className="flex space-x-2">
+                  {order.status === "confirmed" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <Phone className="h-4 w-4 mr-2" />
+                      Call Lab
+                    </Button>
+                  )}
+                  {order.status === "completed" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      View Report
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1"
+                    className="px-6"
+                    onClick={() => navigate(`/booking/${order.id}`)}
                   >
-                    <Phone className="h-4 w-4 mr-2" />
-                    Call Lab
+                    Details
                   </Button>
-                )}
-                {booking.status === "completed" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    View Report
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="px-6"
-                  onClick={() => navigate(`/booking/${booking.id}`)}
-                >
-                  Details
-                </Button>
-              </div>
-            </Card>
-          ))
+                </div>
+              </Card>
+            );
+          })
         )}
       </div>
 

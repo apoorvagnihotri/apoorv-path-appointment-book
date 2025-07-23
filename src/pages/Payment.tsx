@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type PaymentMethod = 'online' | 'cash' | null;
 type OnlinePaymentType = 'upi' | 'card' | 'wallet' | null;
@@ -50,38 +52,79 @@ const Payment = () => {
   const handleProceedPayment = async () => {
     setLoading(true);
     
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    if (selectedPaymentMethod === 'cash') {
-      // For cash payment, just confirm booking
-      clearCart();
-      navigate('/bookings', { 
-        state: { 
-          paymentSuccess: true, 
-          paymentMethod: 'Cash on Collection',
-          amount: cartSummary.total 
-        } 
+    try {
+      // Get scheduled date and time from session storage
+      const selectedDate = sessionStorage.getItem('selectedDate');
+      const selectedTime = sessionStorage.getItem('selectedTime');
+      
+      if (!selectedDate || !selectedTime) {
+        toast.error("Please select date and time for your appointment");
+        navigate('/schedule');
+        return;
+      }
+
+      // Create the order
+      const orderData = {
+        user_id: user!.id,
+        status: selectedPaymentMethod === 'cash' ? 'confirmed' : 'pending',
+        payment_method: selectedPaymentMethod === 'cash' ? 'Cash on Collection' : `Online (${selectedOnlineType?.toUpperCase()})`,
+        payment_status: selectedPaymentMethod === 'cash' ? 'pending' : 'completed',
+        total_amount: cartSummary.total,
+        subtotal: cartSummary.subtotal,
+        lab_charges: cartSummary.labCharges,
+        home_collection_charges: cartSummary.homeCollection,
+        appointment_date: selectedDate,
+        appointment_time: selectedTime,
+        collection_type: 'home'
+      };
+
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert(orderData)
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Create order items
+      const orderItems = cartItems.map(item => {
+        const displayItem = item.test || item.package || item.service;
+        return {
+          order_id: order.id,
+          item_type: item.item_type,
+          item_id: displayItem!.id,
+          item_name: displayItem!.name,
+          item_price: displayItem!.price,
+          quantity: item.quantity || 1
+        };
       });
-    } else {
-      // For online payment, simulate payment gateway
-      // In real app, integrate with actual payment gateway
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      // Clear cart and session storage
       clearCart();
-      navigate('/bookings', { 
-        state: { 
-          paymentSuccess: true, 
-          paymentMethod: `Online (${selectedOnlineType?.toUpperCase()})`,
-          amount: cartSummary.total 
-        } 
-      });
+      sessionStorage.removeItem('selectedDate');
+      sessionStorage.removeItem('selectedTime');
+
+      // Show success message
+      toast.success("Order placed successfully!");
+
+      // Navigate to bookings
+      navigate('/bookings');
+      
+    } catch (error) {
+      console.error('Error creating order:', error);
+      toast.error("Failed to place order. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
-  const canProceed = selectedPaymentMethod && 
-    (selectedPaymentMethod === 'cash' || 
-     (selectedPaymentMethod === 'online' && selectedOnlineType));
+  const canProceed = selectedPaymentMethod === 'cash';
 
   return (
     <div className="min-h-screen bg-background">
@@ -155,82 +198,24 @@ const Payment = () => {
           <CardContent className="space-y-4">
             {/* Online Payment */}
             <div 
-              className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                selectedPaymentMethod === 'online' 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border hover:border-primary/50'
+              className={`border-2 rounded-lg p-4 transition-colors relative ${
+                'border-muted bg-muted/20 cursor-not-allowed opacity-60'
               }`}
-              onClick={() => handlePaymentMethodSelect('online')}
             >
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-medical rounded-full flex items-center justify-center">
-                  <CreditCard className="h-6 w-6 text-primary-foreground" />
+                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                  <CreditCard className="h-6 w-6 text-muted-foreground" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium">Online Payment</h3>
+                  <h3 className="font-medium text-muted-foreground">Online Payment</h3>
                   <p className="text-sm text-muted-foreground">UPI, Card, Wallet options</p>
                 </div>
-                {selectedPaymentMethod === 'online' && (
-                  <Badge variant="default">Selected</Badge>
-                )}
+                <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
+                  Coming Soon
+                </Badge>
               </div>
-
-              {/* Online Payment Options */}
-              {selectedPaymentMethod === 'online' && (
-                <div className="mt-4 space-y-3 pl-15">
-                  <div 
-                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                      selectedOnlineType === 'upi' 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                    onClick={() => handleOnlineTypeSelect('upi')}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Smartphone className="h-5 w-5 text-primary" />
-                      <span className="font-medium">UPI Payment</span>
-                      {selectedOnlineType === 'upi' && (
-                        <Badge variant="secondary" className="ml-auto">Selected</Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  <div 
-                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                      selectedOnlineType === 'card' 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                    onClick={() => handleOnlineTypeSelect('card')}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <CreditCard className="h-5 w-5 text-primary" />
-                      <span className="font-medium">Credit/Debit Card</span>
-                      {selectedOnlineType === 'card' && (
-                        <Badge variant="secondary" className="ml-auto">Selected</Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  <div 
-                    className={`border rounded-lg p-3 cursor-pointer transition-colors ${
-                      selectedOnlineType === 'wallet' 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                    onClick={() => handleOnlineTypeSelect('wallet')}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Wallet className="h-5 w-5 text-primary" />
-                      <span className="font-medium">Digital Wallet</span>
-                      {selectedOnlineType === 'wallet' && (
-                        <Badge variant="secondary" className="ml-auto">Selected</Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
+
 
             {/* Cash Payment */}
             <div 
