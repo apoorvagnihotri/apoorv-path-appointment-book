@@ -86,22 +86,47 @@ const Schedule = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-7 gap-1 sm:gap-3">
+            {/* Mobile: Horizontal scroll */}
+            <div className="sm:hidden">
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
+                {getNextSevenDays().map((day) => (
+                  <button
+                    key={day.date}
+                    onClick={() => setSelectedDate(day.date)}
+                    className={`flex-shrink-0 w-20 p-3 text-center rounded-lg border transition-colors min-h-[80px] flex flex-col justify-center ${
+                      selectedDate === day.date
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="text-xs font-medium mb-1">{day.display.split(' ')[0]}</div>
+                    <div className="text-sm font-semibold">{day.display.split(' ')[2]}</div>
+                    <div className="text-xs">{day.display.split(' ')[1]}</div>
+                    {day.isToday && (
+                      <div className={`text-xs mt-1 font-medium ${selectedDate === day.date ? 'text-primary-foreground/90' : 'text-primary'}`}>Today</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Desktop: Grid layout */}
+            <div className="hidden sm:grid grid-cols-7 gap-3">
               {getNextSevenDays().map((day) => (
                 <button
                   key={day.date}
                   onClick={() => setSelectedDate(day.date)}
-                  className={`p-1.5 sm:p-3 text-center rounded-lg border transition-colors min-h-[65px] sm:min-h-[70px] flex flex-col justify-center ${
+                  className={`p-3 text-center rounded-lg border transition-colors min-h-[70px] flex flex-col justify-center ${
                     selectedDate === day.date
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'border-border hover:border-primary/50'
                   }`}
                 >
-                  <div className="text-xs font-medium truncate">{day.display.split(' ')[0]}</div>
-                  <div className="text-xs sm:text-sm font-medium">{day.display.split(' ')[1]}</div>
-                  <div className="text-xs sm:text-sm">{day.display.split(' ')[2]}</div>
+                  <div className="text-xs font-medium">{day.display.split(' ')[0]}</div>
+                  <div className="text-sm font-semibold">{day.display.split(' ')[2]}</div>
+                  <div className="text-xs">{day.display.split(' ')[1]}</div>
                   {day.isToday && (
-                    <div className={`text-xs mt-0.5 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
+                    <div className={`text-xs mt-1 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
                   )}
                 </button>
               ))}
