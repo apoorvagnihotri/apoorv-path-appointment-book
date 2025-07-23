@@ -89,36 +89,53 @@ const Cart = () => {
               <ProgressStepper steps={orderSteps} currentStep={1} />
             </Card>
 
+            {/* Your Cart heading */}
+            <h2 className="text-xl font-semibold text-foreground mb-4">Your Cart</h2>
+            
             <div className="space-y-4">
             {items.map((item) => {
               const itemData = item.test || item.package || item.service;
               const itemType = item.test ? 'test' : item.package ? 'package' : 'service';
               const itemId = item.test_id || item.package_id || item.service_id;
               
+              const cardClassName = itemType === 'test' 
+                ? "p-4 shadow-card bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 relative"
+                : itemType === 'package'
+                ? "p-4 shadow-card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 relative"
+                : "p-4 shadow-card relative";
+              
               return (
-                <Card key={item.id} className="p-4">
-                  <div className="flex justify-between items-start mb-3">
+                <Card key={item.id} className={cardClassName}>
+                  <div className="absolute top-3 right-3">
+                    <Button
+                      onClick={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="absolute bottom-3 right-3">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      itemType === 'test' 
+                        ? 'bg-purple-100 text-purple-600'
+                        : itemType === 'package'
+                        ? 'bg-muted text-muted-foreground'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {itemType.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-start pr-16 pb-8">
                     <div className="flex-1">
-                      <h3 className="font-medium text-foreground">{itemData?.name}</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {itemType === 'test' ? (itemData as any)?.category : itemType.charAt(0).toUpperCase() + itemType.slice(1)}
-                      </p>
-                      
-                    </div>
-                    <div className="text-right ml-4">
-                      <p className="text-lg font-semibold text-primary">₹{itemData?.price}</p>
-                      <p className="text-xs text-muted-foreground">per {itemType}</p>
+                      <h3 className="font-semibold text-foreground mb-1">{itemData?.name}</h3>
+                      {itemType === 'test' && (
+                        <p className="text-sm text-muted-foreground mb-2">{(itemData as any)?.category}</p>
+                      )}
+                      <p className="text-lg font-bold text-primary">₹{itemData?.price}</p>
                     </div>
                   </div>
-
-                  <Button
-                    onClick={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
-                    size="sm"
-                    variant="ghost"
-                    className="text-destructive hover:text-destructive ml-auto"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </Card>
               );
             })}

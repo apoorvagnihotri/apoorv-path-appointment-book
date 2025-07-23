@@ -239,23 +239,29 @@ const Tests = () => {
         ) : (
           <div className="space-y-4">
             {filteredTests.map((test) => (
-              <Card key={test.id} className="p-4 shadow-card">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{test.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{test.category}</p>
-                    <p className="text-sm text-muted-foreground mb-3">{test.description}</p>
-                    <p className="text-lg font-bold text-primary">₹{test.price}</p>
-                  </div>
+              <Card key={test.id} className="p-4 shadow-card bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 relative">
+                <div className="absolute top-3 right-3">
                   <Button
                     onClick={() => handleAddToCart(test.id, 'test', test.name)}
                     disabled={isItemInCart(test.id, 'test')}
                     variant={isItemInCart(test.id, 'test') ? "secondary" : "default"}
                     size="sm"
-                    className="ml-4"
                   >
                     {isItemInCart(test.id, 'test') ? "Added" : "Add to Cart"}
                   </Button>
+                </div>
+                <div className="absolute bottom-3 right-3">
+                  <span className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
+                    TEST
+                  </span>
+                </div>
+                <div className="flex justify-between items-start pr-16 pb-8">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">{test.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-2">{test.category}</p>
+                    <p className="text-sm text-muted-foreground mb-3">{test.description}</p>
+                    <p className="text-lg font-bold text-primary">₹{test.price}</p>
+                  </div>
                 </div>
               </Card>
             ))}
