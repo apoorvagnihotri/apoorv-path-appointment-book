@@ -109,6 +109,101 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          item_name: string
+          item_price: number
+          item_type: string
+          order_id: string
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          item_name: string
+          item_price: number
+          item_type: string
+          order_id: string
+          quantity?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_name?: string
+          item_price?: number
+          item_type?: string
+          order_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          appointment_date: string | null
+          appointment_time: string | null
+          collection_type: string | null
+          created_at: string
+          home_collection_charges: number | null
+          id: string
+          lab_charges: number | null
+          order_number: string
+          payment_method: string | null
+          payment_status: string
+          status: string
+          subtotal: number
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          appointment_date?: string | null
+          appointment_time?: string | null
+          collection_type?: string | null
+          created_at?: string
+          home_collection_charges?: number | null
+          id?: string
+          lab_charges?: number | null
+          order_number?: string
+          payment_method?: string | null
+          payment_status?: string
+          status?: string
+          subtotal: number
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          appointment_date?: string | null
+          appointment_time?: string | null
+          collection_type?: string | null
+          created_at?: string
+          home_collection_charges?: number | null
+          id?: string
+          lab_charges?: number | null
+          order_number?: string
+          payment_method?: string | null
+          payment_status?: string
+          status?: string
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       package_categories: {
         Row: {
           category_id: string
