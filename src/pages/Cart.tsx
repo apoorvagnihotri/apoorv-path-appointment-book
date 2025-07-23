@@ -76,30 +76,38 @@ const Cart = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {items.map((item) => (
-              <Card key={item.id} className="p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-foreground">{item.test.name}</h3>
-                    <p className="text-xs text-muted-foreground">{item.test.category}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{item.test.description}</p>
+            {items.map((item) => {
+              const itemData = item.test || item.package || item.service;
+              const itemType = item.test ? 'test' : item.package ? 'package' : 'service';
+              const itemId = item.test_id || item.package_id || item.service_id;
+              
+              return (
+                <Card key={item.id} className="p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-foreground">{itemData?.name}</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {itemType === 'test' ? (itemData as any)?.category : itemType.charAt(0).toUpperCase() + itemType.slice(1)}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">{itemData?.description}</p>
+                    </div>
+                    <div className="text-right ml-4">
+                      <p className="text-lg font-semibold text-primary">₹{itemData?.price}</p>
+                      <p className="text-xs text-muted-foreground">per {itemType}</p>
+                    </div>
                   </div>
-                  <div className="text-right ml-4">
-                    <p className="text-lg font-semibold text-primary">₹{item.test.price}</p>
-                    <p className="text-xs text-muted-foreground">per test</p>
-                  </div>
-                </div>
 
-                <Button
-                  onClick={() => removeFromCart(item.test_id)}
-                  size="sm"
-                  variant="ghost"
-                  className="text-destructive hover:text-destructive ml-auto"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </Card>
-            ))}
+                  <Button
+                    onClick={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
+                    size="sm"
+                    variant="ghost"
+                    className="text-destructive hover:text-destructive ml-auto"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </Card>
+              );
+            })}
 
             {/* Cart Summary */}
             <Card className="p-4 mt-6">
