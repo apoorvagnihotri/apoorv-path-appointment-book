@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
+import { ProgressStepper } from "@/components/ui/progress-stepper";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +12,13 @@ const Cart = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, loading, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice } = useCart();
+
+  const orderSteps = [
+    { id: 1, title: "Select", description: "Choose tests" },
+    { id: 2, title: "Members", description: "Add members" },
+    { id: 3, title: "Schedule", description: "Date & time" },
+    { id: 4, title: "Payment", description: "Complete order" }
+  ];
 
   if (!user) {
     return (
@@ -75,7 +83,13 @@ const Cart = () => {
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Progress Stepper */}
+            <Card className="p-4">
+              <ProgressStepper steps={orderSteps} currentStep={1} />
+            </Card>
+
+            <div className="space-y-4">
             {items.map((item) => {
               const itemData = item.test || item.package || item.service;
               const itemType = item.test ? 'test' : item.package ? 'package' : 'service';
@@ -139,6 +153,7 @@ const Cart = () => {
                 Proceed to Book
               </Button>
             </Card>
+            </div>
           </div>
         )}
       </div>

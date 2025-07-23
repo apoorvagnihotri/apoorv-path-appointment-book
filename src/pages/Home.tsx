@@ -284,39 +284,6 @@ const Home = () => {
         </ServiceGrid>
       </div>
 
-      {/* Categories Section */}
-      {categories.length > 0 && (
-        <div className="px-6 mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-4">
-            Find Tests By Category
-          </h2>
-          
-          <div className="grid grid-cols-3 gap-4">
-            {categories.map((category) => {
-              const IconComponent = iconMap[category.icon_name as keyof typeof iconMap];
-              
-              return (
-                <Card
-                  key={category.id}
-                  className="p-4 text-center cursor-pointer hover:shadow-lg transition-shadow bg-card border-border"
-                  onClick={() => handleCategoryClick(category.name)}
-                >
-                  <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      {IconComponent && (
-                        <IconComponent className="h-6 w-6 text-primary" />
-                      )}
-                    </div>
-                    <span className="text-sm font-medium text-foreground">
-                      {category.name}
-                    </span>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       {/* Why Choose Section */}
       <div className="px-6 mb-8">
