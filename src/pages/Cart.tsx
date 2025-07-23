@@ -106,34 +106,32 @@ const Cart = () => {
               
               return (
                 <Card key={item.id} className={cardClassName}>
-                  <div className="absolute top-3 right-3">
-                    <Button
-                      onClick={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
-                      size="sm"
-                      variant="ghost"
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="absolute bottom-3 right-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      itemType === 'test' 
-                        ? 'bg-purple-100 text-purple-600'
-                        : itemType === 'package'
-                        ? 'bg-muted text-muted-foreground'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      {itemType.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start pr-16 pb-8">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground mb-1">{itemData?.name}</h3>
-                      {itemType === 'test' && (
-                        <p className="text-sm text-muted-foreground mb-2">{(itemData as any)?.category}</p>
-                      )}
+                  <div className="flex flex-col h-full">
+                    {/* Top section with title and tag */}
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="font-semibold text-foreground">{itemData?.name}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ml-2 ${
+                        itemType === 'test' 
+                          ? 'bg-yellow-100 text-yellow-600'
+                          : itemType === 'package'
+                          ? 'bg-blue-100 text-blue-600'
+                          : 'bg-green-100 text-green-600'
+                      }`}>
+                        {itemType.toUpperCase()}
+                      </span>
+                    </div>
+                    
+                    {/* Bottom section with price and remove button */}
+                    <div className="flex justify-between items-end mt-auto">
                       <p className="text-lg font-bold text-primary">₹{itemData?.price}</p>
+                      <Button
+                        onClick={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </Card>

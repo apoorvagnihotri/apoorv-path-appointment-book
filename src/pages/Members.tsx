@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Plus, User, Edit } from "lucide-react";
+import { ArrowLeft, Plus, User, Edit, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -97,8 +97,7 @@ const Members = () => {
               <CardTitle>Family Members</CardTitle>
               <Button
                 onClick={() => setShowAddForm(!showAddForm)}
-                size="sm"
-                variant="outline"
+                className="bg-gradient-medical text-white hover:shadow-button"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Member
@@ -178,24 +177,39 @@ const Members = () => {
                     </div>
                     <div>
                       <Label htmlFor="relation">Relation</Label>
-                      <Input
+                      <select
                         id="relation"
                         value={newMember.relation}
                         onChange={(e) => setNewMember({...newMember, relation: e.target.value})}
-                        placeholder="e.g., Father, Mother"
-                      />
+                        className="w-full p-2 border rounded-md bg-background"
+                      >
+                        <option value="">Select relation</option>
+                        <option value="Father">Father</option>
+                        <option value="Mother">Mother</option>
+                        <option value="Spouse">Spouse</option>
+                        <option value="Son">Son</option>
+                        <option value="Daughter">Daughter</option>
+                        <option value="Brother">Brother</option>
+                        <option value="Sister">Sister</option>
+                        <option value="Father-in-law">Father-in-law</option>
+                        <option value="Mother-in-law">Mother-in-law</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Other">Other</option>
+                      </select>
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button onClick={handleAddMember} size="sm">
-                      Add Member
-                    </Button>
                     <Button
                       onClick={() => setShowAddForm(false)}
                       size="sm"
                       variant="outline"
                     >
+                      <X className="h-4 w-4 mr-2" />
                       Cancel
+                    </Button>
+                    <Button onClick={handleAddMember} size="sm" className="bg-gradient-medical">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Member
                     </Button>
                   </div>
                 </div>
