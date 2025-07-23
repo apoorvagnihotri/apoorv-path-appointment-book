@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
+import { CartItem } from "@/components/ui/cart-item";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -98,43 +99,15 @@ const Cart = () => {
               const itemType = item.test ? 'test' : item.package ? 'package' : 'service';
               const itemId = item.test_id || item.package_id || item.service_id;
               
-              const cardClassName = itemType === 'test' 
-                ? "p-4 shadow-card bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 relative"
-                : itemType === 'package'
-                ? "p-4 shadow-card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 relative"
-                : "p-4 shadow-card relative";
-              
               return (
-                <Card key={item.id} className={cardClassName}>
-                  <div className="flex flex-col h-full">
-                    {/* Top section with title and tag */}
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-semibold text-foreground">{itemData?.name}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ml-2 ${
-                        itemType === 'test' 
-                          ? 'bg-yellow-100 text-yellow-600'
-                          : itemType === 'package'
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'bg-green-100 text-green-600'
-                      }`}>
-                        {itemType.toUpperCase()}
-                      </span>
-                    </div>
-                    
-                    {/* Bottom section with price and remove button */}
-                    <div className="flex justify-between items-end mt-auto">
-                      <p className="text-lg font-bold text-primary">₹{itemData?.price}</p>
-                      <Button
-                        onClick={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
-                        size="sm"
-                        variant="ghost"
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
+                <CartItem
+                  key={item.id}
+                  id={item.id}
+                  itemData={itemData}
+                  itemType={itemType}
+                  itemId={itemId}
+                  onRemove={removeFromCart}
+                />
               );
             })}
 
