@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,8 +9,12 @@ import { useAuth } from "@/hooks/useAuth";
 const Schedule = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    return sessionStorage.getItem('selectedDate') || "";
+  });
+  const [selectedTime, setSelectedTime] = useState<string>(() => {
+    return sessionStorage.getItem('selectedTime') || "";
+  });
 
   const orderSteps = [
     { id: 1, title: "Select", description: "Choose tests" },
@@ -49,6 +53,19 @@ const Schedule = () => {
     navigate('/signin');
     return null;
   }
+
+  // Save selections to session storage
+  useEffect(() => {
+    if (selectedDate) {
+      sessionStorage.setItem('selectedDate', selectedDate);
+    }
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (selectedTime) {
+      sessionStorage.setItem('selectedTime', selectedTime);
+    }
+  }, [selectedTime]);
 
   const canProceed = selectedDate && selectedTime;
 
@@ -186,7 +203,7 @@ const Schedule = () => {
         )}
 
         {/* Continue Button */}
-        <div className="sticky bottom-6">
+        <div className="pb-6 pt-4">
           <Button
             onClick={() => navigate('/payment')}
             disabled={!canProceed}
