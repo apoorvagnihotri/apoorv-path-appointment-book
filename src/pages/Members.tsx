@@ -39,18 +39,7 @@ const Members = () => {
     { id: 4, title: "Payment", description: "Complete order" }
   ];
 
-  if (!user) {
-    navigate('/signin');
-    return null;
-  }
-
-  // Load family members from database
-  useEffect(() => {
-    if (user) {
-      loadMembers();
-    }
-  }, [user]);
-
+  // Define loadMembers function before useEffect
   const loadMembers = async () => {
     if (!user) return;
     
@@ -104,6 +93,19 @@ const Members = () => {
       setLoading(false);
     }
   };
+
+  // Load family members from database
+  useEffect(() => {
+    if (user) {
+      loadMembers();
+    }
+  }, [user]);
+
+  // Handle user authentication check AFTER all hooks
+  if (!user) {
+    navigate('/signin');
+    return null;
+  }
 
   const handleAddMember = async () => {
     if (!user || !newMember.name || !newMember.age || !newMember.relation) {
