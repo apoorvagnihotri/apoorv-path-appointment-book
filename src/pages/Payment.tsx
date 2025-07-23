@@ -145,7 +145,7 @@ const Payment = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-6 py-6 pb-24 space-y-6">
         {/* Order Summary */}
         <Card>
           <CardHeader>
@@ -243,11 +243,11 @@ const Payment = () => {
         </Card>
 
         {/* Proceed Button */}
-        <div className="sticky bottom-6">
+        <div className="fixed bottom-6 left-6 right-6 z-10">
           <Button
             onClick={handleProceedPayment}
             disabled={!canProceed || loading}
-            className="w-full h-12 bg-gradient-medical"
+            className="w-full h-12 bg-gradient-medical shadow-lg backdrop-blur-sm bg-opacity-95"
             size="lg"
           >
             {loading ? (

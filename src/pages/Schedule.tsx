@@ -88,7 +88,7 @@ const Schedule = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-6 py-6 pb-24 space-y-6">
         {/* Progress Stepper */}
         <Card className="p-4">
           <ProgressStepper steps={orderSteps} currentStep={3} />
@@ -203,11 +203,11 @@ const Schedule = () => {
         )}
 
         {/* Continue Button */}
-        <div className="pb-6 pt-4">
+        <div className="fixed bottom-6 left-6 right-6 z-10">
           <Button
             onClick={() => navigate('/payment')}
             disabled={!canProceed}
-            className="w-full h-12 bg-gradient-medical"
+            className="w-full h-12 bg-gradient-medical shadow-lg backdrop-blur-sm bg-opacity-95"
             size="lg"
           >
             Continue to Payment
