@@ -76,6 +76,39 @@ export type Database = {
         }
         Relationships: []
       }
+      family_members: {
+        Row: {
+          age: string
+          created_at: string
+          gender: string
+          id: string
+          name: string
+          relation: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age: string
+          created_at?: string
+          gender?: string
+          id?: string
+          name: string
+          relation: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age?: string
+          created_at?: string
+          gender?: string
+          id?: string
+          name?: string
+          relation?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       package_categories: {
         Row: {
           category_id: string

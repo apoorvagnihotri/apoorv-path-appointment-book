@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, Plus, User, Edit, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Plus, User, Edit, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Member {
   id: string;
@@ -19,15 +21,9 @@ interface Member {
 const Members = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [members, setMembers] = useState<Member[]>([
-    {
-      id: "1",
-      name: user?.user_metadata?.full_name || "You",
-      age: "25",
-      gender: "Male",
-      relation: "Self"
-    }
-  ]);
+  const { toast } = useToast();
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newMember, setNewMember] = useState({
     name: "",
@@ -48,20 +44,168 @@ const Members = () => {
     return null;
   }
 
-  const handleAddMember = () => {
-    if (newMember.name && newMember.age && newMember.relation) {
-      setMembers([...members, {
-        id: Date.now().toString(),
-        ...newMember
-      }]);
-      setNewMember({ name: "", age: "", gender: "Male", relation: "" });
-      setShowAddForm(false);
+  // Load family members from database
+  useEffect(() => {
+    if (user) {
+      loadMembers();
+    }
+  }, [user]);
+
+  const loadMembers = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      
+      // Add self as the first member
+      const selfMember: Member = {
+        id: "self",
+        name: user.user_metadata?.full_name || "You",
+        age: "25",
+        gender: "Male",
+        relation: "Self"
+      };
+
+      // Fetch family members from database
+      const { data: familyMembers, error } = await supabase
+        .from('family_members')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading family members:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load family members",
+          variant: "destructive"
+        });
+        setMembers([selfMember]);
+        return;
+      }
+
+      const dbMembers: Member[] = familyMembers?.map(member => ({
+        id: member.id,
+        name: member.name,
+        age: member.age,
+        gender: member.gender,
+        relation: member.relation
+      })) || [];
+
+      setMembers([selfMember, ...dbMembers]);
+    } catch (error) {
+      console.error('Error loading members:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load family members",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRemoveMember = (id: string) => {
-    if (members.length > 1) {
+  const handleAddMember = async () => {
+    if (!user || !newMember.name || !newMember.age || !newMember.relation) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('family_members')
+        .insert({
+          user_id: user.id,
+          name: newMember.name,
+          age: newMember.age,
+          gender: newMember.gender,
+          relation: newMember.relation
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding family member:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add family member",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Add to local state
+      const newFamilyMember: Member = {
+        id: data.id,
+        name: data.name,
+        age: data.age,
+        gender: data.gender,
+        relation: data.relation
+      };
+
+      setMembers([...members, newFamilyMember]);
+      setNewMember({ name: "", age: "", gender: "Male", relation: "" });
+      setShowAddForm(false);
+      
+      toast({
+        title: "Success",
+        description: "Family member added successfully"
+      });
+    } catch (error) {
+      console.error('Error adding member:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add family member",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleRemoveMember = async (id: string) => {
+    if (id === "self") {
+      toast({
+        title: "Error",
+        description: "Cannot remove yourself",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (members.length <= 1) return;
+
+    try {
+      const { error } = await supabase
+        .from('family_members')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user?.id);
+
+      if (error) {
+        console.error('Error removing family member:', error);
+        toast({
+          title: "Error",
+          description: "Failed to remove family member",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setMembers(members.filter(m => m.id !== id));
+      toast({
+        title: "Success",
+        description: "Family member removed successfully"
+      });
+    } catch (error) {
+      console.error('Error removing member:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove family member",
+        variant: "destructive"
+      });
     }
   };
 
@@ -105,36 +249,44 @@ const Members = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {members.map((member) => (
-              <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <User className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {member.age} years • {member.gender} • {member.relation}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Button size="sm" variant="ghost">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  {members.length > 1 && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveMember(member.id)}
-                      className="text-destructive"
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
+            <div className="space-y-4">
+              {loading ? (
+                <p className="text-center text-muted-foreground">Loading members...</p>
+              ) : (
+                <>
+                  {members.map((member) => (
+                    <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                          <User className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{member.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {member.age} years • {member.gender} • {member.relation}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="ghost">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {members.length > 1 && member.id !== "self" && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleRemoveMember(member.id)}
+                            className="text-destructive"
+                          >
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
 
             {/* Add Member Form */}
             {showAddForm && (
@@ -208,8 +360,8 @@ const Members = () => {
                       Cancel
                     </Button>
                     <Button onClick={handleAddMember} size="sm" className="bg-gradient-medical">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Member
+                      <Save className="h-4 w-4 mr-2" />
+                      Save
                     </Button>
                   </div>
                 </div>
