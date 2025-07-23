@@ -91,42 +91,33 @@ const Services = () => {
           Available Services
         </h2>
         
-        <div className="grid grid-cols-1 gap-4">
+        <div className="space-y-4">
           {services.map((service) => {
             const IconComponent = iconMap[service.icon_name as keyof typeof iconMap];
             
             return (
-              <Card
-                key={service.id}
-                className="p-4 border-border bg-card"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    {IconComponent && (
-                      <IconComponent className="h-6 w-6 text-primary" />
-                    )}
-                  </div>
+              <Card key={service.id} className="p-4 shadow-card bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 relative">
+                <div className="absolute top-3 right-3">
+                  <Button
+                    onClick={() => handleAddToCart(service.id)}
+                    disabled={isServiceInCart(service.id)}
+                    variant={isServiceInCart(service.id) ? "secondary" : "default"}
+                    size="sm"
+                    className={isServiceInCart(service.id) ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
+                  >
+                    {isServiceInCart(service.id) ? "Added" : "Add to Cart"}
+                  </Button>
+                </div>
+                <div className="absolute bottom-3 right-3">
+                  <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full font-medium">
+                    SERVICE
+                  </span>
+                </div>
+                <div className="flex justify-between items-start pr-16 pb-8">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-foreground mb-1">
-                      {service.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {service.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-primary">
-                        ₹{service.price}
-                      </span>
-                      <Button
-                        onClick={() => handleAddToCart(service.id)}
-                        disabled={isServiceInCart(service.id)}
-                        variant={isServiceInCart(service.id) ? "secondary" : "default"}
-                        size="sm"
-                        className="bg-primary hover:bg-primary/90"
-                      >
-                        {isServiceInCart(service.id) ? "Added" : "Add to Cart"}
-                      </Button>
-                    </div>
+                    <h3 className="font-semibold text-foreground mb-1">{service.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
+                    <p className="text-lg font-bold text-primary">₹{service.price}</p>
                   </div>
                 </div>
               </Card>

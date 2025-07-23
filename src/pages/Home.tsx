@@ -187,7 +187,7 @@ const Home = () => {
                 onClick={handleCall}
                 size="sm"
                 variant="secondary"
-                className="bg-white/20 hover:bg-white/30 border-white/30"
+                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md"
               >
                 <Phone className="h-4 w-4 mr-2" />
                 Call Us
@@ -197,10 +197,10 @@ const Home = () => {
                 onClick={handleWhatsApp}
                 size="sm"
                 variant="secondary"
-                className="bg-white/20 hover:bg-white/30 border-white/30"
+                className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md"
               >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                WA
+                <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
+                WhatsApp
               </Button>
             </div>
           </div>
@@ -273,14 +273,26 @@ const Home = () => {
         </h2>
         
         <ServiceGrid>
-          {services.map((service) => (
-            <ServiceCard
-              key={service.title}
-              title={service.title}
-              icon={service.icon}
-              onClick={service.onClick}
-            />
-          ))}
+          {services.map((service) => {
+            let iconBgColor = "bg-card";
+            if (service.title === "Tests") {
+              iconBgColor = "bg-yellow-50";
+            } else if (service.title === "Health Packages") {
+              iconBgColor = "bg-blue-50";
+            } else if (service.title === "Other Services") {
+              iconBgColor = "bg-green-50";
+            }
+            
+            return (
+              <ServiceCard
+                key={service.title}
+                title={service.title}
+                icon={service.icon}
+                onClick={service.onClick}
+                className={iconBgColor}
+              />
+            );
+          })}
         </ServiceGrid>
       </div>
 

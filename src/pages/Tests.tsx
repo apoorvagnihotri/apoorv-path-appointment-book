@@ -203,6 +203,7 @@ const Tests = () => {
                     disabled={isItemInCart(pkg.id, 'package')}
                     variant={isItemInCart(pkg.id, 'package') ? "secondary" : "default"}
                     size="sm"
+                    className={isItemInCart(pkg.id, 'package') ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
                   >
                     {isItemInCart(pkg.id, 'package') ? "Added" : "Add to Cart"}
                   </Button>
@@ -239,19 +240,20 @@ const Tests = () => {
         ) : (
           <div className="space-y-4">
             {filteredTests.map((test) => (
-              <Card key={test.id} className="p-4 shadow-card bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 relative">
+              <Card key={test.id} className="p-4 shadow-card bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200 relative">
                 <div className="absolute top-3 right-3">
                   <Button
                     onClick={() => handleAddToCart(test.id, 'test', test.name)}
                     disabled={isItemInCart(test.id, 'test')}
                     variant={isItemInCart(test.id, 'test') ? "secondary" : "default"}
                     size="sm"
+                    className={isItemInCart(test.id, 'test') ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
                   >
                     {isItemInCart(test.id, 'test') ? "Added" : "Add to Cart"}
                   </Button>
                 </div>
                 <div className="absolute bottom-3 right-3">
-                  <span className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full font-medium">
+                  <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full font-medium">
                     TEST
                   </span>
                 </div>
