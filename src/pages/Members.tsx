@@ -533,19 +533,33 @@ const Members = () => {
                       type="tel"
                     />
                   </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      onClick={() => setEditingMember(null)}
-                      size="sm"
-                      variant="outline"
-                    >
-                      <X className="h-4 w-4 mr-2" />
-                      Cancel
-                    </Button>
-                    <Button onClick={handleUpdateMember} size="sm" className="bg-gradient-medical">
-                      <Save className="h-4 w-4 mr-2" />
-                      Update
-                    </Button>
+                  <div className="flex justify-between">
+                    <div className="flex space-x-2">
+                      <Button
+                        onClick={() => setEditingMember(null)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                      <Button onClick={handleUpdateMember} size="sm" className="bg-gradient-medical">
+                        <Save className="h-4 w-4 mr-2" />
+                        Update
+                      </Button>
+                    </div>
+                    {editingMember.id !== "self" && (
+                      <Button
+                        onClick={() => {
+                          handleRemoveMember(editingMember.id);
+                          setEditingMember(null);
+                        }}
+                        size="sm"
+                        variant="destructive"
+                      >
+                        Remove
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Card>
