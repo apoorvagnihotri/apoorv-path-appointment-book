@@ -187,7 +187,7 @@ const Home = () => {
                 onClick={handleCall}
                 size="sm"
                 variant="secondary"
-                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md"
+                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
               >
                 <img 
                   src="/lovable-uploads/f81599a4-f902-4c17-b832-66f9fea63ba4.png" 
@@ -201,7 +201,7 @@ const Home = () => {
                 onClick={handleWhatsApp}
                 size="sm"
                 variant="secondary"
-                className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md"
+                className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md text-white"
               >
                 <img 
                   src="/lovable-uploads/1cccab30-4cdc-463a-a398-09fa51a7c4e0.png" 
