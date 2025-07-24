@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, ArrowLeft, User, Thermometer, Heart, Pill, Droplets, Shield, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
+import { Search, ChevronLeft, User, Thermometer, Heart, Pill, Droplets, Shield, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
@@ -92,20 +92,20 @@ const Packages = () => {
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex items-center mb-4">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 rounded-full bg-white/20 hover:bg-white/30"
+              className="p-1 rounded-full bg-white/20 hover:bg-white/30 mr-4"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ChevronLeft className="h-6 w-6" />
             </button>
-            <h1 className="text-xl font-semibold">Search packages</h1>
+            <h1 className="text-2xl font-semibold ml-8">Search packages</h1>
           </div>
         </div>
       </div>
 
       {/* Search Section */}
-      <div className="px-6 -mt-6 mb-6">
+      <div className="px-6 mt-6 mb-6">
         <Card className="p-4 shadow-card">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
