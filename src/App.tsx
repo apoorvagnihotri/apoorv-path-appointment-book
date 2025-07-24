@@ -21,6 +21,7 @@ import Cart from "./pages/Cart";
 import Members from "./pages/Members";
 import Schedule from "./pages/Schedule";
 import Payment from "./pages/Payment";
+import BookingConfirmation from "./pages/BookingConfirmation";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/members" element={<Members />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/payment" element={<Payment />} />
+              <Route path="/booking-confirmation" element={<BookingConfirmation />} />
               <Route path="/bookings" element={<Bookings />} />
               <Route path="/account" element={<Account />} />
               <Route path="*" element={<NotFound />} />

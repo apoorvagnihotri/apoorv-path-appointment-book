@@ -111,10 +111,10 @@ const Payment = () => {
       sessionStorage.removeItem('selectedTime');
 
       // Show success message
-      toast.success("Order placed successfully!");
+      toast.success("Booking confirmed successfully!");
 
-      // Navigate to bookings
-      navigate('/bookings');
+      // Navigate to booking confirmation page
+      navigate(`/booking-confirmation?orderId=${order.id}`);
       
     } catch (error) {
       console.error('Error creating order:', error);
