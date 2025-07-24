@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Search, Gift } from "lucide-react";
+import { ArrowLeft, Search, Gift, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -212,7 +212,10 @@ const Tests = () => {
       {/* Tests List */}
       <div className="px-6 mb-8">
         {filteredTests.length > 0 && (
-          <h2 className="text-lg font-semibold text-foreground mb-4">Individual Tests</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+            <TestTube className="h-5 w-5 mr-2" />
+            Individual Tests
+          </h2>
         )}
         {loading ? (
           <div className="text-center text-muted-foreground">Loading...</div>
