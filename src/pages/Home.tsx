@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ServiceCard, ServiceGrid } from "@/components/ui/service-card";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Command,
@@ -284,13 +285,29 @@ const Home = () => {
             }
             
             return (
-              <ServiceCard
+              <button
                 key={service.title}
-                title={service.title}
-                icon={service.icon}
                 onClick={service.onClick}
-                className={iconBgColor}
-              />
+                className={cn(
+                  "flex flex-col items-center justify-center p-6 rounded-lg",
+                  "bg-card border border-border shadow-card",
+                  "hover:shadow-button hover:scale-105 active:scale-95",
+                  "transition-all duration-200",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  "w-full aspect-square",
+                  iconBgColor
+                )}
+              >
+                <service.icon 
+                  className={cn(
+                    "h-12 w-12 text-primary mb-3",
+                    service.title === "Tests" && "transform rotate-12"
+                  )} 
+                />
+                <span className="text-sm font-medium text-foreground text-center leading-tight">
+                  {service.title}
+                </span>
+              </button>
             );
           })}
         </ServiceGrid>
