@@ -256,7 +256,7 @@ const Payment = () => {
                 Processing...
               </>
             ) : (
-              `Proceed to Pay ₹${cartSummary.total}`
+              "Confirm"
             )}
           </Button>
         </div>
