@@ -213,7 +213,7 @@ const Tests = () => {
       <div className="px-6 mb-8">
         {filteredTests.length > 0 && (
           <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-            <TestTube className="h-5 w-5 mr-2" />
+            <TestTube className="h-5 w-5 mr-2" strokeWidth={2.5} />
             Individual Tests
           </h2>
         )}
