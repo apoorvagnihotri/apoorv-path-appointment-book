@@ -242,21 +242,24 @@ const Payment = () => {
           </CardContent>
         </Card>
 
-        {/* Proceed Button */}
+        {/* Confirm Button */}
         <div className="fixed bottom-6 left-6 right-6 z-10">
           <Button
             onClick={handleProceedPayment}
             disabled={!canProceed || loading}
-            className="w-full h-12 bg-gradient-medical shadow-lg backdrop-blur-sm bg-opacity-95"
+            className="w-full h-14 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold text-lg shadow-xl hover:shadow-2xl backdrop-blur-sm bg-opacity-95 transform hover:scale-[1.02] transition-all duration-200 border-0"
             size="lg"
           >
             {loading ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                 Processing...
               </>
             ) : (
-              "Confirm"
+              <>
+                <span className="text-xl font-bold">Confirm</span>
+                <span className="ml-2 text-lg">✓</span>
+              </>
             )}
           </Button>
         </div>
