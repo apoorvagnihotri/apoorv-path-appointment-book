@@ -203,7 +203,11 @@ const Home = () => {
                 variant="secondary"
                 className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md"
               >
-                <MessageSquare className="h-5 w-5 mr-2 text-green-600" />
+                <img 
+                  src="/lovable-uploads/1cccab30-4cdc-463a-a398-09fa51a7c4e0.png" 
+                  alt="WhatsApp" 
+                  className="h-5 w-5 mr-2"
+                />
                 WhatsApp
               </Button>
             </div>
