@@ -117,22 +117,14 @@ const Cart = () => {
                   <span>Subtotal ({totalItems} items)</span>
                   <span>₹{totalPrice}</span>
                 </div>
-                {totalPrice < 1000 && (
-                  <div className="flex justify-between text-sm">
-                    <span>Home collection</span>
-                    <span>₹100</span>
-                  </div>
-                )}
-                {totalPrice >= 1000 && (
-                  <div className="flex justify-between text-sm">
-                    <span>Home collection</span>
-                    <span className="text-green-600">Free</span>
-                  </div>
-                )}
+                <div className="flex justify-between text-sm">
+                  <span>Home collection</span>
+                  <span>₹{items.some(item => item.package) ? 200 : 100}</span>
+                </div>
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-primary">₹{totalPrice >= 1000 ? totalPrice : totalPrice + 100}</span>
+                  <span className="text-primary">₹{totalPrice + (items.some(item => item.package) ? 200 : 100)}</span>
                 </div>
               </div>
 
