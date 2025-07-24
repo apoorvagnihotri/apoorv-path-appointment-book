@@ -189,7 +189,11 @@ const Home = () => {
                 variant="secondary"
                 className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md"
               >
-                <PhoneCall className="h-5 w-5 mr-2" />
+                <img 
+                  src="/lovable-uploads/13c0cfd3-b6bd-4631-94bb-b3d65443a789.png" 
+                  alt="Call" 
+                  className="h-5 w-5 mr-2"
+                />
                 Call Us
               </Button>
               
