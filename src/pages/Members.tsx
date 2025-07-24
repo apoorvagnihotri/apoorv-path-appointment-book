@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Plus, User, Edit, X, Save } from "lucide-react";
+import { ChevronLeft, Plus, User, Edit, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -216,16 +216,14 @@ const Members = () => {
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
-          <div className="flex items-center space-x-4">
-            <Button
+          <div className="flex items-center">
+            <button
               onClick={() => navigate(-1)}
-              size="sm"
-              variant="ghost"
-              className="text-primary-foreground hover:bg-white/20"
+              className="p-1 rounded-full bg-white/20 hover:bg-white/30 mr-4"
             >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-lg font-semibold">Select Members</h1>
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <h1 className="text-2xl font-semibold ml-8">Select Members</h1>
           </div>
         </div>
       </div>
