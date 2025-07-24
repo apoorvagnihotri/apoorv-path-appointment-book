@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
+import { Trash2, Check } from "lucide-react";
 
 interface ItemData {
   id: string;
@@ -79,11 +79,18 @@ export const ItemCard = ({
               <Button
                 onClick={onAddToCart}
                 disabled={isInCart}
-                variant={isInCart ? "default" : "default"}
+                variant={isInCart ? "outline" : "default"}
                 size="sm"
-                className={isInCart ? "bg-green-500 text-white hover:bg-green-600 border-green-500 shadow-md" : ""}
+                className={isInCart ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200" : ""}
               >
-                {isInCart ? "Added" : "Add to Cart"}
+                {isInCart ? (
+                  <div className="flex items-center space-x-1">
+                    <Check className="h-3 w-3" />
+                    <span>Added</span>
+                  </div>
+                ) : (
+                  "Add to Cart"
+                )}
               </Button>
             )
           )}
