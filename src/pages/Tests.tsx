@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Search, Package } from "lucide-react";
+import { ArrowLeft, Search, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -192,7 +192,7 @@ const Tests = () => {
       {filteredPackages.length > 0 && (
         <div className="px-6 mb-8">
           <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center">
-            <Package className="h-5 w-5 mr-2" />
+            <Gift className="h-5 w-5 mr-2" />
             Health Packages
           </h2>
           <div className="space-y-4">
