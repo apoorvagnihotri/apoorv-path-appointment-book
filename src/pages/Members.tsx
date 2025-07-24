@@ -17,6 +17,7 @@ interface Member {
   age: string;
   gender: string;
   relation: string;
+  mobile_number?: string;
 }
 
 const Members = () => {
@@ -32,7 +33,8 @@ const Members = () => {
     name: "",
     age: "",
     gender: "Male",
-    relation: ""
+    relation: "",
+    mobile_number: ""
   });
 
   const orderSteps = [
@@ -81,7 +83,8 @@ const Members = () => {
         name: member.name,
         age: member.age,
         gender: member.gender,
-        relation: member.relation
+        relation: member.relation,
+        mobile_number: member.mobile_number
       })) || [];
 
       setMembers([selfMember, ...dbMembers]);
@@ -136,7 +139,8 @@ const Members = () => {
           name: newMember.name,
           age: newMember.age,
           gender: newMember.gender,
-          relation: newMember.relation
+          relation: newMember.relation,
+          mobile_number: newMember.mobile_number
         })
         .select()
         .single();
@@ -157,11 +161,12 @@ const Members = () => {
         name: data.name,
         age: data.age,
         gender: data.gender,
-        relation: data.relation
+        relation: data.relation,
+        mobile_number: data.mobile_number
       };
 
       setMembers([...members, newFamilyMember]);
-      setNewMember({ name: "", age: "", gender: "Male", relation: "" });
+      setNewMember({ name: "", age: "", gender: "Male", relation: "", mobile_number: "" });
       setShowAddForm(false);
       
       toast({
@@ -251,7 +256,8 @@ const Members = () => {
           name: editingMember.name,
           age: editingMember.age,
           gender: editingMember.gender,
-          relation: editingMember.relation
+          relation: editingMember.relation,
+          mobile_number: editingMember.mobile_number
         })
         .eq('id', editingMember.id)
         .eq('user_id', user?.id);
@@ -333,12 +339,17 @@ const Members = () => {
                         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                           <User className="h-5 w-5 text-primary" />
                         </div>
-                        <div>
-                          <p className="font-medium">{member.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {member.age} years • {member.gender} • {member.relation}
-                          </p>
-                        </div>
+                         <div>
+                           <p className="font-medium">{member.name}</p>
+                           <p className="text-sm text-muted-foreground">
+                             {member.age} years • {member.gender} • {member.relation}
+                           </p>
+                           {member.mobile_number && (
+                             <p className="text-sm text-muted-foreground">
+                               📱 {member.mobile_number}
+                             </p>
+                           )}
+                         </div>
                        </div>
                        <div className="flex items-center space-x-2">
                          <Button 
@@ -421,6 +432,16 @@ const Members = () => {
                       </select>
                     </div>
                   </div>
+                  <div>
+                    <Label htmlFor="mobile">Mobile Number (Optional)</Label>
+                    <Input
+                      id="mobile"
+                      value={newMember.mobile_number}
+                      onChange={(e) => setNewMember({...newMember, mobile_number: e.target.value})}
+                      placeholder="Enter mobile number"
+                      type="tel"
+                    />
+                  </div>
                   <div className="flex space-x-2">
                     <Button
                       onClick={() => setShowAddForm(false)}
@@ -501,6 +522,16 @@ const Members = () => {
                         <option value="Other">Other</option>
                       </select>
                     </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-mobile">Mobile Number (Optional)</Label>
+                    <Input
+                      id="edit-mobile"
+                      value={editingMember.mobile_number || ""}
+                      onChange={(e) => setEditingMember({...editingMember, mobile_number: e.target.value})}
+                      placeholder="Enter mobile number"
+                      type="tel"
+                    />
                   </div>
                   <div className="flex space-x-2">
                     <Button
