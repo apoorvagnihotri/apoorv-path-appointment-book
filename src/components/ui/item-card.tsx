@@ -81,7 +81,7 @@ export const ItemCard = ({
                 disabled={isInCart}
                 variant={isInCart ? "default" : "default"}
                 size="sm"
-                className={isInCart ? "bg-green-600 text-white hover:bg-green-700 border-green-600" : ""}
+                className={isInCart ? "bg-green-500 text-white hover:bg-green-600 border-green-500 shadow-md" : ""}
               >
                 {isInCart ? "Added" : "Add to Cart"}
               </Button>
