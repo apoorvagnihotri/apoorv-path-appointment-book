@@ -146,10 +146,10 @@ const Payment = () => {
       </div>
 
       <div className="px-6 py-6 pb-24 space-y-6">
-        {/* Order Summary */}
+        {/* Test Booking Summary */}
         <Card>
           <CardHeader>
-            <CardTitle>Order Summary</CardTitle>
+            <CardTitle>Your Test Booking Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {cartItems.map((item) => {
