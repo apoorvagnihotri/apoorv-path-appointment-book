@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, ChevronLeft, User, Thermometer, Heart, Pill, Droplets, Shield, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
+import { Search, ChevronLeft, User, Thermometer, Heart, Pill, Droplets, Shield, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet, Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
@@ -128,7 +128,7 @@ const Packages = () => {
         
         <div className="grid grid-cols-3 gap-4">
           {filteredCategories.map((category, index) => {
-            const IconComponent = iconMap[category.icon_name as keyof typeof iconMap];
+            const IconComponent = iconMap[category.icon_name as keyof typeof iconMap] || Package;
             
             // Define pastel color combinations
             const pastelColors = [
@@ -159,9 +159,7 @@ const Packages = () => {
               >
                 <div className="flex flex-col items-center space-y-2">
                   <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center`}>
-                    {IconComponent && (
-                      <IconComponent className={`h-6 w-6 ${text}`} />
-                    )}
+                    <IconComponent className={`h-6 w-6 ${text}`} />
                   </div>
                   <span className="text-sm font-medium text-foreground">
                     {category.name}
