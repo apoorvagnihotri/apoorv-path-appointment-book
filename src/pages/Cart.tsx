@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, Minus, Trash2 } from "lucide-react";
+import { ChevronLeft, Trash2, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -41,26 +41,25 @@ const Cart = () => {
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
+            <div className="flex items-center">
+              <button
                 onClick={() => navigate(-1)}
-                size="sm"
-                variant="ghost"
-                className="text-primary-foreground hover:bg-white/20"
+                className="p-1 rounded-full bg-white/20 hover:bg-white/30 mr-4"
               >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <h1 className="text-lg font-semibold">Cart ({totalItems})</h1>
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <h1 className="text-2xl font-semibold ml-8">
+                Cart ({totalItems})
+              </h1>
             </div>
+            
             {items.length > 0 && (
-              <Button
+              <button
                 onClick={clearCart}
-                size="sm"
-                variant="ghost"
-                className="text-primary-foreground hover:bg-white/20"
+                className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
               >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+                <Trash2 className="h-5 w-5" />
+              </button>
             )}
           </div>
         </div>
