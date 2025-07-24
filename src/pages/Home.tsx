@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, PhoneCall, MapPin, TestTube, Gift, Heart, Camera, MessageSquare, Shield, ThumbsUp, DollarSign, Award, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
+import { Search, PhoneCall, MapPin, TestTube, Gift, Heart, Camera, MessageSquare, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -40,7 +40,7 @@ const iconMap = {
   Heart,
   Pill,
   Droplets,
-  Shield,
+  ShieldCheck,
   Activity,
   Ribbon,
   Dumbbell,
@@ -314,33 +314,33 @@ const Home = () => {
         <div className="grid grid-cols-4 gap-4">
           {/* Trusted by Doctors */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2">
-              <Shield className="h-6 w-6 text-muted-foreground" />
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-2 hover-scale">
+              <ShieldCheck className="h-6 w-6 text-blue-600" />
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">Trusted by<br />Doctors</p>
           </div>
 
           {/* 100% Report Accuracy */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2">
-              <ThumbsUp className="h-6 w-6 text-muted-foreground" />
+            <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-2 hover-scale">
+              <CheckCircle className="h-6 w-6 text-green-600" />
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">100% report<br />accuracy<br />guaranteed</p>
           </div>
 
           {/* Save Money */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2">
-              <DollarSign className="h-6 w-6 text-muted-foreground" />
+            <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-2 hover-scale">
+              <Coins className="h-6 w-6 text-amber-600" />
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">Save Money</p>
           </div>
 
           {/* 25+ Years Experience */}
           <div className="flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-2 relative">
-              <Award className="h-6 w-6 text-muted-foreground" />
-              <span className="absolute text-[8px] font-bold text-muted-foreground">25</span>
+            <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mb-2 hover-scale relative">
+              <Trophy className="h-6 w-6 text-purple-600" />
+              <span className="absolute -top-1 -right-1 text-[8px] font-bold text-purple-600 bg-purple-100 rounded-full px-1">25</span>
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">More than<br />25 years<br />experience</p>
           </div>
