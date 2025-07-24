@@ -81,7 +81,7 @@ export const ItemCard = ({
                 disabled={isInCart}
                 variant={isInCart ? "outline" : "default"}
                 size="sm"
-                className={isInCart ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200" : ""}
+                className={isInCart ? "bg-emerald-50 text-black border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200" : ""}
               >
                 {isInCart ? (
                   <div className="flex items-center space-x-1">
