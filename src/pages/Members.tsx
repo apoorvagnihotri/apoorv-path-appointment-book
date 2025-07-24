@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, Plus, User, X, Save } from "lucide-react";
+import { ChevronLeft, Plus, User, Edit, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ const Members = () => {
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [newMember, setNewMember] = useState({
     name: "",
     age: "",
@@ -221,6 +222,68 @@ const Members = () => {
     }
   };
 
+  const handleEditMember = (member: Member) => {
+    if (member.id === "self") {
+      toast({
+        title: "Info",
+        description: "Self information can be updated in profile settings",
+        variant: "default"
+      });
+      return;
+    }
+    setEditingMember(member);
+  };
+
+  const handleUpdateMember = async () => {
+    if (!editingMember || !editingMember.name || !editingMember.age || !editingMember.relation) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('family_members')
+        .update({
+          name: editingMember.name,
+          age: editingMember.age,
+          gender: editingMember.gender,
+          relation: editingMember.relation
+        })
+        .eq('id', editingMember.id)
+        .eq('user_id', user?.id);
+
+      if (error) {
+        console.error('Error updating family member:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update family member",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Update local state
+      setMembers(members.map(m => m.id === editingMember.id ? editingMember : m));
+      setEditingMember(null);
+      
+      toast({
+        title: "Success",
+        description: "Family member updated successfully"
+      });
+    } catch (error) {
+      console.error('Error updating member:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update family member",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -277,7 +340,14 @@ const Members = () => {
                           </p>
                         </div>
                        </div>
-                       <div className="flex items-center">
+                       <div className="flex items-center space-x-2">
+                         <Button 
+                           size="sm" 
+                           variant="ghost"
+                           onClick={() => handleEditMember(member)}
+                         >
+                           <Edit className="h-4 w-4" />
+                         </Button>
                          <Checkbox
                            checked={selectedMembers.includes(member.id)}
                            onCheckedChange={(checked) => handleMemberSelection(member.id, checked as boolean)}
@@ -363,6 +433,87 @@ const Members = () => {
                     <Button onClick={handleAddMember} size="sm" className="bg-gradient-medical">
                       <Save className="h-4 w-4 mr-2" />
                       Save
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Edit Member Form */}
+            {editingMember && (
+              <Card className="p-4 border-dashed">
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Edit Member Information</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="edit-name">Name</Label>
+                      <Input
+                        id="edit-name"
+                        value={editingMember.name}
+                        onChange={(e) => setEditingMember({...editingMember, name: e.target.value})}
+                        placeholder="Enter name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-age">Age</Label>
+                      <Input
+                        id="edit-age"
+                        value={editingMember.age}
+                        onChange={(e) => setEditingMember({...editingMember, age: e.target.value})}
+                        placeholder="Enter age"
+                        type="number"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="edit-gender">Gender</Label>
+                      <select
+                        id="edit-gender"
+                        value={editingMember.gender}
+                        onChange={(e) => setEditingMember({...editingMember, gender: e.target.value})}
+                        className="w-full p-2 border rounded-md"
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label htmlFor="edit-relation">Relation</Label>
+                      <select
+                        id="edit-relation"
+                        value={editingMember.relation}
+                        onChange={(e) => setEditingMember({...editingMember, relation: e.target.value})}
+                        className="w-full p-2 border rounded-md bg-background"
+                      >
+                        <option value="">Select relation</option>
+                        <option value="Father">Father</option>
+                        <option value="Mother">Mother</option>
+                        <option value="Spouse">Spouse</option>
+                        <option value="Son">Son</option>
+                        <option value="Daughter">Daughter</option>
+                        <option value="Brother">Brother</option>
+                        <option value="Sister">Sister</option>
+                        <option value="Father-in-law">Father-in-law</option>
+                        <option value="Mother-in-law">Mother-in-law</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button
+                      onClick={() => setEditingMember(null)}
+                      size="sm"
+                      variant="outline"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                    <Button onClick={handleUpdateMember} size="sm" className="bg-gradient-medical">
+                      <Save className="h-4 w-4 mr-2" />
+                      Update
                     </Button>
                   </div>
                 </div>
