@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Phone, MapPin, TestTube, Gift, Heart, Camera, MessageCircle, Shield, ThumbsUp, DollarSign, Award, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
+import { Search, PhoneCall, MapPin, TestTube, Gift, Heart, Camera, MessageSquare, Shield, ThumbsUp, DollarSign, Award, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -189,7 +189,7 @@ const Home = () => {
                 variant="secondary"
                 className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md"
               >
-                <Phone className="h-4 w-4 mr-2" />
+                <PhoneCall className="h-5 w-5 mr-2" />
                 Call Us
               </Button>
               
@@ -199,7 +199,7 @@ const Home = () => {
                 variant="secondary"
                 className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md"
               >
-                <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
+                <MessageSquare className="h-5 w-5 mr-2 text-green-600" />
                 WhatsApp
               </Button>
             </div>
