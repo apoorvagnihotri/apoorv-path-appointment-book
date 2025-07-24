@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { ChevronLeft, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
@@ -23,7 +23,7 @@ const Schedule = () => {
     { id: 4, title: "Payment", description: "Complete order" }
   ];
 
-  // Generate next 7 days
+  // Generate next 7 days starting from today
   const getNextSevenDays = () => {
     const days = [];
     const today = new Date();
@@ -43,9 +43,38 @@ const Schedule = () => {
     return days;
   };
 
+  // Get current time in 24-hour format
+  const getCurrentHour = () => {
+    return new Date().getHours();
+  };
+
+  // Check if time slot is available for the selected date
+  const isTimeSlotAvailable = (timeSlot: string) => {
+    if (!selectedDate) return true;
+    
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = selectedDate === today;
+    
+    if (!isToday) return true; // Future dates, all slots available
+    
+    const currentHour = getCurrentHour();
+    
+    // Parse time slot to get start hour
+    const startTime = timeSlot.split(' - ')[0];
+    let startHour: number;
+    
+    if (startTime.includes('7:00 AM')) startHour = 7;
+    else if (startTime.includes('12:00 PM')) startHour = 12;
+    else if (startTime.includes('5:00 PM')) startHour = 17;
+    else startHour = 0;
+    
+    // Time slot is available if it starts after current hour
+    return startHour > currentHour;
+  };
+
   const timeSlots = [
     "7:00 AM - 12:00 PM",
-    "12:00 PM - 5:00 PM",
+    "12:00 PM - 5:00 PM", 
     "5:00 PM - 9:00 PM"
   ];
 
@@ -74,16 +103,14 @@ const Schedule = () => {
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
-          <div className="flex items-center space-x-4">
-            <Button
+          <div className="flex items-center">
+            <button
               onClick={() => navigate(-1)}
-              size="sm"
-              variant="ghost"
-              className="text-primary-foreground hover:bg-white/20"
+              className="p-1 rounded-full bg-white/20 hover:bg-white/30 mr-4"
             >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-lg font-semibold">Schedule Appointment</h1>
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <h1 className="text-2xl font-semibold ml-8">Schedule Appointment</h1>
           </div>
         </div>
       </div>
@@ -161,19 +188,30 @@ const Schedule = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-3">
-              {timeSlots.map((slot) => (
-                <button
-                  key={slot}
-                  onClick={() => setSelectedTime(slot)}
-                  className={`p-4 text-center rounded-lg border transition-colors min-h-[56px] flex items-center justify-center ${
-                    selectedTime === slot
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                >
-                  <span className="text-sm font-medium">{slot}</span>
-                </button>
-              ))}
+              {timeSlots.map((slot) => {
+                const isAvailable = isTimeSlotAvailable(slot);
+                return (
+                  <button
+                    key={slot}
+                    onClick={() => isAvailable && setSelectedTime(slot)}
+                    disabled={!isAvailable}
+                    className={`p-4 text-center rounded-lg border transition-colors min-h-[56px] flex items-center justify-center ${
+                      selectedTime === slot
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : isAvailable
+                        ? 'border-border hover:border-primary/50'
+                        : 'border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <span className="text-sm font-medium">
+                      {slot}
+                      {!isAvailable && selectedDate === new Date().toISOString().split('T')[0] && (
+                        <span className="block text-xs mt-1">Not available today</span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
