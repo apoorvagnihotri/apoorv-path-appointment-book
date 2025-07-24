@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, Plus, User, Edit, X, Save } from "lucide-react";
+import { ChevronLeft, Plus, User, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,6 +24,7 @@ const Members = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [members, setMembers] = useState<Member[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newMember, setNewMember] = useState({
@@ -100,6 +102,14 @@ const Members = () => {
       loadMembers();
     }
   }, [user]);
+
+  const handleMemberSelection = (memberId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedMembers([...selectedMembers, memberId]);
+    } else {
+      setSelectedMembers(selectedMembers.filter(id => id !== memberId));
+    }
+  };
 
   // Handle user authentication check AFTER all hooks
   if (!user) {
@@ -266,23 +276,14 @@ const Members = () => {
                             {member.age} years • {member.gender} • {member.relation}
                           </p>
                         </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="ghost">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        {members.length > 1 && member.id !== "self" && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleRemoveMember(member.id)}
-                            className="text-destructive"
-                          >
-                            Remove
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+                       </div>
+                       <div className="flex items-center">
+                         <Checkbox
+                           checked={selectedMembers.includes(member.id)}
+                           onCheckedChange={(checked) => handleMemberSelection(member.id, checked as boolean)}
+                         />
+                       </div>
+                     </div>
                   ))}
                 </>
               )}
