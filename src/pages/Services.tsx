@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { ItemCard } from "@/components/ui/item-card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
@@ -18,6 +19,11 @@ interface Service {
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmDialog, setConfirmDialog] = useState<{open: boolean, item: any, name: string}>({
+    open: false,
+    item: null,
+    name: ''
+  });
   const navigate = useNavigate();
   const { addToCart, removeFromCart, items: cartItems } = useCart();
   const { toast } = useToast();
@@ -63,13 +69,22 @@ const Services = () => {
     }
   };
 
-  const handleRemoveFromCart = async (serviceId: string, name: string): Promise<void> => {
+  const handleRemoveConfirm = (serviceId: string, name: string) => {
+    setConfirmDialog({
+      open: true,
+      item: { id: serviceId },
+      name
+    });
+  };
+
+  const handleConfirmRemove = async () => {
     try {
-      await removeFromCart(serviceId, 'service');
+      await removeFromCart(confirmDialog.item.id, 'service');
       toast({
         title: "Removed from cart",
-        description: `${name} has been removed from your cart.`,
+        description: `${confirmDialog.name} has been removed from your cart.`,
       });
+      setConfirmDialog({ open: false, item: null, name: '' });
     } catch (error) {
       console.error('Error removing from cart:', error);
       toast({
@@ -138,11 +153,27 @@ const Services = () => {
                itemType="service"
                isInCart={isServiceInCart(service.id)}
                onAddToCart={() => handleAddToCart(service.id, service.name)}
-               onRemove={() => handleRemoveFromCart(service.id, service.name)}
-             />
+                onRemove={() => handleRemoveConfirm(service.id, service.name)}
+              />
            ))}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove from Cart</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove "{confirmDialog.name}" from your cart?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmRemove}>Remove</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Bottom Navigation */}
       <BottomNavigation />

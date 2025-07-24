@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { ItemCard } from "@/components/ui/item-card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
@@ -30,6 +31,12 @@ const Tests = () => {
   const [tests, setTests] = useState<Test[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmDialog, setConfirmDialog] = useState<{open: boolean, item: any, itemType: 'test' | 'package', name: string}>({
+    open: false,
+    item: null,
+    itemType: 'test',
+    name: ''
+  });
   const navigate = useNavigate();
   const { addToCart, removeFromCart, items: cartItems } = useCart();
   const { toast } = useToast();
@@ -132,13 +139,23 @@ const Tests = () => {
     }
   };
 
-  const handleRemoveFromCart = async (itemId: string, itemType: 'test' | 'package' = 'test', name: string): Promise<void> => {
+  const handleRemoveConfirm = (itemId: string, itemType: 'test' | 'package', name: string) => {
+    setConfirmDialog({
+      open: true,
+      item: { id: itemId },
+      itemType,
+      name
+    });
+  };
+
+  const handleConfirmRemove = async () => {
     try {
-      await removeFromCart(itemId, itemType);
+      await removeFromCart(confirmDialog.item.id, confirmDialog.itemType);
       toast({
         title: "Removed from cart",
-        description: `${name} has been removed from your cart.`,
+        description: `${confirmDialog.name} has been removed from your cart.`,
       });
+      setConfirmDialog({ open: false, item: null, itemType: 'test', name: '' });
     } catch (error) {
       console.error('Error removing from cart:', error);
       toast({
@@ -235,7 +252,7 @@ const Tests = () => {
                 itemType="package"
                 isInCart={isItemInCart(pkg.id, 'package')}
                 onAddToCart={() => handleAddToCart(pkg.id, 'package', pkg.name)}
-                onRemove={() => handleRemoveFromCart(pkg.id, 'package', pkg.name)}
+                onRemove={() => handleRemoveConfirm(pkg.id, 'package', pkg.name)}
               />
             ))}
           </div>
@@ -265,12 +282,28 @@ const Tests = () => {
                 itemType="test"
                 isInCart={isItemInCart(test.id, 'test')}
                 onAddToCart={() => handleAddToCart(test.id, 'test', test.name)}
-                onRemove={() => handleRemoveFromCart(test.id, 'test', test.name)}
+                onRemove={() => handleRemoveConfirm(test.id, 'test', test.name)}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove from Cart</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove "{confirmDialog.name}" from your cart?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmRemove}>Remove</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
