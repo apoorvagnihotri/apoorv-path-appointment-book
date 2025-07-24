@@ -208,7 +208,7 @@ const Home = () => {
       </div>
 
       {/* Search Section */}
-      <div className="px-6 -mt-6 mb-6">
+      <div className="px-6 mt-6 mb-6">
         <Card className="p-4 shadow-card">
           <Popover open={showSearchResults && searchQuery.length >= 3} onOpenChange={setShowSearchResults}>
             <PopoverTrigger asChild>
