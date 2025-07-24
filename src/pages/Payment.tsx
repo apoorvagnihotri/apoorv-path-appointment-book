@@ -232,7 +232,7 @@ const Payment = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-medium">Pay by Cash / Card / UPI</h3>
-                  <p className="text-sm text-muted-foreground">Pay at time of sample collection</p>
+                  <p className="text-sm text-muted-foreground">Pay during sample collection</p>
                 </div>
                 {selectedPaymentMethod === 'cash' && (
                   <Badge variant="default">Selected</Badge>
