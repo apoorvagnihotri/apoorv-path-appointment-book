@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trash2, Check } from "lucide-react";
+import { Trash2, Check, X } from "lucide-react";
 
 interface ItemData {
   id: string;
@@ -62,7 +62,7 @@ export const ItemCard = ({
         </span>
       </div>
 
-      {/* Action button - Add to Cart or Remove */}
+      {/* Action buttons - Add to Cart or Remove */}
       {(showAddToCart || isCartView) && (
         <div className="absolute bottom-3 right-3">
           {isCartView && onRemove ? (
@@ -76,22 +76,34 @@ export const ItemCard = ({
             </Button>
           ) : (
             onAddToCart && (
-              <Button
-                onClick={onAddToCart}
-                disabled={isInCart}
-                variant={isInCart ? "outline" : "default"}
-                size="sm"
-                className={isInCart ? "bg-white text-primary border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 font-bold" : ""}
-              >
-                {isInCart ? (
-                  <div className="flex items-center space-x-1">
-                    <Check className="h-3 w-3" />
-                    <span>Added</span>
-                  </div>
-                ) : (
-                  "Add to Cart"
+              <div className="flex items-center space-x-1">
+                <Button
+                  onClick={onAddToCart}
+                  disabled={isInCart}
+                  variant={isInCart ? "outline" : "default"}
+                  size="sm"
+                  className={isInCart ? "bg-white text-primary border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 font-bold" : ""}
+                >
+                  {isInCart ? (
+                    <div className="flex items-center space-x-1">
+                      <Check className="h-3 w-3" />
+                      <span>Added</span>
+                    </div>
+                  ) : (
+                    "Add to Cart"
+                  )}
+                </Button>
+                {isInCart && onRemove && (
+                  <Button
+                    onClick={onRemove}
+                    size="sm"
+                    variant="ghost"
+                    className="text-muted-foreground hover:text-destructive h-9 w-9 p-0"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
                 )}
-              </Button>
+              </div>
             )
           )}
         </div>

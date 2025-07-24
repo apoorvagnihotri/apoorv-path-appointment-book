@@ -31,7 +31,7 @@ const Tests = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToCart, items: cartItems } = useCart();
+  const { addToCart, removeFromCart, items: cartItems } = useCart();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
 
@@ -132,6 +132,23 @@ const Tests = () => {
     }
   };
 
+  const handleRemoveFromCart = async (itemId: string, itemType: 'test' | 'package' = 'test', name: string): Promise<void> => {
+    try {
+      await removeFromCart(itemId, itemType);
+      toast({
+        title: "Removed from cart",
+        description: `${name} has been removed from your cart.`,
+      });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove item from cart. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const isItemInCart = (itemId: string, itemType: 'test' | 'package' = 'test'): boolean => {
     if (itemType === 'test') {
       return cartItems.some(item => item.test_id === itemId);
@@ -203,6 +220,7 @@ const Tests = () => {
                 itemType="package"
                 isInCart={isItemInCart(pkg.id, 'package')}
                 onAddToCart={() => handleAddToCart(pkg.id, 'package', pkg.name)}
+                onRemove={() => handleRemoveFromCart(pkg.id, 'package', pkg.name)}
               />
             ))}
           </div>
@@ -232,6 +250,7 @@ const Tests = () => {
                 itemType="test"
                 isInCart={isItemInCart(test.id, 'test')}
                 onAddToCart={() => handleAddToCart(test.id, 'test', test.name)}
+                onRemove={() => handleRemoveFromCart(test.id, 'test', test.name)}
               />
             ))}
           </div>
