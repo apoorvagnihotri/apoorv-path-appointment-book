@@ -433,7 +433,7 @@ const Members = () => {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="mobile">Mobile Number (Optional)</Label>
+                    <Label htmlFor="mobile">Mobile Number - We will send test reports here</Label>
                     <Input
                       id="mobile"
                       value={newMember.mobile_number}
@@ -524,7 +524,7 @@ const Members = () => {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="edit-mobile">Mobile Number (Optional)</Label>
+                    <Label htmlFor="edit-mobile">Mobile Number - We will send test reports here</Label>
                     <Input
                       id="edit-mobile"
                       value={editingMember.mobile_number || ""}
