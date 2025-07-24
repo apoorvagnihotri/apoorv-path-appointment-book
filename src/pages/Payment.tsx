@@ -231,7 +231,7 @@ const Payment = () => {
                   <Banknote className="h-6 w-6 text-accent-foreground" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium">Cash Payment</h3>
+                  <h3 className="font-medium">Pay by Cash / Card / UPI</h3>
                   <p className="text-sm text-muted-foreground">Pay at time of sample collection</p>
                 </div>
                 {selectedPaymentMethod === 'cash' && (
