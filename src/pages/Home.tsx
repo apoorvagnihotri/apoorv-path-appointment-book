@@ -190,7 +190,7 @@ const Home = () => {
                 className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md"
               >
                 <img 
-                  src="/lovable-uploads/13c0cfd3-b6bd-4631-94bb-b3d65443a789.png" 
+                  src="/lovable-uploads/f81599a4-f902-4c17-b832-66f9fea63ba4.png" 
                   alt="Call" 
                   className="h-5 w-5 mr-2"
                 />
