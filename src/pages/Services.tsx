@@ -5,6 +5,7 @@ import { ItemCard } from "@/components/ui/item-card";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
+import { useToast } from "@/hooks/use-toast";
 
 interface Service {
   id: string;
@@ -18,7 +19,8 @@ const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToCart, items: cartItems } = useCart();
+  const { addToCart, removeFromCart, items: cartItems } = useCart();
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchServices();
@@ -44,8 +46,38 @@ const Services = () => {
     }
   };
 
-  const handleAddToCart = async (serviceId: string) => {
-    await addToCart(serviceId, 'service');
+  const handleAddToCart = async (serviceId: string, name: string): Promise<void> => {
+    try {
+      await addToCart(serviceId, 'service');
+      toast({
+        title: "Added to cart",
+        description: `${name} has been added to your cart.`,
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveFromCart = async (serviceId: string, name: string): Promise<void> => {
+    try {
+      await removeFromCart(serviceId, 'service');
+      toast({
+        title: "Removed from cart",
+        description: `${name} has been removed from your cart.`,
+      });
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove item from cart. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const isServiceInCart = (serviceId: string): boolean => {
@@ -84,15 +116,16 @@ const Services = () => {
         </h2>
         
         <div className="space-y-4">
-          {services.map((service) => (
-            <ItemCard
-              key={service.id}
-              item={service}
-              itemType="service"
-              isInCart={isServiceInCart(service.id)}
-              onAddToCart={() => handleAddToCart(service.id)}
-            />
-          ))}
+           {services.map((service) => (
+             <ItemCard
+               key={service.id}
+               item={service}
+               itemType="service"
+               isInCart={isServiceInCart(service.id)}
+               onAddToCart={() => handleAddToCart(service.id, service.name)}
+               onRemove={() => handleRemoveFromCart(service.id, service.name)}
+             />
+           ))}
         </div>
       </div>
 
