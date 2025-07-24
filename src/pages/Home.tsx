@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Phone, MapPin, TestTube, Gift, Plus, Camera, MessageCircle, Shield, ThumbsUp, DollarSign, Award, User, Thermometer, Heart, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
+import { Search, Phone, MapPin, TestTube, Gift, Heart, Camera, MessageCircle, Shield, ThumbsUp, DollarSign, Award, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -156,7 +156,7 @@ const Home = () => {
     },
     {
       title: "Other Services",
-      icon: Plus,
+      icon: Heart,
       onClick: () => navigate("/services"),
     },
     {
