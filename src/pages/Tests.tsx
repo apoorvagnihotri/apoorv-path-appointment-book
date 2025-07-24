@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Search, Gift, TestTube } from "lucide-react";
+import { ArrowLeft, Search, Gift, TestTube, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -175,16 +175,31 @@ const Tests = () => {
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 rounded-full bg-white/20 hover:bg-white/30"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+              <h1 className="text-xl font-semibold">
+                {searchParams.get('category') ? `${searchParams.get('category')} Tests & Packages` : 'Tests & Packages'}
+              </h1>
+            </div>
+            
+            {/* Cart Button */}
             <button
-              onClick={() => navigate(-1)}
-              className="p-2 rounded-full bg-white/20 hover:bg-white/30"
+              onClick={() => navigate('/cart')}
+              className="relative p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  {cartItems.length}
+                </span>
+              )}
             </button>
-            <h1 className="text-xl font-semibold">
-              {searchParams.get('category') ? `${searchParams.get('category')} Tests & Packages` : 'Tests & Packages'}
-            </h1>
           </div>
         </div>
       </div>
