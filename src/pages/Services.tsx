@@ -58,7 +58,7 @@ const Services = () => {
       toast({
         title: "Added to cart",
         description: `${name} has been added to your cart.`,
-        duration: 3000,
+        duration: 1500,
       });
     } catch (error) {
       console.error('Error adding to cart:', error);
