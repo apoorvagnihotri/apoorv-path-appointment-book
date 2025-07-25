@@ -80,7 +80,20 @@ const Cart = () => {
             </Card>
 
             {/* Your Cart heading */}
-            <h2 className="text-xl font-semibold text-foreground mb-4">Review your cart</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-foreground">Review your cart</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  localStorage.setItem('returnToCart', 'true');
+                  navigate('/');
+                }}
+                className="text-primary border-primary hover:bg-primary/10"
+              >
+                Add more tests
+              </Button>
+            </div>
             
             <div className="space-y-4">
             {items.map((item) => {
