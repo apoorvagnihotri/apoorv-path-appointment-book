@@ -18,6 +18,7 @@ import TestDetails from "./pages/TestDetails";
 import Bookings from "./pages/Bookings";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
+import Address from "./pages/Address";
 import Members from "./pages/Members";
 import Schedule from "./pages/Schedule";
 import Payment from "./pages/Payment";
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/prescription" element={<Prescription />} />
               <Route path="/test/:testId" element={<TestDetails />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/address" element={<Address />} />
               <Route path="/members" element={<Members />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/payment" element={<Payment />} />

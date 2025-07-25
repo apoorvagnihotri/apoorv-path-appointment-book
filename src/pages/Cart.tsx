@@ -1,4 +1,4 @@
-import { ChevronLeft, Trash2, ShoppingCart, Info } from "lucide-react";
+import { ChevronLeft, Trash2, ShoppingCart, Info, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -17,9 +17,10 @@ const Cart = () => {
 
   const orderSteps = [
     { id: 1, title: "Select", description: "Choose tests" },
-    { id: 2, title: "Members", description: "Add members" },
-    { id: 3, title: "Schedule", description: "Date & time" },
-    { id: 4, title: "Payment", description: "Complete order" }
+    { id: 2, title: "Address", description: "Add address" },
+    { id: 3, title: "Members", description: "Add members" },
+    { id: 4, title: "Schedule", description: "Date & time" },
+    { id: 5, title: "Payment", description: "Complete order" }
   ];
 
   if (!user) {
@@ -132,22 +133,22 @@ const Cart = () => {
               </div>
 
               <Button 
-                className="w-full mt-4 bg-gradient-medical hover:shadow-button"
-                size="lg"
-                onClick={() => navigate('/members')}
-              >
-                Proceed
-              </Button>
-              
-              <Button 
-                variant="outline"
-                className="w-full mt-3 text-primary border-primary hover:bg-primary/10"
+                className="w-full mt-4 text-primary hover:bg-primary/10"
                 onClick={() => {
                   localStorage.setItem('returnToCart', 'true');
                   navigate('/home');
                 }}
               >
+                <Plus className="h-4 w-4 mr-2" />
                 Add more tests
+              </Button>
+              
+              <Button 
+                className="w-full mt-3 bg-gradient-medical hover:shadow-button"
+                size="lg"
+                onClick={() => navigate('/address')}
+              >
+                Proceed
               </Button>
             </Card>
             </div>
