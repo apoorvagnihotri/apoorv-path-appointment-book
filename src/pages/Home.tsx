@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, PhoneCall, MapPin, TestTube, Gift, Heart, Camera, MessageSquare, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet } from "lucide-react";
+import { Search, PhoneCall, MapPin, TestTube, Gift, Heart, Camera, MessageSquare, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet, Bell } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -185,30 +185,36 @@ const Home = () => {
             <div className="flex items-center space-x-2">
               <Button
                 onClick={handleCall}
-                size="sm"
+                size="icon"
                 variant="secondary"
                 className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
               >
                 <img 
                   src="/lovable-uploads/f81599a4-f902-4c17-b832-66f9fea63ba4.png" 
                   alt="Call" 
-                  className="h-5 w-5 mr-2"
+                  className="h-5 w-5"
                 />
-                Call Us
               </Button>
               
               <Button
                 onClick={handleWhatsApp}
-                size="sm"
+                size="icon"
                 variant="secondary"
                 className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md text-white"
               >
                 <img 
                   src="/lovable-uploads/1cccab30-4cdc-463a-a398-09fa51a7c4e0.png" 
                   alt="WhatsApp" 
-                  className="h-5 w-5 mr-2"
+                  className="h-5 w-5"
                 />
-                WhatsApp
+              </Button>
+              
+              <Button
+                size="icon"
+                variant="secondary"
+                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
+              >
+                <Bell className="h-5 w-5" />
               </Button>
             </div>
           </div>

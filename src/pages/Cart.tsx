@@ -1,10 +1,11 @@
-import { ChevronLeft, Trash2, ShoppingCart } from "lucide-react";
+import { ChevronLeft, Trash2, ShoppingCart, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
 import { ItemCard } from "@/components/ui/item-card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -106,7 +107,21 @@ const Cart = () => {
                   <span>₹{totalPrice}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Home collection</span>
+                  <div className="flex items-center space-x-1">
+                    <span>Home collection</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="h-3 w-3 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs text-xs">
+                            With health packages, our technician carry multiple instruments like weighing machine, bp instrument, etc. Therefore, it costs more than when booking just a test.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                   <span>₹{items.some(item => item.package) ? 200 : 100}</span>
                 </div>
                 <Separator />
