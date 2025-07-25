@@ -2,7 +2,6 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 
 interface CartItem {
   id: string;
@@ -51,7 +50,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const fetchCartItems = async () => {
     if (!user) {
@@ -154,7 +152,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       const returnToCart = localStorage.getItem('returnToCart');
       if (returnToCart === 'true') {
         localStorage.removeItem('returnToCart');
-        navigate('/cart');
+        // Use window.location instead of navigate to avoid Router context issue
+        window.location.href = '/cart';
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
