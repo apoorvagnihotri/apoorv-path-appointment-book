@@ -6,12 +6,142 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { ProgressStepper } from "@/components/ui/progress-stepper";
+import { AddressCard } from "@/components/ui/address-card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useAddresses, type Address } from "@/hooks/useAddresses";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Address = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { saveAddress, getAddresses, updateAddress, loading, error } = useAddresses();
+  const { toast } = useToast();
+
+  // Form state
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    street_address: '',
+    city: '',
+    pincode: '',
+    landmark: '',
+    is_default: true, // First address is default by default
+  });
+
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [showForm, setShowForm] = useState(false);
+
+  // Load existing addresses
+  useEffect(() => {
+    const loadAddresses = async () => {
+      const existingAddresses = await getAddresses();
+      setAddresses(existingAddresses);
+      // If user already has addresses, don't make this one default by default and don't show form initially
+      if (existingAddresses.length > 0) {
+        setFormData(prev => ({ ...prev, is_default: false }));
+        setShowForm(false);
+      } else {
+        setShowForm(true);
+      }
+    };
+
+    if (user) {
+      loadAddresses();
+    }
+  }, [user]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveAddress = async () => {
+    // Validate required fields
+    if (!formData.first_name || !formData.last_name || !formData.phone || 
+        !formData.street_address || !formData.city || !formData.pincode) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate phone number (basic validation)
+    if (formData.phone.length < 10) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate pincode (basic validation)
+    if (formData.pincode.length !== 6 || !/^\d+$/.test(formData.pincode)) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid 6-digit pincode",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const savedAddress = await saveAddress(formData);
+    
+    if (savedAddress) {
+      toast({
+        title: "Success",
+        description: "Address saved successfully!",
+      });
+      // Refresh addresses list
+      const updatedAddresses = await getAddresses();
+      setAddresses(updatedAddresses);
+      // Reset form
+      setFormData({
+        first_name: '',
+        last_name: '',
+        phone: '',
+        street_address: '',
+        city: '',
+        pincode: '',
+        landmark: '',
+        is_default: false,
+      });
+      setShowForm(false);
+    } else if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSelectAddress = (address: Address) => {
+    // Navigate to members page with selected address
+    navigate('/members');
+  };
+
+  const handleSetDefault = async (address: Address) => {
+    if (address.id) {
+      const updated = await updateAddress(address.id, { is_default: true });
+      if (updated) {
+        toast({
+          title: "Success",
+          description: "Default address updated!",
+        });
+        // Refresh addresses list
+        const updatedAddresses = await getAddresses();
+        setAddresses(updatedAddresses);
+      }
+    }
+  };
 
   const orderSteps = [
     { id: 1, title: "Select", description: "Choose tests" },
@@ -62,73 +192,149 @@ const Address = () => {
             <ProgressStepper steps={orderSteps} currentStep={2} />
           </Card>
 
+          {/* Existing Addresses */}
+          {addresses.length > 0 && (
+            <Card className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Your Addresses</h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowForm(!showForm)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New
+                </Button>
+              </div>
+              <div className="space-y-3">
+                {addresses.map((address) => (
+                  <AddressCard
+                    key={address.id}
+                    address={address}
+                    onSelect={handleSelectAddress}
+                    onSetDefault={handleSetDefault}
+                  />
+                ))}
+              </div>
+              {addresses.length > 0 && (
+                <Button 
+                  className="w-full mt-4 bg-gradient-medical hover:shadow-button"
+                  onClick={() => navigate('/members')}
+                >
+                  Continue with Selected Address
+                </Button>
+              )}
+            </Card>
+          )}
+
           {/* Address Form */}
-          <Card className="p-6">
-            <div className="flex items-center mb-6">
-              <MapPin className="h-5 w-5 text-primary mr-2" />
-              <h2 className="text-xl font-semibold">Home Collection Address</h2>
-            </div>
+          {showForm && (
+            <Card className="p-6">
+              <div className="flex items-center mb-6">
+                <MapPin className="h-5 w-5 text-primary mr-2" />
+                <h2 className="text-xl font-semibold">
+                  {addresses.length > 0 ? 'Add New Address' : 'Home Collection Address'}
+                </h2>
+              </div>
 
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="Enter first name" />
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">First Name *</Label>
+                    <Input 
+                      id="firstName" 
+                      placeholder="Enter first name"
+                      value={formData.first_name}
+                      onChange={(e) => handleInputChange('first_name', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">Last Name *</Label>
+                    <Input 
+                      id="lastName" 
+                      placeholder="Enter last name"
+                      value={formData.last_name}
+                      onChange={(e) => handleInputChange('last_name', e.target.value)}
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Enter last name" />
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input 
+                    id="phone" 
+                    type="tel" 
+                    placeholder="Enter phone number"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="address">Street Address *</Label>
+                  <Textarea 
+                    id="address" 
+                    placeholder="Enter complete address with house/flat number, building name, street name"
+                    rows={3}
+                    value={formData.street_address}
+                    onChange={(e) => handleInputChange('street_address', e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">City *</Label>
+                    <Input 
+                      id="city" 
+                      placeholder="Enter city"
+                      value={formData.city}
+                      onChange={(e) => handleInputChange('city', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="pincode">Pincode *</Label>
+                    <Input 
+                      id="pincode" 
+                      placeholder="Enter pincode"
+                      value={formData.pincode}
+                      onChange={(e) => handleInputChange('pincode', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="landmark">Landmark (Optional)</Label>
+                  <Input 
+                    id="landmark" 
+                    placeholder="Enter nearby landmark"
+                    value={formData.landmark}
+                    onChange={(e) => handleInputChange('landmark', e.target.value)}
+                  />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" placeholder="Enter phone number" />
-              </div>
+              <Button 
+                className="w-full mt-6 bg-gradient-medical hover:shadow-button"
+                size="lg"
+                onClick={handleSaveAddress}
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Save Address & Continue'}
+              </Button>
+            </Card>
+          )}
 
-              <div>
-                <Label htmlFor="address">Street Address</Label>
-                <Textarea 
-                  id="address" 
-                  placeholder="Enter complete address with house/flat number, building name, street name"
-                  rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="city">City</Label>
-                  <Input id="city" placeholder="Enter city" />
-                </div>
-                <div>
-                  <Label htmlFor="pincode">Pincode</Label>
-                  <Input id="pincode" placeholder="Enter pincode" />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="landmark">Landmark (Optional)</Label>
-                <Input id="landmark" placeholder="Enter nearby landmark" />
-              </div>
-            </div>
-
+          {/* Add New Address Button - only show if no addresses exist */}
+          {addresses.length === 0 && !showForm && (
             <Button 
-              className="w-full mt-6 bg-gradient-medical hover:shadow-button"
-              size="lg"
-              onClick={() => navigate('/members')}
+              variant="outline"
+              className="w-full text-primary border-primary hover:bg-primary/10"
+              onClick={() => setShowForm(true)}
             >
-              Save Address & Continue
+              <Plus className="h-4 w-4 mr-2" />
+              Add Address
             </Button>
-          </Card>
-
-          {/* Add New Address Button */}
-          <Button 
-            variant="outline"
-            className="w-full text-primary border-primary hover:bg-primary/10"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Another Address
-          </Button>
+          )}
         </div>
       </div>
 
