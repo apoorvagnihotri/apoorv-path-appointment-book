@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 const Address = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { saveAddress, getAddresses, updateAddress, loading, error } = useAddresses();
+  const { saveAddress, getAddresses, loading, error } = useAddresses();
   const { toast } = useToast();
 
   // Form state
@@ -28,20 +28,21 @@ const Address = () => {
     city: '',
     pincode: '',
     landmark: '',
-    is_default: true, // First address is default by default
+    is_default: false,
   });
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
   // Load existing addresses
   useEffect(() => {
     const loadAddresses = async () => {
       const existingAddresses = await getAddresses();
       setAddresses(existingAddresses);
-      // If user already has addresses, don't make this one default by default and don't show form initially
+      
+      // If user already has addresses, don't show form initially
       if (existingAddresses.length > 0) {
-        setFormData(prev => ({ ...prev, is_default: false }));
         setShowForm(false);
       } else {
         setShowForm(true);
@@ -102,6 +103,12 @@ const Address = () => {
       // Refresh addresses list
       const updatedAddresses = await getAddresses();
       setAddresses(updatedAddresses);
+      
+      // Auto-select the newly saved address
+      if (savedAddress.id) {
+        setSelectedAddressId(savedAddress.id);
+      }
+      
       // Reset form
       setFormData({
         first_name: '',
@@ -124,22 +131,9 @@ const Address = () => {
   };
 
   const handleSelectAddress = (address: Address) => {
-    // Navigate to members page with selected address
-    navigate('/members');
-  };
-
-  const handleSetDefault = async (address: Address) => {
+    // Select the address instead of navigating immediately
     if (address.id) {
-      const updated = await updateAddress(address.id, { is_default: true });
-      if (updated) {
-        toast({
-          title: "Success",
-          description: "Default address updated!",
-        });
-        // Refresh addresses list
-        const updatedAddresses = await getAddresses();
-        setAddresses(updatedAddresses);
-      }
+      setSelectedAddressId(address.id);
     }
   };
 
@@ -202,16 +196,17 @@ const Address = () => {
                     key={address.id}
                     address={address}
                     onSelect={handleSelectAddress}
-                    onSetDefault={handleSetDefault}
+                    isSelected={selectedAddressId === address.id}
                   />
                 ))}
               </div>
               {addresses.length > 0 && (
                 <Button 
-                  className="w-full mt-4 bg-gradient-medical hover:shadow-button"
+                  className="w-full mt-4 bg-gradient-medical hover:shadow-button disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => navigate('/members')}
+                  disabled={!selectedAddressId}
                 >
-                  Continue with Selected Address
+                  {selectedAddressId ? 'Continue with Selected Address' : 'Please Select an Address'}
                 </Button>
               )}
             </Card>
