@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
-import { ProgressStepper } from "@/components/ui/progress-stepper";
+import { OrderProgress } from "@/components/ui/order-progress";
 import { AddressCard } from "@/components/ui/address-card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -143,14 +143,6 @@ const Address = () => {
     }
   };
 
-  const orderSteps = [
-    { id: 1, title: "Select", description: "Choose tests" },
-    { id: 2, title: "Address", description: "Add address" },
-    { id: 3, title: "Members", description: "Add members" },
-    { id: 4, title: "Schedule", description: "Date & time" },
-    { id: 5, title: "Payment", description: "Complete order" }
-  ];
-
   if (!user) {
     return (
       <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
@@ -188,9 +180,7 @@ const Address = () => {
       <div className="px-6 py-4">
         <div className="space-y-6">
           {/* Progress Stepper */}
-          <Card className="p-4">
-            <ProgressStepper steps={orderSteps} currentStep={2} />
-          </Card>
+          <OrderProgress currentStep={2} />
 
           {/* Existing Addresses */}
           {addresses.length > 0 && (

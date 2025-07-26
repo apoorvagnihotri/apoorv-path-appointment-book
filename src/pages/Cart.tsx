@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
-import { ProgressStepper } from "@/components/ui/progress-stepper";
+import { OrderProgress } from "@/components/ui/order-progress";
 import { ItemCard } from "@/components/ui/item-card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
@@ -14,14 +14,6 @@ const Cart = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items, loading, updateQuantity, removeFromCart, clearCart, totalItems, totalPrice } = useCart();
-
-  const orderSteps = [
-    { id: 1, title: "Select", description: "Choose tests" },
-    { id: 2, title: "Address", description: "Add address" },
-    { id: 3, title: "Members", description: "Add members" },
-    { id: 4, title: "Schedule", description: "Date & time" },
-    { id: 5, title: "Payment", description: "Complete order" }
-  ];
 
   if (!user) {
     return (
@@ -76,9 +68,7 @@ const Cart = () => {
         ) : (
           <div className="space-y-6">
             {/* Progress Stepper */}
-            <Card className="p-4">
-              <ProgressStepper steps={orderSteps} currentStep={1} />
-            </Card>
+            <OrderProgress currentStep={1} />
 
             {/* Your Cart heading */}
             <h2 className="text-xl font-semibold text-foreground mb-4">Review your cart</h2>
@@ -133,7 +123,8 @@ const Cart = () => {
               </div>
 
               <Button 
-                className="w-full mt-4 text-primary hover:bg-primary/10"
+                variant="outline"
+                className="w-full mt-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 onClick={() => {
                   localStorage.setItem('returnToCart', 'true');
                   navigate('/home');

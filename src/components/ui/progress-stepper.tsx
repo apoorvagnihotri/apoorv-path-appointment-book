@@ -1,4 +1,4 @@
-import { Check, TestTube, Users, Calendar, CreditCard } from "lucide-react";
+import { Check, TestTube, MapPin, Users, Calendar, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Step {
@@ -19,9 +19,10 @@ export const ProgressStepper = ({ steps, currentStep, className }: ProgressStepp
     
     switch (stepId) {
       case 1: return <TestTube className="h-4 w-4" />;
-      case 2: return <Users className="h-4 w-4" />;
-      case 3: return <Calendar className="h-4 w-4" />;
-      case 4: return <CreditCard className="h-4 w-4" />;
+      case 2: return <MapPin className="h-4 w-4" />;
+      case 3: return <Users className="h-4 w-4" />;
+      case 4: return <Calendar className="h-4 w-4" />;
+      case 5: return <CreditCard className="h-4 w-4" />;
       default: return stepId;
     }
   };

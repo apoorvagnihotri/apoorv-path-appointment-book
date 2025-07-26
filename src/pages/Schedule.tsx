@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProgressStepper } from "@/components/ui/progress-stepper";
+import { OrderProgress } from "@/components/ui/order-progress";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -15,13 +15,6 @@ const Schedule = () => {
   const [selectedTime, setSelectedTime] = useState<string>(() => {
     return sessionStorage.getItem('selectedTime') || "";
   });
-
-  const orderSteps = [
-    { id: 1, title: "Select", description: "Choose tests" },
-    { id: 2, title: "Members", description: "Add members" },
-    { id: 3, title: "Schedule", description: "Date & time" },
-    { id: 4, title: "Payment", description: "Complete order" }
-  ];
 
   // Generate next 7 days starting from today
   const getNextSevenDays = () => {
@@ -78,11 +71,6 @@ const Schedule = () => {
     "5:00 PM - 9:00 PM"
   ];
 
-  if (!user) {
-    navigate('/signin');
-    return null;
-  }
-
   // Save selections to session storage
   useEffect(() => {
     if (selectedDate) {
@@ -95,6 +83,17 @@ const Schedule = () => {
       sessionStorage.setItem('selectedTime', selectedTime);
     }
   }, [selectedTime]);
+
+  // Handle authentication check after all hooks
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin');
+    }
+  }, [user, navigate]);
+
+  if (!user) {
+    return null;
+  }
 
   const canProceed = selectedDate && selectedTime;
 
@@ -117,9 +116,7 @@ const Schedule = () => {
 
       <div className="px-6 py-6 pb-24 space-y-6">
         {/* Progress Stepper */}
-        <Card className="p-4">
-          <ProgressStepper steps={orderSteps} currentStep={3} />
-        </Card>
+        <OrderProgress currentStep={4} />
 
         {/* Date Selection */}
         <Card>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProgressStepper } from "@/components/ui/progress-stepper";
+import { OrderProgress } from "@/components/ui/order-progress";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,13 +36,6 @@ const Members = () => {
     relation: "",
     mobile_number: ""
   });
-
-  const orderSteps = [
-    { id: 1, title: "Select", description: "Choose tests" },
-    { id: 2, title: "Members", description: "Add members" },
-    { id: 3, title: "Schedule", description: "Date & time" },
-    { id: 4, title: "Payment", description: "Complete order" }
-  ];
 
   // Define loadMembers function before useEffect
   const loadMembers = async () => {
@@ -115,9 +108,14 @@ const Members = () => {
     }
   };
 
-  // Handle user authentication check AFTER all hooks
+  // Handle user authentication check after all hooks
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin');
+    }
+  }, [user, navigate]);
+
   if (!user) {
-    navigate('/signin');
     return null;
   }
 
@@ -309,9 +307,7 @@ const Members = () => {
 
       <div className="px-6 py-6 space-y-6">
         {/* Progress Stepper */}
-        <Card className="p-4">
-          <ProgressStepper steps={orderSteps} currentStep={2} />
-        </Card>
+        <OrderProgress currentStep={3} />
 
         {/* Members List */}
         <Card>
