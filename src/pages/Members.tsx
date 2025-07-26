@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, Plus, User, Edit, X, Save } from "lucide-react";
+import { ChevronLeft, Plus, User, Edit, X, Save, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { OrderProgress } from "@/components/ui/order-progress";
+import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,11 +26,14 @@ const Members = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { items: cartItems } = useCart();
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
+  const [showTestSelection, setShowTestSelection] = useState(false);
+  const [memberTestSelections, setMemberTestSelections] = useState<{[memberId: string]: {[itemId: string]: boolean}}>({});
   const [newMember, setNewMember] = useState({
     name: "",
     age: "",
@@ -106,6 +111,45 @@ const Members = () => {
     } else {
       setSelectedMembers(selectedMembers.filter(id => id !== memberId));
     }
+  };
+
+  // Initialize member test selections when members or cart changes
+  useEffect(() => {
+    if (selectedMembers.length > 0 && cartItems.length > 0) {
+      const newSelections: {[memberId: string]: {[itemId: string]: boolean}} = {};
+      selectedMembers.forEach(memberId => {
+        newSelections[memberId] = {};
+        cartItems.forEach(item => {
+          const itemId = item.test_id || item.package_id || item.service_id || '';
+          newSelections[memberId][itemId] = true; // All items selected by default
+        });
+      });
+      setMemberTestSelections(newSelections);
+    }
+  }, [selectedMembers, cartItems]);
+
+  const handleTestSelectionForMember = (memberId: string, itemId: string, checked: boolean) => {
+    setMemberTestSelections(prev => ({
+      ...prev,
+      [memberId]: {
+        ...prev[memberId],
+        [itemId]: checked
+      }
+    }));
+  };
+
+  const handleProceedToTestSelection = () => {
+    if (selectedMembers.length > 1) {
+      setShowTestSelection(true);
+    } else {
+      navigate('/schedule');
+    }
+  };
+
+  const handleFinalProceed = () => {
+    // Store the member test selections in localStorage or context for use in next steps
+    localStorage.setItem('memberTestSelections', JSON.stringify(memberTestSelections));
+    navigate('/schedule');
   };
 
   // Handle user authentication check after all hooks
@@ -288,6 +332,121 @@ const Members = () => {
     }
   };
 
+  // Add validation function
+  const canContinue = selectedMembers.length > 0;
+
+  // Test Selection Subpage Component
+  const TestSelectionSubpage = () => (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-gradient-medical text-primary-foreground">
+        <div className="px-6 py-4">
+          <div className="flex items-center">
+            <button
+              onClick={() => setShowTestSelection(false)}
+              className="p-1 rounded-full bg-white/20 hover:bg-white/30 mr-4"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <h1 className="text-2xl font-semibold ml-8">Select Tests for Members</h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-6 py-6 space-y-6">
+        {/* Progress Stepper */}
+        <OrderProgress currentStep={3} />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Customize Tests for Each Member</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              All tests are selected by default. Uncheck tests that specific members don't need.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {selectedMembers.map((memberId) => {
+              const member = members.find(m => m.id === memberId);
+              if (!member) return null;
+
+              return (
+                <div key={memberId} className="border rounded-lg p-4">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <User className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{member.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {member.age} years • {member.gender} • {member.relation}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <Separator className="mb-4" />
+                  
+                  <div className="space-y-3">
+                    {cartItems.map((item) => {
+                      const itemData = item.test || item.package || item.service;
+                      const itemId = item.test_id || item.package_id || item.service_id || '';
+                      const itemType = item.test ? 'Test' : item.package ? 'Package' : 'Service';
+                      
+                      if (!itemData) return null;
+
+                      return (
+                        <div 
+                          key={itemId} 
+                          className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors ${
+                            memberTestSelections[memberId]?.[itemId] 
+                              ? 'bg-primary/10 border border-primary' 
+                              : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                          }`}
+                          onClick={() => handleTestSelectionForMember(memberId, itemId, !(memberTestSelections[memberId]?.[itemId] || false))}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Checkbox
+                              checked={memberTestSelections[memberId]?.[itemId] || false}
+                              onCheckedChange={(checked) => 
+                                handleTestSelectionForMember(memberId, itemId, checked as boolean)
+                              }
+                              onClick={(e) => e.stopPropagation()} // Prevent double triggering
+                              className="pointer-events-none" // Disable direct checkbox clicks
+                            />
+                            <div>
+                              <p className="font-medium">{itemData.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {itemType} • ₹{itemData.price}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {/* Continue Button */}
+        <div className="sticky bottom-6">
+          <Button
+            onClick={handleFinalProceed}
+            className="w-full h-12 bg-gradient-medical"
+            size="lg"
+          >
+            Book Slots for Selected Tests
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (showTestSelection) {
+    return <TestSelectionSubpage />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -300,7 +459,7 @@ const Members = () => {
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
-            <h1 className="text-2xl font-semibold ml-8">Select Members for Sample Collection</h1>
+            <h1 className="text-2xl font-semibold ml-8">Family</h1>
           </div>
         </div>
       </div>
@@ -313,7 +472,7 @@ const Members = () => {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Family Members</CardTitle>
+              <CardTitle>Select Members</CardTitle>
               <Button
                 onClick={() => setShowAddForm(!showAddForm)}
                 className="bg-gradient-medical text-white hover:shadow-button"
@@ -324,19 +483,41 @@ const Members = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {!loading && selectedMembers.length === 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-yellow-800">
+                  Please select at least one member to continue
+                </p>
+              </div>
+            )}
+            
             <div className="space-y-4">
               {loading ? (
                 <p className="text-center text-muted-foreground">Loading members...</p>
               ) : (
                 <>
                   {members.map((member) => (
-                    <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div 
+                      key={member.id} 
+                      className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                        selectedMembers.includes(member.id) 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
+                      onClick={() => handleMemberSelection(member.id, !selectedMembers.includes(member.id))}
+                    >
                       <div className="flex items-center space-x-3">
+                        <Checkbox
+                          checked={selectedMembers.includes(member.id)}
+                          onCheckedChange={(checked) => handleMemberSelection(member.id, checked as boolean)}
+                          onClick={(e) => e.stopPropagation()} // Prevent double triggering
+                          className="pointer-events-none" // Disable direct checkbox clicks
+                        />
                         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                           <User className="h-5 w-5 text-primary" />
                         </div>
                          <div>
-                           <p className="font-medium">{member.name}</p>
+                           <p className="font-semibold text-foreground">{member.name}</p>
                            <p className="text-sm text-muted-foreground">
                              {member.age} years • {member.gender} • {member.relation}
                            </p>
@@ -351,14 +532,13 @@ const Members = () => {
                          <Button 
                            size="sm" 
                            variant="ghost"
-                           onClick={() => handleEditMember(member)}
+                           onClick={(e) => {
+                             e.stopPropagation(); // Prevent card selection when clicking edit
+                             handleEditMember(member);
+                           }}
                          >
                            <Edit className="h-4 w-4" />
                          </Button>
-                         <Checkbox
-                           checked={selectedMembers.includes(member.id)}
-                           onCheckedChange={(checked) => handleMemberSelection(member.id, checked as boolean)}
-                         />
                        </div>
                      </div>
                   ))}
@@ -566,11 +746,20 @@ const Members = () => {
         {/* Continue Button */}
         <div className="sticky bottom-6">
           <Button
-            onClick={() => navigate('/schedule')}
-            className="w-full h-12 bg-gradient-medical"
+            onClick={handleProceedToTestSelection}
+            disabled={!canContinue}
+            className={`w-full h-12 ${canContinue ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
-            Continue to Schedule
+            {canContinue ? 
+              (selectedMembers.length > 1 ? 
+                <>
+                  Select Tests for Members <ArrowRight className="h-4 w-4 ml-2" />
+                </> : 
+                'Book a slot'
+              ) : 
+              `Select ${selectedMembers.length === 0 ? 'at least one' : 'a'} member to continue`
+            }
           </Button>
         </div>
       </div>
