@@ -16,12 +16,56 @@ const Payment = () => {
   const navigate = useNavigate();
   const { items: cartItems, totalPrice, clearCart } = useCart();
   
-  // Calculate cart summary
+  // Get member test selections from sessionStorage
+  const memberTestSelections = JSON.parse(sessionStorage.getItem('memberTestSelections') || '{}');
+  const selectedMembers = JSON.parse(sessionStorage.getItem('selectedMembers') || '[]');
+  const selectedMemberDetails = JSON.parse(sessionStorage.getItem('selectedMemberDetails') || '[]');
+  
+  // Create filtered items based on member selections
+  const getFilteredCartItems = () => {
+    if (Object.keys(memberTestSelections).length === 0) {
+      return cartItems; // If no member selections, show all cart items
+    }
+    
+    const filteredItems: any[] = [];
+    Object.entries(memberTestSelections).forEach(([memberId, selections]) => {
+      const member = selectedMemberDetails.find((m: any) => m.id === memberId);
+      Object.entries(selections).forEach(([itemId, isSelected]) => {
+        if (isSelected) {
+          const cartItem = cartItems.find(item => 
+            (item.test_id === itemId) || 
+            (item.package_id === itemId) || 
+            (item.service_id === itemId)
+          );
+          if (cartItem) {
+            filteredItems.push({
+              ...cartItem,
+              memberInfo: member,
+              memberId: memberId
+            });
+          }
+        }
+      });
+    });
+    return filteredItems;
+  };
+  
+  const filteredCartItems = getFilteredCartItems();
+  
+  // Calculate cart summary based on filtered items
+  const calculateFilteredTotal = () => {
+    return filteredCartItems.reduce((total, item) => {
+      const itemData = item.test || item.package || item.service;
+      return total + (itemData?.price || 0);
+    }, 0);
+  };
+  
+  const filteredSubtotal = calculateFilteredTotal();
   const cartSummary = {
-    subtotal: totalPrice,
+    subtotal: filteredSubtotal,
     labCharges: 50,
     homeCollection: 100,
-    total: totalPrice + 50 + 100
+    total: filteredSubtotal + 50 + 100
   };
   const { user } = useAuth();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>(null);
@@ -34,8 +78,8 @@ const Payment = () => {
     return null;
   }
 
-  // Redirect if cart is empty
-  if (cartItems.length === 0) {
+  // Redirect if cart is empty or no items selected for members
+  if (cartItems.length === 0 || filteredCartItems.length === 0) {
     navigate('/cart');
     return null;
   }
@@ -86,8 +130,8 @@ const Payment = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
-      const orderItems = cartItems.map(item => {
+      // Create order items based on filtered selections
+      const orderItems = filteredCartItems.map(item => {
         const displayItem = item.test || item.package || item.service;
         return {
           order_id: order.id,
@@ -95,7 +139,9 @@ const Payment = () => {
           item_id: displayItem!.id,
           item_name: displayItem!.name,
           item_price: displayItem!.price,
-          quantity: item.quantity || 1
+          quantity: item.quantity || 1,
+          member_id: item.memberId,
+          member_name: item.memberInfo?.name
         };
       });
 
@@ -109,6 +155,9 @@ const Payment = () => {
       clearCart();
       sessionStorage.removeItem('selectedDate');
       sessionStorage.removeItem('selectedTime');
+      sessionStorage.removeItem('memberTestSelections');
+      sessionStorage.removeItem('selectedMembers');
+      sessionStorage.removeItem('selectedMemberDetails');
 
       // Show success message
       toast.success("Booking confirmed successfully!");
@@ -152,16 +201,21 @@ const Payment = () => {
             <CardTitle>Your Test Booking Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {cartItems.map((item) => {
+            {filteredCartItems.map((item, index) => {
               const displayItem = item.test || item.package || item.service;
               if (!displayItem) return null;
               
               return (
-                <div key={displayItem.id} className="flex justify-between items-center">
+                <div key={`${displayItem.id}-${item.memberId}-${index}`} className="flex justify-between items-center">
                   <div>
                     <p className="font-medium">{displayItem.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.test?.category || (item.package ? 'Package' : 'Service')}
+                      {item.memberInfo && (
+                        <span className="ml-2 text-primary font-medium">
+                          • {item.memberInfo.name}
+                        </span>
+                      )}
                     </p>
                   </div>
                   <p className="font-semibold">₹{displayItem.price}</p>

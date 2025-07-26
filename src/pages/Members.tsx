@@ -95,8 +95,16 @@ const Members = () => {
   };
 
   const handleFinalProceed = () => {
-    // Store the member test selections in localStorage or context for use in next steps
-    localStorage.setItem('memberTestSelections', JSON.stringify(memberTestSelections));
+    // Store the member test selections and selected members in sessionStorage for use in next steps
+    sessionStorage.setItem('memberTestSelections', JSON.stringify(memberTestSelections));
+    sessionStorage.setItem('selectedMembers', JSON.stringify(selectedMembers));
+    
+    // Store member details for display
+    const selectedMemberDetails = selectedMembers.map(memberId => 
+      members.find(m => m.id === memberId)
+    ).filter(Boolean);
+    sessionStorage.setItem('selectedMemberDetails', JSON.stringify(selectedMemberDetails));
+    
     navigate('/schedule');
   };
 
