@@ -20,9 +20,27 @@ const Auth = () => {
   const [showForgotSuggestion, setShowForgotSuggestion] = useState(false);
 
   // Redirect if already authenticated
+  useEffect(() => {
+    if (user) {
+      navigate('/home');
+    }
+  }, [user, navigate]);
+
+  // Show loading while redirecting authenticated users
   if (user) {
-    navigate('/home');
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-center">
+          <img 
+            src={apoorvLogo} 
+            alt="Apoorv Pathology Lab" 
+            className="w-20 h-20 object-contain mx-auto mb-4"
+          />
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground mt-4">Redirecting...</p>
+        </div>
+      </div>
+    );
   }
 
   const handleEmailAuth = async () => {

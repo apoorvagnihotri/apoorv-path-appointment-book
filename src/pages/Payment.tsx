@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, CreditCard, Banknote, Smartphone, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,16 +72,25 @@ const Payment = () => {
   const [selectedOnlineType, setSelectedOnlineType] = useState<OnlinePaymentType>(null);
   const [loading, setLoading] = useState(false);
 
-  // Redirect if not authenticated
-  if (!user) {
-    navigate('/signin');
-    return null;
-  }
+  // Redirect if not authenticated or cart is empty
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin');
+    } else if (cartItems.length === 0 || filteredCartItems.length === 0) {
+      navigate('/cart');
+    }
+  }, [user, cartItems.length, filteredCartItems.length, navigate]);
 
-  // Redirect if cart is empty or no items selected for members
-  if (cartItems.length === 0 || filteredCartItems.length === 0) {
-    navigate('/cart');
-    return null;
+  // Show loading while redirecting
+  if (!user || cartItems.length === 0 || filteredCartItems.length === 0) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground mt-4">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   const handlePaymentMethodSelect = (method: PaymentMethod) => {
@@ -200,28 +209,56 @@ const Payment = () => {
           <CardHeader>
             <CardTitle>Your Test Booking Summary</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {filteredCartItems.map((item, index) => {
-              const displayItem = item.test || item.package || item.service;
-              if (!displayItem) return null;
-              
-              return (
-                <div key={`${displayItem.id}-${item.memberId}-${index}`} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{displayItem.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {item.test?.category || (item.package ? 'Package' : 'Service')}
-                      {item.memberInfo && (
-                        <span className="ml-2 text-primary font-medium">
-                          • {item.memberInfo.name}
-                        </span>
-                      )}
-                    </p>
+          <CardContent className="space-y-4">
+            {(() => {
+              // Group items by member
+              const itemsByMember = filteredCartItems.reduce((acc: any, item) => {
+                const memberId = item.memberId || 'self';
+                const memberName = item.memberInfo?.name || 'You';
+                
+                if (!acc[memberId]) {
+                  acc[memberId] = {
+                    name: memberName,
+                    items: []
+                  };
+                }
+                
+                const displayItem = item.test || item.package || item.service;
+                if (displayItem) {
+                  acc[memberId].items.push({
+                    ...displayItem,
+                    category: item.test?.category || (item.package ? 'Package' : 'Service')
+                  });
+                }
+                
+                return acc;
+              }, {});
+
+              return Object.entries(itemsByMember).map(([memberId, memberData]: [string, any]) => (
+                <div key={memberId} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg flex items-center">
+                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                      {memberData.name}
+                    </h3>
+                    <span className="text-sm text-muted-foreground">
+                      ₹{memberData.items.reduce((sum: number, item: any) => sum + item.price, 0)}
+                    </span>
                   </div>
-                  <p className="font-semibold">₹{displayItem.price}</p>
+                  <div className="ml-5 space-y-1">
+                    {memberData.items.map((item: any, itemIndex: number) => (
+                      <div key={`${item.id}-${itemIndex}`} className="flex justify-between items-center py-1">
+                        <div className="flex items-center">
+                          <span className="w-1 h-1 bg-muted-foreground rounded-full mr-3"></span>
+                          <span className="text-sm">{item.name}</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">₹{item.price}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              );
-            })}
+              ));
+            })()}
             
             <div className="border-t pt-3 space-y-2">
               <div className="flex justify-between">
