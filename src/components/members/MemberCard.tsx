@@ -1,6 +1,5 @@
-import { User, Edit } from "lucide-react";
+import { User, Edit, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface Member {
   id: string;
@@ -29,12 +28,25 @@ export const MemberCard = ({ member, isSelected, onSelect, onEdit }: MemberCardP
       onClick={() => onSelect(member.id, !isSelected)}
     >
       <div className="flex items-center space-x-3">
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={(checked) => onSelect(member.id, checked as boolean)}
-          onClick={(e) => e.stopPropagation()}
-          className="pointer-events-none"
-        />
+        {isSelected ? (
+          <div
+            className="h-5 w-5 bg-green-500 rounded-sm flex items-center justify-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(member.id, false);
+            }}
+          >
+            <Check className="h-3 w-3 text-white" />
+          </div>
+        ) : (
+          <div
+            className="h-5 w-5 border border-gray-300 rounded-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(member.id, true);
+            }}
+          />
+        )}
         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
           <User className="h-5 w-5 text-primary" />
         </div>
