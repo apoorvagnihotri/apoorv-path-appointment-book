@@ -1,4 +1,4 @@
-import { ChevronLeft, User } from "lucide-react";
+import { ChevronLeft, User, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -94,7 +94,7 @@ export const TestSelectionSubpage = ({
                   
                   <Separator className="mb-4" />
                   
-                  <div className="space-y-3">
+                  <div className="space-y-3 pl-12">
                     {cartItems.map((item) => {
                       const itemData = item.test || item.package || item.service;
                       const itemId = item.test_id || item.package_id || item.service_id || '';
@@ -103,30 +103,35 @@ export const TestSelectionSubpage = ({
                       if (!itemData) return null;
 
                       return (
-                        <div 
-                          key={itemId} 
-                          className={`flex items-center justify-end p-3 rounded-lg cursor-pointer transition-colors ${
-                            memberTestSelections[memberId]?.[itemId] 
-                              ? 'bg-primary/10 border border-primary' 
-                              : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                        <div
+                          key={itemId}
+                          className={`flex items-center justify-start p-3 rounded-lg cursor-pointer shadow-card transition-colors ${
+                            itemType === 'Test'
+                              ? 'bg-gradient-to-r from-red-50 to-white border border-red-200'
+                              : itemType === 'Package'
+                              ? 'bg-gradient-to-r from-blue-50 to-white border border-blue-200'
+                              : 'bg-gradient-to-r from-green-50 to-white border border-green-200'
+                          } ${
+                            memberTestSelections[memberId]?.[itemId]
+                              ? 'ring-2 ring-primary'
+                              : 'hover:opacity-95'
                           }`}
                           onClick={() => onTestSelectionChange(memberId, itemId, !(memberTestSelections[memberId]?.[itemId] || false))}
                         >
                           <div className="flex items-center space-x-3">
-                            <div className="text-right">
+                            {memberTestSelections[memberId]?.[itemId] ? (
+                              <div className="h-5 w-5 bg-green-500 rounded-sm flex items-center justify-center">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            ) : (
+                              <div className="h-5 w-5 border border-gray-300 rounded-sm" />
+                            )}
+                            <div className="text-left">
                               <p className="font-medium">{itemData.name}</p>
                               <p className="text-sm text-muted-foreground">
                                 {itemType} • ₹{itemData.price}
                               </p>
                             </div>
-                            <Checkbox
-                              checked={memberTestSelections[memberId]?.[itemId] || false}
-                              onCheckedChange={(checked) => 
-                                onTestSelectionChange(memberId, itemId, checked as boolean)
-                              }
-                              onClick={(e) => e.stopPropagation()}
-                              className="pointer-events-none"
-                            />
                           </div>
                         </div>
                       );
