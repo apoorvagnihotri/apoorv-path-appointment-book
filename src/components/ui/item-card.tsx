@@ -34,15 +34,11 @@ export const ItemCard = ({
   const getCardClassName = () => {
     switch (itemType) {
       case 'test':
-        return isCartView 
-          ? "p-4 shadow-card bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200 relative"
-          : "p-4 shadow-card bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200 relative";
+        return "p-4 shadow-card bg-gradient-to-r from-red-50 to-white border-red-200 relative";
       case 'package':
-        return "p-4 shadow-card bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 relative";
+        return "p-4 shadow-card bg-gradient-to-r from-blue-50 to-white border-blue-200 relative";
       case 'service':
-        return isCartView
-          ? "p-4 shadow-card relative"
-          : "p-4 shadow-card bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 relative";
+        return "p-4 shadow-card bg-gradient-to-r from-green-50 to-white border-green-200 relative";
       default:
         return "p-4 shadow-card relative";
     }

@@ -286,7 +286,7 @@ const Home = () => {
           {services.map((service) => {
             let iconBgColor = "bg-card";
             if (service.title === "Tests") {
-              iconBgColor = "bg-yellow-50";
+              iconBgColor = "bg-red-50";
             } else if (service.title === "Health Packages") {
               iconBgColor = "bg-blue-50";
             } else if (service.title === "Other Services") {
