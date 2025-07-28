@@ -49,9 +49,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
             cn(
               "flex flex-col items-center justify-center px-3 py-2 rounded-lg relative",
               "transition-all duration-200 min-w-0 flex-1",
-              item.href === "/cart" && totalItems > 0
-                ? "text-accent-foreground bg-accent" 
-                : isActive 
+              isActive 
                 ? "text-primary bg-secondary" 
                 : "text-muted-foreground hover:text-foreground hover:bg-muted"
             )

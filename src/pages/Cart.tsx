@@ -85,6 +85,7 @@ const Cart = () => {
                   item={itemData}
                   itemType={itemType}
                   isCartView={true}
+                  isInCart={true}
                   onRemove={() => removeFromCart(itemId, itemType as 'test' | 'package' | 'service')}
                 />
               );
