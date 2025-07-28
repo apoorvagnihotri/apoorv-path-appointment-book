@@ -169,16 +169,12 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-4">
+      <div className="bg-gradient-medical text-primary-foreground" style={{ height: '80px' }}>
+        <div className="px-6 py-2">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div>
                 <p className="text-sm opacity-90">Hi, Patient</p>
-                <div className="flex items-center space-x-1">
-                  <MapPin className="h-4 w-4" />
-                  <span className="text-sm font-medium">Jabalpur</span>
-                </div>
               </div>
             </div>
             
@@ -223,7 +219,7 @@ const Home = () => {
 
       {/* Search Section */}
       <div className="px-6 mt-6 mb-6">
-        <Card className="p-4 shadow-card">
+        <Card className="p-2 shadow-card">
           <Popover open={showSearchResults && searchQuery.length >= 3} onOpenChange={setShowSearchResults}>
             <PopoverTrigger asChild>
               <div className="relative">
@@ -244,7 +240,7 @@ const Home = () => {
                     }
                   }}
                   onKeyPress={handleKeyPress}
-                  className="pl-10 h-12 border-border focus:ring-primary"
+                  className="pl-10 h-10 border-border focus:ring-primary"
                 />
               </div>
             </PopoverTrigger>
@@ -296,14 +292,14 @@ const Home = () => {
             } else if (service.title === "Other Services") {
               iconBgColor = "bg-green-50";
             }
-            
+
             return (
               <ServiceCard
                 key={service.title}
                 title={service.title}
                 icon={service.icon}
                 onClick={service.onClick}
-                className={iconBgColor}
+                className={`${iconBgColor} !shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] border-none`}
               />
             );
           })}

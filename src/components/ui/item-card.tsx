@@ -70,37 +70,30 @@ export const ItemCard = ({
               onClick={onRemove}
               size="sm"
               variant="ghost"
-              className="text-destructive hover:text-destructive"
+              className="text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           ) : (
             onAddToCart && (
               <div className="flex items-center space-x-1">
-                <Button
-                  onClick={onAddToCart}
-                  disabled={isInCart}
-                  variant={isInCart ? "outline" : "default"}
-                  size="sm"
-                  className={isInCart ? "bg-white text-primary border-emerald-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 font-bold" : ""}
-                >
-                  {isInCart ? (
-                    <div className="flex items-center space-x-1">
-                      <Check className="h-3 w-3" />
-                      <span>Added</span>
-                    </div>
-                  ) : (
-                    "Add to Cart"
-                  )}
-                </Button>
+                {!isInCart && (
+                  <Button
+                    onClick={onAddToCart}
+                    variant="default"
+                    size="sm"
+                  >
+                    Add to Cart
+                  </Button>
+                )}
                 {isInCart && onRemove && (
                   <Button
                     onClick={onRemove}
                     size="sm"
                     variant="ghost"
-                    className="text-muted-foreground hover:text-destructive h-9 w-9 p-0"
+                    className="text-destructive hover:bg-destructive/10 p-0"
                   >
-                    <X className="h-3 w-3" />
+                    <Trash2 className="h-5 w-5" />
                   </Button>
                 )}
               </div>
@@ -117,7 +110,14 @@ export const ItemCard = ({
       {/* Main content */}
       <div className={`flex justify-between items-start ${showAddToCart || isCartView ? 'pr-16 pb-16' : 'pb-16'}`}>
         <div className="flex-1">
-          <h3 className="font-semibold text-foreground mb-1">{item.name}</h3>
+          <h3 className="font-semibold text-foreground mb-1 flex items-center">
+            {isInCart && (
+              <div className="h-5 w-5 bg-green-500 rounded-sm flex items-center justify-center mr-2">
+                <Check className="h-3 w-3 text-white" />
+              </div>
+            )}
+            {item.name}
+          </h3>
           {item.category && itemType === 'test' && (
             <p className="text-sm text-muted-foreground mb-2">{item.category}</p>
           )}
