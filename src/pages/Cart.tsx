@@ -30,9 +30,9 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
+    <div className="min-h-screen bg-background relative">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-gradient-medical text-primary-foreground z-40">
         <div className="px-6 py-4">
           <div className="flex items-center">
             <button
@@ -48,8 +48,9 @@ const Cart = () => {
         </div>
       </div>
 
-      {/* Cart Items */}
-      <div className="px-6 py-4 pb-48">
+      {/* Scrollable Content with Tailwind spacing classes */}
+      <div className="overflow-y-auto pt-20 pb-40 h-screen">
+        <div className="px-6 py-4">
         {loading ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">Loading cart...</p>
@@ -134,19 +135,27 @@ const Cart = () => {
                 <Plus className="h-4 w-4 mr-2" />
                 Add more tests
               </Button>
-              
-              <Button 
-                className="w-full mt-3 bg-gradient-medical hover:shadow-button"
-                size="lg"
-                onClick={() => navigate('/address')}
-              >
-                Proceed
-              </Button>
             </Card>
             </div>
           </div>
         )}
+        </div>
       </div>
+
+      {/* Fixed Continue Button positioned above BottomNavigation */}
+      {items.length > 0 && (
+        <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
+          <div className="px-6 py-4">
+            <Button 
+              className="w-full h-12 bg-gradient-medical hover:shadow-button"
+              size="lg"
+              onClick={() => navigate('/address')}
+            >
+              Proceed
+            </Button>
+          </div>
+        </div>
+      )}
 
       <BottomNavigation />
     </div>

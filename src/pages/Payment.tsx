@@ -186,9 +186,9 @@ const Payment = () => {
   const canProceed = selectedPaymentMethod === 'cash';
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
+    <div className="min-h-screen bg-background relative">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-gradient-medical text-primary-foreground z-40">
         <div className="px-6 py-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -204,8 +204,8 @@ const Payment = () => {
         </div>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto pb-32">
+      {/* Scrollable Content with Tailwind spacing classes */}
+      <div className="overflow-y-auto pt-20 pb-40 h-screen">
         <div className="px-6 py-6 space-y-6">
           {/* Test Booking Summary */}
           <Card>
@@ -344,13 +344,10 @@ const Payment = () => {
             </CardContent>
           </Card>
         </div>
-        
-        {/* Scroll indicator shadow */}
-        <div className="absolute bottom-32 left-0 right-0 h-8 bg-gradient-to-t from-background via-background/50 to-transparent pointer-events-none" />
       </div>
 
-      {/* Fixed Confirm Button */}
-      <div className="fixed bottom-20 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg">
+      {/* Fixed Confirm Button positioned above BottomNavigation */}
+      <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
         <div className="px-6 py-4">
           <Button
             onClick={handleProceedPayment}

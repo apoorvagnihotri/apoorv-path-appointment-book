@@ -152,9 +152,9 @@ const Address = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
+    <div className="min-h-screen bg-background relative">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-gradient-medical text-primary-foreground z-40">
         <div className="px-6 py-4">
           <div className="flex items-center">
             <button
@@ -170,8 +170,9 @@ const Address = () => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-6 py-4 pb-48">
+      {/* Scrollable Content with Tailwind spacing classes */}
+      <div className="overflow-y-auto pt-20 pb-40 h-screen">
+        <div className="px-6 py-4">
         <div className="space-y-6">
           {/* Progress Stepper */}
           <OrderProgress currentStep={2} />
@@ -200,15 +201,6 @@ const Address = () => {
                   />
                 ))}
               </div>
-              {addresses.length > 0 && (
-                <Button 
-                  className="w-full mt-4 bg-gradient-medical hover:shadow-button disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => navigate('/members')}
-                  disabled={!selectedAddressId}
-                >
-                  {selectedAddressId ? 'Continue with Selected Address' : 'Please Select an Address'}
-                </Button>
-              )}
             </Card>
           )}
 
@@ -297,15 +289,6 @@ const Address = () => {
                   />
                 </div>
               </div>
-
-              <Button 
-                className="w-full mt-6 bg-gradient-medical hover:shadow-button"
-                size="lg"
-                onClick={handleSaveAddress}
-                disabled={loading}
-              >
-                {loading ? 'Saving...' : 'Save Address & Continue'}
-              </Button>
             </Card>
           )}
 
@@ -321,7 +304,38 @@ const Address = () => {
             </Button>
           )}
         </div>
+        </div>
       </div>
+
+      {/* Fixed Continue Buttons positioned above BottomNavigation */}  
+      {showForm ? (
+        /* Save Address Button */
+        <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
+          <div className="px-6 py-4">
+            <Button 
+              className="w-full h-12 bg-gradient-medical hover:shadow-button"
+              size="lg"
+              onClick={handleSaveAddress}
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : 'Save Address & Continue'}
+            </Button>
+          </div>
+        </div>
+      ) : addresses.length > 0 ? (
+        /* Continue with Selected Address Button */
+        <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
+          <div className="px-6 py-4">
+            <Button 
+              className="w-full h-12 bg-gradient-medical hover:shadow-button disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => navigate('/members')}
+              disabled={!selectedAddressId}
+            >
+              {selectedAddressId ? 'Continue with Selected Address' : 'Please Select an Address'}
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
       <BottomNavigation />
     </div>
