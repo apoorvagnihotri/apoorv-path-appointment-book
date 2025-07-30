@@ -9,8 +9,13 @@ import { useNavigate } from "react-router-dom";
 
 const Account = () => {
   const { user, signOut } = useAuth();
-  const { profile } = useProfile();
+  const { profile, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
+
+  // Debug logging
+  console.log('Account page - user:', user);
+  console.log('Account page - profile:', profile);
+  console.log('Account page - profileLoading:', profileLoading);
 
   const handleLogout = async () => {
     await signOut();

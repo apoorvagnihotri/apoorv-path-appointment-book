@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          city: string
+          created_at: string
+          first_name: string
+          id: string
+          is_default: boolean | null
+          landmark: string | null
+          last_name: string
+          phone: string
+          pincode: string
+          street_address: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          first_name: string
+          id?: string
+          is_default?: boolean | null
+          landmark?: string | null
+          last_name: string
+          phone: string
+          pincode: string
+          street_address: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          first_name?: string
+          id?: string
+          is_default?: boolean | null
+          landmark?: string | null
+          last_name?: string
+          phone?: string
+          pincode?: string
+          street_address?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -120,6 +165,8 @@ export type Database = {
           item_name: string
           item_price: number
           item_type: string
+          member_id: string | null
+          member_name: string | null
           order_id: string
           quantity: number
         }
@@ -130,6 +177,8 @@ export type Database = {
           item_name: string
           item_price: number
           item_type: string
+          member_id?: string | null
+          member_name?: string | null
           order_id: string
           quantity?: number
         }
@@ -140,6 +189,8 @@ export type Database = {
           item_name?: string
           item_price?: number
           item_type?: string
+          member_id?: string | null
+          member_name?: string | null
           order_id?: string
           quantity?: number
         }
@@ -309,23 +360,29 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          date_of_birth: string | null
           full_name: string | null
           id: string
           mobile_number: string | null
+          sex: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           id: string
           mobile_number?: string | null
+          sex?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string | null
           id?: string
           mobile_number?: string | null
+          sex?: string | null
           updated_at?: string
         }
         Relationships: []

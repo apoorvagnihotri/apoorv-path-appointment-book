@@ -5,11 +5,11 @@ import { useToast } from './use-toast';
 
 export interface Profile {
   id: string;
-  full_name?: string;
-  mobile_number?: string;
+  full_name?: string | null;
+  mobile_number?: string | null;
   email?: string;
-  date_of_birth?: string;
-  sex?: 'Male' | 'Female' | 'Other';
+  date_of_birth?: string | null;
+  sex?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -21,33 +21,63 @@ export const useProfile = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchProfile = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('No user found, skipping profile fetch');
+      return;
+    }
 
+    console.log('Fetching profile for user:', user.id);
     setLoading(true);
     try {
+      // First check if user is authenticated
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
+        console.log('No authenticated user found');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Authenticated user found:', currentUser.id);
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
-        .single();
+        .eq('id', currentUser.id)
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
+      console.log('Profile query result:', { data, error });
 
-      if (data) {
-        setProfile({
+      if (error) {
+        console.error('Profile fetch error:', error);
+        // If profile doesn't exist, create a basic one from user metadata
+        if (error.code === 'PGRST116' || error.message?.includes('No rows found')) {
+          const newProfile = {
+            id: currentUser.id,
+            full_name: currentUser.user_metadata?.full_name || '',
+            mobile_number: currentUser.user_metadata?.mobile_number || currentUser.phone || '',
+            email: currentUser.email || '',
+          };
+          console.log('Creating new profile from user metadata:', newProfile);
+          setProfile(newProfile);
+        } else {
+          throw error;
+        }
+      } else if (data) {
+        const profileData = {
           ...data,
-          email: user.email || ''
-        });
-      } else {
-        // Create initial profile if it doesn't exist
-        const newProfile = {
-          id: user.id,
-          full_name: user.user_metadata?.full_name || '',
-          mobile_number: user.user_metadata?.mobile_number || '',
-          email: user.email || '',
+          email: currentUser.email || ''
         };
+        console.log('Setting profile data:', profileData);
+        setProfile(profileData);
+      } else {
+        // Create initial profile if no data returned
+        const newProfile = {
+          id: currentUser.id,
+          full_name: currentUser.user_metadata?.full_name || '',
+          mobile_number: currentUser.user_metadata?.mobile_number || currentUser.phone || '',
+          email: currentUser.email || '',
+        };
+        console.log('No profile data, creating from user metadata:', newProfile);
         setProfile(newProfile);
       }
     } catch (error: any) {
@@ -67,10 +97,16 @@ export const useProfile = () => {
 
     setLoading(true);
     try {
+      // Ensure we have a current authenticated user
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
+        throw new Error('User not authenticated');
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id,
+          id: currentUser.id,
           ...updates,
           updated_at: new Date().toISOString(),
         })
@@ -83,7 +119,7 @@ export const useProfile = () => {
 
       setProfile({
         ...data,
-        email: user.email || ''
+        email: currentUser.email || ''
       });
 
       toast({

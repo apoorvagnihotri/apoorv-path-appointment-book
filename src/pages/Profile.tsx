@@ -15,7 +15,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     full_name: '',
     date_of_birth: '',
-    sex: '' as 'Male' | 'Female' | 'Other' | '',
+    sex: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,12 +41,15 @@ const Profile = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Filter out empty sex field
-    const updateData = {
-      full_name: formData.full_name,
-      date_of_birth: formData.date_of_birth,
-      ...(formData.sex && { sex: formData.sex as 'Male' | 'Female' | 'Other' })
+    // Filter out empty values
+    const updateData: any = {
+      full_name: formData.full_name || null,
+      date_of_birth: formData.date_of_birth || null,
     };
+    
+    if (formData.sex) {
+      updateData.sex = formData.sex;
+    }
 
     const { error } = await updateProfile(updateData);
     
