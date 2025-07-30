@@ -40,12 +40,17 @@
     - Improved accessibility and scaling across different devices and zoom levels
   - Applied proper z-index layering: header (z-40), buttons (z-30), bottom nav (z-50)
   - Used Tailwind spacing classes (pt-20, pb-40, h-screen) for consistent layout structure
+- **Fixed Critical React Issues in Members Component:**
+  - Resolved duplicate React key warnings in TestSelectionSubpage by using unique cart item IDs
+  - Fixed infinite loop issue in useEffect that caused "Maximum update depth exceeded" error
+  - Implemented proper cart item deduplication using useMemo to prevent unnecessary re-renders
+  - Updated member test selection initialization logic to prevent cascading state updates
+  - Enhanced test selection interface stability when multiple members are selected
 
 
 Problems: 
   - Design of the add to cart button for services is not same as health packages.
   - The search bar in the home page isn't what I am expecting it to be, but it works as expected in /tests
-  - The current flow of cart isn't correctly working, need to fix all the pages.
   - Login page takes a lot of time to load.
 
 

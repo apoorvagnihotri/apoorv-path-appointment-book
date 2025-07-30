@@ -107,7 +107,7 @@ export const TestSelectionSubpage = ({
 
                         return (
                           <div
-                            key={itemId}
+                            key={`${memberId}-${item.id}`}
                             className={`flex items-center justify-start p-3 rounded-lg cursor-pointer shadow-card transition-colors ${
                               itemType === 'Test'
                                 ? 'bg-gradient-to-r from-red-50 to-white border border-red-200'

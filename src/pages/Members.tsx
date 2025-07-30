@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ChevronLeft, Plus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +28,14 @@ const Members = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { items: cartItems } = useCart();
+  
+  // Remove any potential duplicate cart items using useMemo to prevent recalculation
+  const uniqueCartItems = useMemo(() => 
+    cartItems.filter((item, index, array) => 
+      array.findIndex(i => i.id === item.id) === index
+    ), [cartItems]
+  );
+  
   const { members, loading, addMember, updateMember, removeMember } = useMemberManagement();
   
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -64,18 +72,28 @@ const Members = () => {
 
   // Initialize member test selections when members or cart changes
   useEffect(() => {
-    if (selectedMembers.length > 0 && cartItems.length > 0) {
-      const newSelections: {[memberId: string]: {[itemId: string]: boolean}} = {};
-      selectedMembers.forEach(memberId => {
-        newSelections[memberId] = {};
-        cartItems.forEach(item => {
-          const itemId = item.test_id || item.package_id || item.service_id || '';
-          newSelections[memberId][itemId] = false; // All items unselected by default
-        });
+    if (selectedMembers.length > 0 && uniqueCartItems.length > 0) {
+      setMemberTestSelections(prev => {
+        // Only create new selections if we don't already have selections for these members
+        const needsUpdate = selectedMembers.some(memberId => !prev[memberId]);
+        
+        if (needsUpdate) {
+          const newSelections: {[memberId: string]: {[itemId: string]: boolean}} = { ...prev };
+          selectedMembers.forEach(memberId => {
+            if (!newSelections[memberId]) {
+              newSelections[memberId] = {};
+              uniqueCartItems.forEach(item => {
+                const itemId = item.test_id || item.package_id || item.service_id || '';
+                newSelections[memberId][itemId] = false; // All items unselected by default
+              });
+            }
+          });
+          return newSelections;
+        }
+        return prev;
       });
-      setMemberTestSelections(newSelections);
     }
-  }, [selectedMembers, cartItems]);
+  }, [selectedMembers, uniqueCartItems]);
 
   const handleTestSelectionForMember = (memberId: string, itemId: string, checked: boolean) => {
     setMemberTestSelections(prev => ({
@@ -157,7 +175,7 @@ const Members = () => {
       <TestSelectionSubpage
         selectedMembers={selectedMembers}
         members={members}
-        cartItems={cartItems}
+        cartItems={uniqueCartItems}
         memberTestSelections={memberTestSelections}
         onBack={() => setShowTestSelection(false)}
         onTestSelectionChange={handleTestSelectionForMember}
