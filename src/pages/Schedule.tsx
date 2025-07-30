@@ -254,7 +254,7 @@ const Schedule = () => {
           <Button
             onClick={() => navigate('/payment')}
             disabled={!canProceed}
-            className={`w-full h-12 ${canProceed ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
+            className={`w-full min-h-[3rem] ${canProceed ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
             Continue to Payment

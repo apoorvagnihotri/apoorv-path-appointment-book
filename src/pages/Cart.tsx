@@ -147,7 +147,7 @@ const Cart = () => {
         <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
           <div className="px-6 py-4">
             <Button 
-              className="w-full h-12 bg-gradient-medical hover:shadow-button"
+              className="w-full min-h-[3rem] bg-gradient-medical hover:shadow-button"
               size="lg"
               onClick={() => navigate('/address')}
             >

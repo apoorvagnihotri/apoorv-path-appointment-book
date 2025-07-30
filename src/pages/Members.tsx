@@ -263,7 +263,7 @@ const Members = () => {
           <Button
             onClick={handleProceedToTestSelection}
             disabled={!canContinue}
-            className={`w-full h-12 ${canContinue ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
+            className={`w-full min-h-[3rem] ${canContinue ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
             {canContinue ? 

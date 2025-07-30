@@ -161,7 +161,7 @@ export const TestSelectionSubpage = ({
           <Button
             onClick={onFinalProceed}
             disabled={!hasSelectedTests()}
-            className={`w-full h-12 ${hasSelectedTests() ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
+            className={`w-full min-h-[3rem] ${hasSelectedTests() ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
             {hasSelectedTests() ? 'Book Slot for Selected Tests' : 'Select tests to continue'}

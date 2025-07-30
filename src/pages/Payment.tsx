@@ -305,7 +305,7 @@ const Payment = () => {
                 }`}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                  <div className="w-[3rem] h-[3rem] bg-muted rounded-full flex items-center justify-center">
                     <CreditCard className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <div className="flex-1">
@@ -329,7 +329,7 @@ const Payment = () => {
                 onClick={() => handlePaymentMethodSelect('cash')}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+                  <div className="w-[3rem] h-[3rem] bg-accent rounded-full flex items-center justify-center">
                     <Banknote className="h-6 w-6 text-accent-foreground" />
                   </div>
                   <div className="flex-1">
@@ -352,7 +352,7 @@ const Payment = () => {
           <Button
             onClick={handleProceedPayment}
             disabled={!canProceed || loading}
-            className="w-full h-14 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+            className="w-full min-h-[3.5rem] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 border-0"
             size="lg"
           >
             {loading ? (
