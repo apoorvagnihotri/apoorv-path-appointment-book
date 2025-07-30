@@ -49,7 +49,7 @@ const Cart = () => {
       </div>
 
       {/* Cart Items */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 pb-48">
         {loading ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">Loading cart...</p>

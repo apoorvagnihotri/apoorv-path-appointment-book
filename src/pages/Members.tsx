@@ -3,6 +3,7 @@ import { ChevronLeft, Plus, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderProgress } from "@/components/ui/order-progress";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
@@ -253,7 +254,7 @@ const Members = () => {
         )}
 
         {/* Continue Button */}
-        <div className="sticky bottom-6">
+        <div className="sticky bottom-24">
           <Button
             onClick={handleProceedToTestSelection}
             disabled={!canContinue}
@@ -272,6 +273,8 @@ const Members = () => {
           </Button>
         </div>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 };

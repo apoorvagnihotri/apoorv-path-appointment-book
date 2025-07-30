@@ -3,6 +3,7 @@ import { ArrowLeft, CreditCard, Banknote, Smartphone, Wallet } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -342,7 +343,7 @@ const Payment = () => {
         </Card>
 
         {/* Confirm Button */}
-        <div className="fixed bottom-6 left-6 right-6 z-10">
+        <div className="fixed bottom-24 left-6 right-6 z-10">
           <Button
             onClick={handleProceedPayment}
             disabled={!canProceed || loading}
@@ -363,6 +364,8 @@ const Payment = () => {
           </Button>
         </div>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 };

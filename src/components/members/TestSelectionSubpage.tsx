@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { OrderProgress } from "@/components/ui/order-progress";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { Separator } from "@/components/ui/separator";
 
 interface Member {
@@ -144,7 +145,7 @@ export const TestSelectionSubpage = ({
         </Card>
 
         {/* Continue Button */}
-        <div className="sticky bottom-6">
+        <div className="sticky bottom-24">
           {!hasSelectedTests() && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-yellow-800">
@@ -162,6 +163,8 @@ export const TestSelectionSubpage = ({
           </Button>
         </div>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 };

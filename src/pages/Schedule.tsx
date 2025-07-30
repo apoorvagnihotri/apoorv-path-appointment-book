@@ -3,6 +3,7 @@ import { ChevronLeft, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderProgress } from "@/components/ui/order-progress";
+import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -238,7 +239,7 @@ const Schedule = () => {
         )}
 
         {/* Continue Button */}
-        <div className="fixed bottom-6 left-6 right-6 z-10">
+        <div className="fixed bottom-24 left-6 right-6 z-10">
           <Button
             onClick={() => navigate('/payment')}
             disabled={!canProceed}
@@ -249,6 +250,8 @@ const Schedule = () => {
           </Button>
         </div>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 };

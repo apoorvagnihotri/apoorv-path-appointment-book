@@ -171,7 +171,7 @@ const Address = () => {
       </div>
 
       {/* Content */}
-      <div className="px-6 py-4">
+      <div className="px-6 py-4 pb-48">
         <div className="space-y-6">
           {/* Progress Stepper */}
           <OrderProgress currentStep={2} />
