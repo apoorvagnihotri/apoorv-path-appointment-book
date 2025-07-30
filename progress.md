@@ -28,6 +28,18 @@
 - Enhanced Account page to display real profile data from database
 - Updated database schema with date_of_birth and sex fields
 - Regenerated TypeScript types to match updated database schema
+- **Major UI/UX Improvements - Cart Flow Layout Overhaul:**
+  - Analyzed and redesigned entire cart booking flow with "window effect" layout
+  - Implemented consistent fixed header + scrollable content + fixed continue buttons pattern
+  - Updated all 6 cart flow pages: Schedule → TestSelectionSubpage → Members → Payment → Cart → Address
+  - Fixed spacing issues: eliminated gaps between continue buttons and bottom navigation
+  - Detached continue buttons from embedded card components for better UX consistency
+  - **Responsive Design Enhancement:** Replaced all px-based values with responsive rem units
+    - Button heights: `h-12` → `min-h-[3rem]`, `h-14` → `min-h-[3.5rem]`
+    - Icon containers: `w-12 h-12` → `w-[3rem] h-[3rem]`
+    - Improved accessibility and scaling across different devices and zoom levels
+  - Applied proper z-index layering: header (z-40), buttons (z-30), bottom nav (z-50)
+  - Used Tailwind spacing classes (pt-20, pb-40, h-screen) for consistent layout structure
 
 
 Problems: 
