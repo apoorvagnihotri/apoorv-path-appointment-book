@@ -168,7 +168,7 @@ const Members = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
@@ -184,77 +184,85 @@ const Members = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
-        {/* Progress Stepper */}
-        <OrderProgress currentStep={3} />
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto pb-32">
+        <div className="px-6 py-6 space-y-6">
+          {/* Progress Stepper */}
+          <OrderProgress currentStep={3} />
 
-        {/* Members List */}
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Select Members</CardTitle>
-              <Button
-                onClick={() => setShowAddForm(!showAddForm)}
-                className="bg-gradient-medical text-white hover:shadow-button"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Member
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-4">
-              {loading ? (
-                <p className="text-center text-muted-foreground">Loading members...</p>
-              ) : (
-                <>
-                  {members.map((member) => (
-                    <MemberCard
-                      key={member.id}
-                      member={member}
-                      isSelected={selectedMembers.includes(member.id)}
-                      onSelect={handleMemberSelection}
-                      onEdit={handleEditMember}
-                    />
-                  ))}
-                </>
+          {/* Members List */}
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Select Members</CardTitle>
+                <Button
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className="bg-gradient-medical text-white hover:shadow-button"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Member
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                {loading ? (
+                  <p className="text-center text-muted-foreground">Loading members...</p>
+                ) : (
+                  <>
+                    {members.map((member) => (
+                      <MemberCard
+                        key={member.id}
+                        member={member}
+                        isSelected={selectedMembers.includes(member.id)}
+                        onSelect={handleMemberSelection}
+                        onEdit={handleEditMember}
+                      />
+                    ))}
+                  </>
+                )}
+              </div>
+
+              {/* Add Member Form */}
+              {showAddForm && (
+                <AddMemberForm
+                  newMember={newMember}
+                  onMemberChange={setNewMember}
+                  onSave={handleAddMember}
+                  onCancel={() => setShowAddForm(false)}
+                />
               )}
+
+              {/* Edit Member Form */}
+              {editingMember && (
+                <EditMemberForm
+                  editingMember={editingMember}
+                  onMemberChange={setEditingMember}
+                  onUpdate={handleUpdateMember}
+                  onCancel={() => setEditingMember(null)}
+                  onRemove={handleRemoveMember}
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Warning message */}
+          {!loading && selectedMembers.length === 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800">
+                Please select at least one member to continue
+              </p>
             </div>
+          )}
+        </div>
+        
+        {/* Scroll indicator shadow */}
+        <div className="absolute bottom-32 left-0 right-0 h-8 bg-gradient-to-t from-background via-background/50 to-transparent pointer-events-none" />
+      </div>
 
-            {/* Add Member Form */}
-            {showAddForm && (
-              <AddMemberForm
-                newMember={newMember}
-                onMemberChange={setNewMember}
-                onSave={handleAddMember}
-                onCancel={() => setShowAddForm(false)}
-              />
-            )}
-
-            {/* Edit Member Form */}
-            {editingMember && (
-              <EditMemberForm
-                editingMember={editingMember}
-                onMemberChange={setEditingMember}
-                onUpdate={handleUpdateMember}
-                onCancel={() => setEditingMember(null)}
-                onRemove={handleRemoveMember}
-              />
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Warning message */}
-        {!loading && selectedMembers.length === 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <p className="text-sm text-yellow-800">
-              Please select at least one member to continue
-            </p>
-          </div>
-        )}
-
-        {/* Continue Button */}
-        <div className="sticky bottom-24">
+      {/* Fixed Continue Button */}
+      <div className="fixed bottom-20 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg">
+        <div className="px-6 py-4">
           <Button
             onClick={handleProceedToTestSelection}
             disabled={!canContinue}

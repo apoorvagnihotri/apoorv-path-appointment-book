@@ -99,7 +99,7 @@ const Schedule = () => {
   const canProceed = selectedDate && selectedTime;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
@@ -115,135 +115,148 @@ const Schedule = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 pb-24 space-y-6">
-        {/* Progress Stepper */}
-        <OrderProgress currentStep={4} />
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-6 py-6 space-y-6">
+          {/* Progress Stepper */}
+          <OrderProgress currentStep={4} />
 
-        {/* Date Selection */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5" />
-              <span>Select Date</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Mobile: Horizontal scroll */}
-            <div className="sm:hidden">
-              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
+          {/* Date Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Calendar className="h-5 w-5" />
+                <span>Select Date</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Mobile: Horizontal scroll */}
+              <div className="sm:hidden">
+                <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1">
+                  {getNextSevenDays().map((day) => (
+                    <button
+                      key={day.date}
+                      onClick={() => setSelectedDate(day.date)}
+                      className={`flex-shrink-0 w-20 p-3 text-center rounded-lg border transition-colors min-h-[80px] flex flex-col justify-center ${
+                        selectedDate === day.date
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className="text-xs font-medium mb-1">{day.display.split(' ')[0]}</div>
+                      <div className="text-sm font-semibold">{day.display.split(' ')[2]}</div>
+                      <div className="text-xs">{day.display.split(' ')[1]}</div>
+                      {day.isToday && (
+                        <div className={`text-xs mt-1 font-medium ${selectedDate === day.date ? 'text-primary-foreground/90' : 'text-primary'}`}>Today</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Desktop: Grid layout */}
+              <div className="hidden sm:grid grid-cols-7 gap-3">
                 {getNextSevenDays().map((day) => (
                   <button
                     key={day.date}
                     onClick={() => setSelectedDate(day.date)}
-                    className={`flex-shrink-0 w-20 p-3 text-center rounded-lg border transition-colors min-h-[80px] flex flex-col justify-center ${
+                    className={`p-3 text-center rounded-lg border transition-colors min-h-[70px] flex flex-col justify-center ${
                       selectedDate === day.date
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'border-border hover:border-primary/50'
                     }`}
                   >
-                    <div className="text-xs font-medium mb-1">{day.display.split(' ')[0]}</div>
+                    <div className="text-xs font-medium">{day.display.split(' ')[0]}</div>
                     <div className="text-sm font-semibold">{day.display.split(' ')[2]}</div>
                     <div className="text-xs">{day.display.split(' ')[1]}</div>
                     {day.isToday && (
-                      <div className={`text-xs mt-1 font-medium ${selectedDate === day.date ? 'text-primary-foreground/90' : 'text-primary'}`}>Today</div>
+                      <div className={`text-xs mt-1 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
                     )}
                   </button>
                 ))}
               </div>
-            </div>
-            
-            {/* Desktop: Grid layout */}
-            <div className="hidden sm:grid grid-cols-7 gap-3">
-              {getNextSevenDays().map((day) => (
-                <button
-                  key={day.date}
-                  onClick={() => setSelectedDate(day.date)}
-                  className={`p-3 text-center rounded-lg border transition-colors min-h-[70px] flex flex-col justify-center ${
-                    selectedDate === day.date
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                >
-                  <div className="text-xs font-medium">{day.display.split(' ')[0]}</div>
-                  <div className="text-sm font-semibold">{day.display.split(' ')[2]}</div>
-                  <div className="text-xs">{day.display.split(' ')[1]}</div>
-                  {day.isToday && (
-                    <div className={`text-xs mt-1 ${selectedDate === day.date ? 'text-primary-foreground/80' : 'text-primary'}`}>Today</div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Time Selection */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="h-5 w-5" />
-              <span>Select Time Slot</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-3">
-              {timeSlots.map((slot) => {
-                const isAvailable = isTimeSlotAvailable(slot);
-                return (
-                  <button
-                    key={slot}
-                    onClick={() => isAvailable && setSelectedTime(slot)}
-                    disabled={!isAvailable}
-                    className={`p-4 text-center rounded-lg border transition-colors min-h-[56px] flex items-center justify-center ${
-                      selectedTime === slot
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : isAvailable
-                        ? 'border-border hover:border-primary/50'
-                        : 'border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50'
-                    }`}
-                  >
-                    <span className="text-sm font-medium">
-                      {slot}
-                      {!isAvailable && selectedDate === new Date().toISOString().split('T')[0] && (
-                        <span className="block text-xs mt-1">Not available today</span>
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Selected Details */}
-        {(selectedDate || selectedTime) && (
-          <Card className="bg-primary/5 border-primary/20">
-            <CardContent className="p-4">
-              <h3 className="font-medium mb-2">Appointment Summary</h3>
-              {selectedDate && (
-                <p className="text-sm text-muted-foreground">
-                  Date: {new Date(selectedDate).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric',
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </p>
-              )}
-              {selectedTime && (
-                <p className="text-sm text-muted-foreground">
-                  Time: {selectedTime}
-                </p>
-              )}
             </CardContent>
           </Card>
-        )}
 
-        {/* Continue Button */}
-        <div className="fixed bottom-24 left-6 right-6 z-10">
+          {/* Time Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Clock className="h-5 w-5" />
+                <span>Select Time Slot</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-3">
+                {timeSlots.map((slot) => {
+                  const isAvailable = isTimeSlotAvailable(slot);
+                  return (
+                    <button
+                      key={slot}
+                      onClick={() => isAvailable && setSelectedTime(slot)}
+                      disabled={!isAvailable}
+                      className={`p-4 text-center rounded-lg border transition-colors min-h-[56px] flex items-center justify-center ${
+                        selectedTime === slot
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : isAvailable
+                          ? 'border-border hover:border-primary/50'
+                          : 'border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                      }`}
+                    >
+                      <span className="text-sm font-medium">
+                        {slot}
+                        {!isAvailable && selectedDate === new Date().toISOString().split('T')[0] && (
+                          <span className="block text-xs mt-1">Not available today</span>
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Selected Details */}
+          {(selectedDate || selectedTime) && (
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="p-4">
+                <h3 className="font-medium mb-2">Appointment Summary</h3>
+                {selectedDate && (
+                  <p className="text-sm text-muted-foreground">
+                    Date: {new Date(selectedDate).toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric',
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
+                )}
+                {selectedTime && (
+                  <p className="text-sm text-muted-foreground">
+                    Time: {selectedTime}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Extra padding to ensure content doesn't get hidden behind the fixed button */}
+          <div className="h-32"></div>
+        </div>
+      </div>
+
+      {/* Fixed Continue Button positioned above BottomNavigation */}
+      <div className="fixed bottom-20 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-10">
+        <div className="px-6 py-4 space-y-2">
+          {!canProceed && (
+            <div className="text-center text-sm text-muted-foreground">
+              Please select both date and time to continue
+            </div>
+          )}
           <Button
             onClick={() => navigate('/payment')}
             disabled={!canProceed}
-            className="w-full h-12 bg-gradient-medical shadow-lg backdrop-blur-sm bg-opacity-95"
+            className={`w-full h-12 ${canProceed ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
             Continue to Payment

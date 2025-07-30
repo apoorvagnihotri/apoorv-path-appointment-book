@@ -186,7 +186,7 @@ const Payment = () => {
   const canProceed = selectedPaymentMethod === 'cash';
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="bg-gradient-medical text-primary-foreground">
         <div className="px-6 py-4">
@@ -204,150 +204,158 @@ const Payment = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 pb-24 space-y-6">
-        {/* Test Booking Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Test Booking Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {(() => {
-              // Group items by member
-              const itemsByMember = filteredCartItems.reduce((acc: any, item) => {
-                const memberId = item.memberId || 'self';
-                const memberName = item.memberInfo?.name || 'You';
-                
-                if (!acc[memberId]) {
-                  acc[memberId] = {
-                    name: memberName,
-                    age: item.memberInfo?.age,
-                    gender: item.memberInfo?.gender,
-                    items: []
-                  };
-                }
-                
-                const displayItem = item.test || item.package || item.service;
-                if (displayItem) {
-                  acc[memberId].items.push({
-                    ...displayItem,
-                    category: item.test?.category || (item.package ? 'Package' : 'Service')
-                  });
-                }
-                
-                return acc;
-              }, {});
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto pb-32">
+        <div className="px-6 py-6 space-y-6">
+          {/* Test Booking Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Test Booking Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(() => {
+                // Group items by member
+                const itemsByMember = filteredCartItems.reduce((acc: any, item) => {
+                  const memberId = item.memberId || 'self';
+                  const memberName = item.memberInfo?.name || 'You';
+                  
+                  if (!acc[memberId]) {
+                    acc[memberId] = {
+                      name: memberName,
+                      age: item.memberInfo?.age,
+                      gender: item.memberInfo?.gender,
+                      items: []
+                    };
+                  }
+                  
+                  const displayItem = item.test || item.package || item.service;
+                  if (displayItem) {
+                    acc[memberId].items.push({
+                      ...displayItem,
+                      category: item.test?.category || (item.package ? 'Package' : 'Service')
+                    });
+                  }
+                  
+                  return acc;
+                }, {});
 
-              return Object.entries(itemsByMember).map(([memberId, memberData]: [string, any]) => (
-                <div key={memberId} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg flex items-center">
-                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                      <span>{memberData.name}</span>
-                      {memberData.age && memberData.gender && (
-                        <span className="text-sm text-muted-foreground ml-2">({memberData.age} yrs, {memberData.gender})</span>
-                      )}
-                      {memberData.name === 'You' && user?.user_metadata?.name && (
-                        <span className="text-sm text-muted-foreground ml-2">({user.user_metadata.name})</span>
-                      )}
-                    </h3>
-                    <span className="text-sm text-muted-foreground">
-                      ₹{memberData.items.reduce((sum: number, item: any) => sum + item.price, 0)}
-                    </span>
-                  </div>
-                  <div className="ml-5 space-y-1">
-                    {memberData.items.map((item: any, itemIndex: number) => (
-                      <div key={`${item.id}-${itemIndex}`} className="flex justify-between items-center py-1">
-                        <div className="flex items-center">
-                          <span className="w-1 h-1 bg-muted-foreground rounded-full mr-3"></span>
-                          <span className="text-sm">{item.name}</span>
+                return Object.entries(itemsByMember).map(([memberId, memberData]: [string, any]) => (
+                  <div key={memberId} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-lg flex items-center">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        <span>{memberData.name}</span>
+                        {memberData.age && memberData.gender && (
+                          <span className="text-sm text-muted-foreground ml-2">({memberData.age} yrs, {memberData.gender})</span>
+                        )}
+                        {memberData.name === 'You' && user?.user_metadata?.name && (
+                          <span className="text-sm text-muted-foreground ml-2">({user.user_metadata.name})</span>
+                        )}
+                      </h3>
+                      <span className="text-sm text-muted-foreground">
+                        ₹{memberData.items.reduce((sum: number, item: any) => sum + item.price, 0)}
+                      </span>
+                    </div>
+                    <div className="ml-5 space-y-1">
+                      {memberData.items.map((item: any, itemIndex: number) => (
+                        <div key={`${item.id}-${itemIndex}`} className="flex justify-between items-center py-1">
+                          <div className="flex items-center">
+                            <span className="w-1 h-1 bg-muted-foreground rounded-full mr-3"></span>
+                            <span className="text-sm">{item.name}</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">₹{item.price}</span>
                         </div>
-                        <span className="text-sm text-muted-foreground">₹{item.price}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
+                ));
+              })()}
+              
+              <div className="border-t pt-3 space-y-2">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>₹{cartSummary.subtotal}</span>
                 </div>
-              ));
-            })()}
-            
-            <div className="border-t pt-3 space-y-2">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>₹{cartSummary.subtotal}</span>
+                <div className="flex justify-between">
+                  <span>Lab Charges</span>
+                  <span>₹{cartSummary.labCharges}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Home Collection</span>
+                  <span>₹{cartSummary.homeCollection}</span>
+                </div>
+                <div className="flex justify-between font-bold text-lg border-t pt-2">
+                  <span>Total</span>
+                  <span>₹{cartSummary.total}</span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span>Lab Charges</span>
-                <span>₹{cartSummary.labCharges}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Home Collection</span>
-                <span>₹{cartSummary.homeCollection}</span>
-              </div>
-              <div className="flex justify-between font-bold text-lg border-t pt-2">
-                <span>Total</span>
-                <span>₹{cartSummary.total}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Payment Method Selection */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Select Payment Method</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Online Payment */}
-            <div 
-              className={`border-2 rounded-lg p-4 transition-colors relative ${
-                'border-muted bg-muted/20 cursor-not-allowed opacity-60'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                  <CreditCard className="h-6 w-6 text-muted-foreground" />
+          {/* Payment Method Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Select Payment Method</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Online Payment */}
+              <div 
+                className={`border-2 rounded-lg p-4 transition-colors relative ${
+                  'border-muted bg-muted/20 cursor-not-allowed opacity-60'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                    <CreditCard className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-muted-foreground">Online Payment</h3>
+                    <p className="text-sm text-muted-foreground">UPI, Card, Wallet options</p>
+                  </div>
+                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
+                    Coming Soon
+                  </Badge>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-medium text-muted-foreground">Online Payment</h3>
-                  <p className="text-sm text-muted-foreground">UPI, Card, Wallet options</p>
-                </div>
-                <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                  Coming Soon
-                </Badge>
               </div>
-            </div>
 
 
-            {/* Cash Payment */}
-            <div 
-              className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                selectedPaymentMethod === 'cash' 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-border hover:border-primary/50'
-              }`}
-              onClick={() => handlePaymentMethodSelect('cash')}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
-                  <Banknote className="h-6 w-6 text-accent-foreground" />
+              {/* Cash Payment */}
+              <div 
+                className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
+                  selectedPaymentMethod === 'cash' 
+                    ? 'border-primary bg-primary/5' 
+                    : 'border-border hover:border-primary/50'
+                }`}
+                onClick={() => handlePaymentMethodSelect('cash')}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
+                    <Banknote className="h-6 w-6 text-accent-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium">Pay by Cash / Card / UPI</h3>
+                    <p className="text-sm text-muted-foreground">Pay during sample collection</p>
+                  </div>
+                  {selectedPaymentMethod === 'cash' && (
+                    <Badge variant="default">Selected</Badge>
+                  )}
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-medium">Pay by Cash / Card / UPI</h3>
-                  <p className="text-sm text-muted-foreground">Pay during sample collection</p>
-                </div>
-                {selectedPaymentMethod === 'cash' && (
-                  <Badge variant="default">Selected</Badge>
-                )}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Scroll indicator shadow */}
+        <div className="absolute bottom-32 left-0 right-0 h-8 bg-gradient-to-t from-background via-background/50 to-transparent pointer-events-none" />
+      </div>
 
-        {/* Confirm Button */}
-        <div className="fixed bottom-24 left-6 right-6 z-10">
+      {/* Fixed Confirm Button */}
+      <div className="fixed bottom-20 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg">
+        <div className="px-6 py-4">
           <Button
             onClick={handleProceedPayment}
             disabled={!canProceed || loading}
-            className="w-full h-14 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold text-lg shadow-xl hover:shadow-2xl backdrop-blur-sm bg-opacity-95 transform hover:scale-[1.02] transition-all duration-200 border-0"
+            className="w-full h-14 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-200 border-0"
             size="lg"
           >
             {loading ? (
