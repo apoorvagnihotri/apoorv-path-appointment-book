@@ -36,9 +36,10 @@ export const useProfile = () => {
         .from('profiles')
         .select('*')
         .eq('id', currentUser.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
+        console.error('Error fetching profile:', error);
         throw error;
       }
 
@@ -47,6 +48,36 @@ export const useProfile = () => {
           ...data,
           email: currentUser.email || ''
         });
+      } else {
+        // Profile doesn't exist (user registered before trigger was created)
+        // Create one from user metadata
+        console.log('No profile found, creating initial profile for existing user');
+        const newProfile = {
+          id: currentUser.id,
+          full_name: currentUser.user_metadata?.full_name || '',
+          mobile_number: currentUser.user_metadata?.mobile_number || currentUser.phone || '',
+        };
+
+        try {
+          const { data: savedProfile, error: saveError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+
+          if (saveError) {
+            console.error('Error creating profile for existing user:', saveError);
+            throw saveError;
+          }
+
+          setProfile({
+            ...savedProfile,
+            email: currentUser.email || ''
+          });
+        } catch (createError) {
+          console.error('Failed to create profile for existing user:', createError);
+          throw createError;
+        }
       }
     } catch (error: any) {
       console.error('Error fetching profile:', error);
