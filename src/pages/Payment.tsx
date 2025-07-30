@@ -219,6 +219,8 @@ const Payment = () => {
                 if (!acc[memberId]) {
                   acc[memberId] = {
                     name: memberName,
+                    age: item.memberInfo?.age,
+                    gender: item.memberInfo?.gender,
                     items: []
                   };
                 }
@@ -239,7 +241,13 @@ const Payment = () => {
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg flex items-center">
                       <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                      {memberData.name}
+                      <span>{memberData.name}</span>
+                      {memberData.age && memberData.gender && (
+                        <span className="text-sm text-muted-foreground ml-2">({memberData.age} yrs, {memberData.gender})</span>
+                      )}
+                      {memberData.name === 'You' && user?.user_metadata?.name && (
+                        <span className="text-sm text-muted-foreground ml-2">({user.user_metadata.name})</span>
+                      )}
                     </h3>
                     <span className="text-sm text-muted-foreground">
                       ₹{memberData.items.reduce((sum: number, item: any) => sum + item.price, 0)}

@@ -202,14 +202,6 @@ const Members = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!loading && selectedMembers.length === 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                <p className="text-sm text-yellow-800">
-                  Please select at least one member to continue
-                </p>
-              </div>
-            )}
-            
             <div className="space-y-4">
               {loading ? (
                 <p className="text-center text-muted-foreground">Loading members...</p>
@@ -250,6 +242,15 @@ const Members = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Warning message */}
+        {!loading && selectedMembers.length === 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p className="text-sm text-yellow-800">
+              Please select at least one member to continue
+            </p>
+          </div>
+        )}
 
         {/* Continue Button */}
         <div className="sticky bottom-6">

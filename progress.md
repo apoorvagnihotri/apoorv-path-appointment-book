@@ -22,3 +22,7 @@ Problems:
   - The search bar in the home page isn't what I am expecting it to be, but it works as expected in /tests
   - The current flow of cart isn't correctly working, need to fix all the pages.
   - Login page takes a lot of time to load.
+
+
+Furture Plans:
+- Allow the user to sign up with numbers that are whatsapp supported. Tell them that this will be used to send them reports.

@@ -1,13 +1,15 @@
-import { User, FileText, Calendar, LogOut, Phone, MapPin, Edit } from "lucide-react";
+import { User, FileText, Calendar, LogOut, Phone, MapPin, Edit, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 import { useNavigate } from "react-router-dom";
 
 const Account = () => {
   const { user, signOut } = useAuth();
+  const { profile } = useProfile();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -20,7 +22,19 @@ const Account = () => {
       icon: User,
       title: "My Profile",
       subtitle: "Personal information",
-      onClick: () => console.log("Navigate to profile")
+      onClick: () => navigate('/profile')
+    },
+    {
+      icon: MapPin,
+      title: "My Addresses",
+      subtitle: "Manage delivery addresses",
+      onClick: () => navigate('/manage-addresses')
+    },
+    {
+      icon: Users,
+      title: "Family Members",
+      subtitle: "Manage family members",
+      onClick: () => navigate('/manage-members')
     },
     {
       icon: Calendar,
@@ -59,10 +73,18 @@ const Account = () => {
               <User className="h-8 w-8 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-foreground">{user?.email || "Guest User"}</h2>
-              <p className="text-sm text-muted-foreground">{user?.phone || "Phone not added"}</p>
+              <h2 className="text-lg font-semibold text-foreground">
+                {profile?.full_name || user?.email || "Guest User"}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {profile?.mobile_number || user?.phone || "Phone not added"}
+              </p>
             </div>
-            <Button size="sm" variant="outline">
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => navigate('/profile')}
+            >
               <Edit className="h-4 w-4" />
             </Button>
           </div>
@@ -70,7 +92,7 @@ const Account = () => {
           <div className="space-y-2 text-sm">
             <div className="flex items-center space-x-2 text-muted-foreground">
               <Phone className="h-4 w-4" />
-              <span>{user?.phone || "Phone not added"}</span>
+              <span>{profile?.mobile_number || user?.phone || "Phone not added"}</span>
             </div>
             <div className="flex items-center space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
