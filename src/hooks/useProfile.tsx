@@ -21,64 +21,32 @@ export const useProfile = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchProfile = async () => {
-    if (!user) {
-      console.log('No user found, skipping profile fetch');
-      return;
-    }
+    if (!user) return;
 
-    console.log('Fetching profile for user:', user.id);
     setLoading(true);
     try {
       // First check if user is authenticated
       const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (!currentUser) {
-        console.log('No authenticated user found');
         setLoading(false);
         return;
       }
-
-      console.log('Authenticated user found:', currentUser.id);
 
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', currentUser.id)
-        .maybeSingle();
-
-      console.log('Profile query result:', { data, error });
+        .single();
 
       if (error) {
-        console.error('Profile fetch error:', error);
-        // If profile doesn't exist, create a basic one from user metadata
-        if (error.code === 'PGRST116' || error.message?.includes('No rows found')) {
-          const newProfile = {
-            id: currentUser.id,
-            full_name: currentUser.user_metadata?.full_name || '',
-            mobile_number: currentUser.user_metadata?.mobile_number || currentUser.phone || '',
-            email: currentUser.email || '',
-          };
-          console.log('Creating new profile from user metadata:', newProfile);
-          setProfile(newProfile);
-        } else {
-          throw error;
-        }
-      } else if (data) {
-        const profileData = {
+        throw error;
+      }
+
+      if (data) {
+        setProfile({
           ...data,
           email: currentUser.email || ''
-        };
-        console.log('Setting profile data:', profileData);
-        setProfile(profileData);
-      } else {
-        // Create initial profile if no data returned
-        const newProfile = {
-          id: currentUser.id,
-          full_name: currentUser.user_metadata?.full_name || '',
-          mobile_number: currentUser.user_metadata?.mobile_number || currentUser.phone || '',
-          email: currentUser.email || '',
-        };
-        console.log('No profile data, creating from user metadata:', newProfile);
-        setProfile(newProfile);
+        });
       }
     } catch (error: any) {
       console.error('Error fetching profile:', error);

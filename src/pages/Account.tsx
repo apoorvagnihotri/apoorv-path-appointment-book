@@ -12,11 +12,6 @@ const Account = () => {
   const { profile, loading: profileLoading } = useProfile();
   const navigate = useNavigate();
 
-  // Debug logging
-  console.log('Account page - user:', user);
-  console.log('Account page - profile:', profile);
-  console.log('Account page - profileLoading:', profileLoading);
-
   const handleLogout = async () => {
     await signOut();
     navigate('/');
