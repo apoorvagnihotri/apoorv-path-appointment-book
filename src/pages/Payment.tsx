@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, CreditCard, Banknote, Smartphone, Wallet } from "lucide-react";
+import { ArrowLeft, CreditCard, Banknote, Smartphone, Wallet, MapPin, Home, Building2, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +53,15 @@ const Payment = () => {
   
   const filteredCartItems = getFilteredCartItems();
   
-  // Calculate cart summary based on filtered items
+  const { user } = useAuth();
+  
+  // Get collection and appointment details from session storage
+  const collectionType = sessionStorage.getItem('collectionType') || 'home';
+  const selectedAddress = JSON.parse(sessionStorage.getItem('selectedAddress') || 'null');
+  const selectedDate = sessionStorage.getItem('selectedDate');
+  const selectedTime = sessionStorage.getItem('selectedTime');
+  
+  // Calculate cart summary based on filtered items and collection type
   const calculateFilteredTotal = () => {
     return filteredCartItems.reduce((total, item) => {
       const itemData = item.test || item.package || item.service;
@@ -62,13 +70,14 @@ const Payment = () => {
   };
   
   const filteredSubtotal = calculateFilteredTotal();
+  const homeCollectionCharges = collectionType === 'home' ? 100 : 0;
   const cartSummary = {
     subtotal: filteredSubtotal,
     labCharges: 50,
-    homeCollection: 100,
-    total: filteredSubtotal + 50 + 100
+    homeCollection: homeCollectionCharges,
+    total: filteredSubtotal + 50 + homeCollectionCharges
   };
-  const { user } = useAuth();
+  
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>(null);
   const [selectedOnlineType, setSelectedOnlineType] = useState<OnlinePaymentType>(null);
   const [loading, setLoading] = useState(false);
@@ -129,7 +138,21 @@ const Payment = () => {
         home_collection_charges: cartSummary.homeCollection,
         appointment_date: selectedDate,
         appointment_time: selectedTime,
-        collection_type: 'home'
+        collection_type: collectionType,
+        collection_address: collectionType === 'home' && selectedAddress ? {
+          first_name: selectedAddress.first_name,
+          last_name: selectedAddress.last_name,
+          phone: selectedAddress.phone,
+          street_address: selectedAddress.street_address,
+          city: selectedAddress.city,
+          pincode: selectedAddress.pincode,
+          landmark: selectedAddress.landmark
+        } : null,
+        customer_details: {
+          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
+          email: user.email,
+          phone: user.user_metadata?.mobile_number || selectedAddress?.phone || null
+        }
       };
 
       const { data: order, error: orderError } = await supabase
@@ -151,7 +174,14 @@ const Payment = () => {
           item_price: displayItem!.price,
           quantity: item.quantity || 1,
           member_id: item.memberId,
-          member_name: item.memberInfo?.name
+          member_name: item.memberInfo?.name,
+          member_details: item.memberInfo ? {
+            id: item.memberInfo.id,
+            name: item.memberInfo.name,
+            age: item.memberInfo.age,
+            gender: item.memberInfo.gender,
+            relationship: item.memberInfo.relationship
+          } : null
         };
       });
 
@@ -168,6 +198,8 @@ const Payment = () => {
       sessionStorage.removeItem('memberTestSelections');
       sessionStorage.removeItem('selectedMembers');
       sessionStorage.removeItem('selectedMemberDetails');
+      sessionStorage.removeItem('collectionType');
+      sessionStorage.removeItem('selectedAddress');
 
       // Show success message
       toast.success("Booking confirmed successfully!");
@@ -280,15 +312,107 @@ const Payment = () => {
                   <span>Lab Charges</span>
                   <span>₹{cartSummary.labCharges}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Home Collection</span>
-                  <span>₹{cartSummary.homeCollection}</span>
-                </div>
+                {collectionType === 'home' && (
+                  <div className="flex justify-between">
+                    <span>Home Collection</span>
+                    <span>₹{cartSummary.homeCollection}</span>
+                  </div>
+                )}
                 <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>Total</span>
                   <span>₹{cartSummary.total}</span>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Collection & Appointment Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Collection & Appointment Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Collection Type */}
+              <div className="flex items-center space-x-3 p-3 bg-accent/20 rounded-lg">
+                {collectionType === 'home' ? (
+                  <Home className="h-5 w-5 text-primary" />
+                ) : (
+                  <Building2 className="h-5 w-5 text-primary" />
+                )}
+                <div className="flex-1">
+                  <h3 className="font-medium">
+                    {collectionType === 'home' ? 'Home Collection' : 'Lab Collection'}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {collectionType === 'home' 
+                      ? 'Our team will visit your location' 
+                      : 'Visit our lab for sample collection'
+                    }
+                  </p>
+                </div>
+              </div>
+
+              {/* Address Details - Only for Home Collection */}
+              {collectionType === 'home' && selectedAddress && (
+                <div className="flex items-start space-x-3 p-3 border rounded-lg">
+                  <MapPin className="h-5 w-5 text-primary mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="font-medium mb-1">Collection Address</h3>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p className="font-medium text-foreground">
+                        {selectedAddress.first_name} {selectedAddress.last_name}
+                      </p>
+                      <p>{selectedAddress.street_address}</p>
+                      <p>{selectedAddress.city} - {selectedAddress.pincode}</p>
+                      {selectedAddress.landmark && <p>Landmark: {selectedAddress.landmark}</p>}
+                      <p>Phone: {selectedAddress.phone}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Lab Address - Only for Lab Collection */}
+              {collectionType === 'lab' && (
+                <div className="flex items-start space-x-3 p-3 border rounded-lg">
+                  <Building2 className="h-5 w-5 text-primary mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="font-medium mb-1">Lab Address</h3>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p className="font-medium text-foreground">Apoorv Path Lab</p>
+                      <p>123 Medical Center Road</p>
+                      <p>City Center, Mumbai - 400001</p>
+                      <p>Phone: +91 98765 43210</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Appointment Date & Time */}
+              {selectedDate && selectedTime && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <div>
+                      <h3 className="font-medium">Date</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(selectedDate).toLocaleDateString('en-IN', {
+                          weekday: 'short',
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                    <Clock className="h-5 w-5 text-primary" />
+                    <div>
+                      <h3 className="font-medium">Time</h3>
+                      <p className="text-sm text-muted-foreground">{selectedTime}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

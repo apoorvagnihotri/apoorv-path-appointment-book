@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle, Calendar, Clock, MapPin, User, Phone, CreditCard, FileText } from "lucide-react";
+import { CheckCircle, Calendar, Clock, MapPin, User, Phone, CreditCard, FileText, Home, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,8 @@ interface OrderDetails {
   appointment_date: string;
   appointment_time: string;
   collection_type: string;
+  collection_address?: any;
+  customer_details?: any;
   created_at: string;
 }
 
@@ -30,6 +32,8 @@ interface OrderItem {
   item_type: string;
   item_price: number;
   quantity: number;
+  member_name?: string;
+  member_details?: any;
 }
 
 const BookingConfirmation = () => {
@@ -146,15 +150,24 @@ const BookingConfirmation = () => {
           <CardContent className="space-y-3">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Name</span>
-              <span className="font-medium">{user?.user_metadata?.full_name || "Patient"}</span>
+              <span className="font-medium">
+                {orderDetails.customer_details?.name || user?.user_metadata?.full_name || "Patient"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Email</span>
-              <span className="font-medium">{user?.email}</span>
+              <span className="font-medium">
+                {orderDetails.customer_details?.email || user?.email}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Phone</span>
-              <span className="font-medium">{user?.user_metadata?.mobile_number || "Not provided"}</span>
+              <span className="font-medium">
+                {orderDetails.customer_details?.phone || 
+                 orderDetails.collection_address?.phone || 
+                 user?.user_metadata?.mobile_number || 
+                 "Not provided"}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -178,9 +191,18 @@ const BookingConfirmation = () => {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Collection Type</span>
-              <Badge variant="secondary" className="bg-blue-50 text-blue-700">
-                <MapPin className="h-3 w-3 mr-1" />
-                Home Collection
+              <Badge variant="secondary" className={orderDetails.collection_type === 'home' ? "bg-blue-50 text-blue-700" : "bg-green-50 text-green-700"}>
+                {orderDetails.collection_type === 'home' ? (
+                  <>
+                    <Home className="h-3 w-3 mr-1" />
+                    Home Collection
+                  </>
+                ) : (
+                  <>
+                    <Building2 className="h-3 w-3 mr-1" />
+                    Lab Collection
+                  </>
+                )}
               </Badge>
             </div>
           </CardContent>
@@ -190,15 +212,70 @@ const BookingConfirmation = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <MapPin className="h-5 w-5" />
-              <span>Sample Collection Address</span>
+              {orderDetails.collection_type === 'home' ? (
+                <Home className="h-5 w-5" />
+              ) : (
+                <Building2 className="h-5 w-5" />
+              )}
+              <span>
+                {orderDetails.collection_type === 'home' 
+                  ? 'Sample Collection Address' 
+                  : 'Lab Visit Details'
+                }
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
-              Our technician will visit your registered address for sample collection.
-              Please ensure someone is available at the scheduled time.
-            </p>
+            {orderDetails.collection_type === 'home' ? (
+              orderDetails.collection_address ? (
+                <div className="space-y-2">
+                  <p className="font-medium">
+                    {orderDetails.collection_address.first_name} {orderDetails.collection_address.last_name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {orderDetails.collection_address.street_address}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {orderDetails.collection_address.city} - {orderDetails.collection_address.pincode}
+                  </p>
+                  {orderDetails.collection_address.landmark && (
+                    <p className="text-sm text-muted-foreground">
+                      Landmark: {orderDetails.collection_address.landmark}
+                    </p>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    Phone: {orderDetails.collection_address.phone}
+                  </p>
+                  <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      Our technician will visit this address for sample collection.
+                      Please ensure someone is available at the scheduled time.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">
+                  Our technician will visit your registered address for sample collection.
+                  Please ensure someone is available at the scheduled time.
+                </p>
+              )
+            ) : (
+              <div className="space-y-2">
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <h3 className="font-medium text-green-800 mb-2">Lab Address:</h3>
+                  <p className="text-sm text-green-700">Apoorv Path Lab</p>
+                  <p className="text-sm text-green-700">123 Medical Center Road</p>
+                  <p className="text-sm text-green-700">City Center, Mumbai - 400001</p>
+                  <p className="text-sm text-green-700">Phone: +91 98765 43210</p>
+                </div>
+                <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-800">
+                    Please visit our lab at the scheduled time for sample collection.
+                    Bring a valid ID and your booking reference.
+                  </p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -211,18 +288,54 @@ const BookingConfirmation = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {orderItems.map((item) => (
-              <div key={item.id} className="flex justify-between items-center">
-                <div>
-                  <p className="font-medium">{item.item_name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {item.item_type.charAt(0).toUpperCase() + item.item_type.slice(1)}
-                    {item.quantity > 1 && ` × ${item.quantity}`}
-                  </p>
+            {(() => {
+              // Group items by member
+              const itemsByMember = orderItems.reduce((acc: any, item) => {
+                const memberId = item.member_details?.id || 'self';
+                const memberName = item.member_name || item.member_details?.name || 'You';
+                
+                if (!acc[memberId]) {
+                  acc[memberId] = {
+                    name: memberName,
+                    details: item.member_details,
+                    items: []
+                  };
+                }
+                
+                acc[memberId].items.push(item);
+                return acc;
+              }, {});
+
+              return Object.entries(itemsByMember).map(([memberId, memberData]: [string, any]) => (
+                <div key={memberId} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg flex items-center">
+                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                      <span>{memberData.name}</span>
+                      {memberData.details && (
+                        <span className="text-sm text-muted-foreground ml-2">
+                          ({memberData.details.age} yrs, {memberData.details.gender})
+                        </span>
+                      )}
+                    </h3>
+                    <span className="text-sm text-muted-foreground">
+                      ₹{memberData.items.reduce((sum: number, item: any) => sum + item.item_price, 0)}
+                    </span>
+                  </div>
+                  <div className="ml-5 space-y-1">
+                    {memberData.items.map((item: OrderItem, itemIndex: number) => (
+                      <div key={`${item.id}-${itemIndex}`} className="flex justify-between items-center py-1">
+                        <div className="flex items-center">
+                          <span className="w-1 h-1 bg-muted-foreground rounded-full mr-3"></span>
+                          <span className="text-sm">{item.item_name}</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">₹{item.item_price}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p className="font-semibold">₹{item.item_price}</p>
-              </div>
-            ))}
+              ));
+            })()}
           </CardContent>
         </Card>
 
@@ -243,10 +356,12 @@ const BookingConfirmation = () => {
               <span>Lab Charges</span>
               <span>₹{orderDetails.lab_charges}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Home Collection</span>
-              <span>₹{orderDetails.home_collection_charges}</span>
-            </div>
+            {orderDetails.collection_type === 'home' && orderDetails.home_collection_charges > 0 && (
+              <div className="flex justify-between">
+                <span>Home Collection</span>
+                <span>₹{orderDetails.home_collection_charges}</span>
+              </div>
+            )}
             <Separator />
             <div className="flex justify-between text-lg font-bold">
               <span>Total Amount</span>
@@ -276,8 +391,19 @@ const BookingConfirmation = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-blue-700">• Keep your booking reference handy</p>
-            <p className="text-sm text-blue-700">• Be available at the scheduled time</p>
-            <p className="text-sm text-blue-700">• Keep the payment amount ready</p>
+            {orderDetails.collection_type === 'home' ? (
+              <>
+                <p className="text-sm text-blue-700">• Be available at the scheduled time</p>
+                <p className="text-sm text-blue-700">• Keep the payment amount ready</p>
+                <p className="text-sm text-blue-700">• Ensure the collection address is accessible</p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-blue-700">• Visit our lab at the scheduled time</p>
+                <p className="text-sm text-blue-700">• Bring a valid photo ID</p>
+                <p className="text-sm text-blue-700">• Carry the exact payment amount</p>
+              </>
+            )}
             <p className="text-sm text-blue-700">• Fast for 12 hours if required for your tests</p>
             <p className="text-sm text-blue-700">• Contact us if you need to reschedule</p>
           </CardContent>
