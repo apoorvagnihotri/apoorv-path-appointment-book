@@ -189,9 +189,9 @@ const Tests = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
+    <div className="min-h-screen bg-background relative">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-gradient-medical text-primary-foreground z-40">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -205,25 +205,14 @@ const Tests = () => {
                 {searchParams.get('category') ? `${searchParams.get('category')} Tests & Packages` : 'Tests & Packages'}
               </h1>
             </div>
-            
-            {/* Cart Button */}
-            <button
-              onClick={() => navigate('/cart')}
-              className="relative p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                  {cartItems.length}
-                </span>
-              )}
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="px-6 mt-6 mb-6">
+      {/* Scrollable Content with Tailwind spacing classes */}
+      <div className="overflow-y-auto pt-20 pb-40 h-screen">
+        {/* Search Bar */}
+        <div className="px-6 mt-6 mb-6">
         <Card className="p-4 shadow-card">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -289,6 +278,23 @@ const Tests = () => {
           </div>
         )}
       </div>
+      </div>
+
+      {/* Fixed Go to Cart Button positioned above BottomNavigation */}
+      {cartItems.length > 0 && (
+        <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
+          <div className="px-6 py-4">
+            <Button
+              onClick={() => navigate('/cart')}
+              className="w-full min-h-[3rem] bg-gradient-medical hover:shadow-button"
+              size="lg"
+            >
+              <ShoppingCart className="h-5 w-5 mr-2" />
+              Go to Cart ({cartItems.length} {cartItems.length === 1 ? 'item' : 'items'})
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Dialog */}
       <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}>
