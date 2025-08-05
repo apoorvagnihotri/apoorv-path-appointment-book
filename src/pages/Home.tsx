@@ -160,9 +160,9 @@ const Home = () => {
       onClick: () => navigate("/services"),
     },
     {
-      title: "Upload Prescription",
-      icon: Camera,
-      onClick: () => navigate("/prescription"),
+      title: "Get Help (WhatsApp)",
+      icon: MessageSquare,
+      onClick: handleWhatsApp,
     },
   ];
 
@@ -193,16 +193,12 @@ const Home = () => {
               </Button>
               
               <Button
-                onClick={handleWhatsApp}
+                onClick={() => navigate("/prescription")}
                 size="icon"
                 variant="secondary"
-                className="bg-green-500/20 hover:bg-green-500/30 border-green-300/30 shadow-md text-white"
+                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
               >
-                <img 
-                  src="/lovable-uploads/1cccab30-4cdc-463a-a398-09fa51a7c4e0.png" 
-                  alt="WhatsApp" 
-                  className="h-5 w-5"
-                />
+                <Camera className="h-5 w-5" />
               </Button>
               
               <Button
@@ -291,6 +287,8 @@ const Home = () => {
               iconBgColor = "bg-blue-50";
             } else if (service.title === "Other Services") {
               iconBgColor = "bg-green-50";
+            } else if (service.title === "WhatsApp") {
+              iconBgColor = "bg-teal-50";
             }
 
             return (
