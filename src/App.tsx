@@ -16,6 +16,7 @@ import Services from "./pages/Services";
 import Prescription from "./pages/Prescription";
 import TestDetails from "./pages/TestDetails";
 import Bookings from "./pages/Bookings";
+import BookingDetails from "./pages/BookingDetails";
 import Account from "./pages/Account";
 import Cart from "./pages/Cart";
 import Address from "./pages/Address";
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/payment" element={<Payment />} />
               <Route path="/booking-confirmation" element={<BookingConfirmation />} />
               <Route path="/bookings" element={<Bookings />} />
+              <Route path="/booking/:id" element={<BookingDetails />} />
               <Route path="/account" element={<Account />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/manage-addresses" element={<ManageAddresses />} />
