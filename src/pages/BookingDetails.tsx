@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Calendar, Clock, MapPin, Phone, User, FileText, Download } from "lucide-react";
+import { ChevronLeft, Calendar, Clock, MapPin, Phone, User, FileText, Download, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -95,6 +95,7 @@ const BookingDetails = () => {
       case "confirmed": return "bg-accent text-accent-foreground";
       case "pending": return "bg-orange-500 text-white";
       case "completed": return "bg-primary text-primary-foreground";
+      case "canceled": return "bg-red-500 text-white";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -104,6 +105,7 @@ const BookingDetails = () => {
       case "confirmed": return "Confirmed";
       case "pending": return "Pending";
       case "completed": return "Completed";
+      case "canceled": return "Canceled";
       default: return "Unknown";
     }
   };
@@ -119,6 +121,36 @@ const BookingDetails = () => {
 
   const formatTime = (timeString: string) => {
     return timeString || 'Not scheduled';
+  };
+
+  const cancelBooking = async () => {
+    if (!order) return;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to cancel booking #${order.order_number}? This action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: 'canceled' })
+        .eq('id', order.id)
+        .eq('user_id', user!.id);
+
+      if (error) throw error;
+
+      // Update the local order state
+      setOrder(prevOrder => 
+        prevOrder ? { ...prevOrder, status: 'canceled' } : null
+      );
+
+      alert('Booking canceled successfully.');
+    } catch (error) {
+      console.error('Error canceling booking:', error);
+      alert('Failed to cancel booking. Please try again.');
+    }
   };
 
   // Redirect if not authenticated
@@ -346,6 +378,23 @@ const BookingDetails = () => {
               <FileText className="h-4 w-4 mr-2" />
               View Report
             </Button>
+          )}
+
+          {(order.status === "pending" || order.status === "confirmed") && (
+            <Button
+              variant="outline"
+              className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300"
+              onClick={cancelBooking}
+            >
+              <X className="h-4 w-4 mr-2" />
+              Cancel Booking
+            </Button>
+          )}
+
+          {order.status === "canceled" && (
+            <div className="text-center py-4">
+              <p className="text-red-600 font-medium">This booking has been canceled</p>
+            </div>
           )}
           
           <Button

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Clock, MapPin, Phone } from "lucide-react";
+import { Calendar, Clock, MapPin, Phone, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -103,11 +103,53 @@ const Bookings = () => {
     }
   };
 
+  const cancelBooking = async (orderId: string) => {
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: 'canceled' })
+        .eq('id', orderId)
+        .eq('user_id', user!.id);
+
+      if (error) throw error;
+
+      // Update the orders state to reflect the cancellation
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order.id === orderId ? { ...order, status: 'canceled' } : order
+        )
+      );
+
+      // Also update pastOrders if they are loaded
+      if (showPastOrders) {
+        setPastOrders(prevOrders => 
+          prevOrders.map(order => 
+            order.id === orderId ? { ...order, status: 'canceled' } : order
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error canceling booking:', error);
+      alert('Failed to cancel booking. Please try again.');
+    }
+  };
+
+  const handleCancelBooking = (orderId: string, orderNumber: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to cancel booking #${orderNumber}? This action cannot be undone.`
+    );
+    
+    if (confirmed) {
+      cancelBooking(orderId);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed": return "bg-accent text-accent-foreground";
       case "pending": return "bg-orange-500 text-white";
       case "completed": return "bg-primary text-primary-foreground";
+      case "canceled": return "bg-red-500 text-white";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -117,6 +159,7 @@ const Bookings = () => {
       case "confirmed": return "Confirmed";
       case "pending": return "Pending";
       case "completed": return "Completed";
+      case "canceled": return "Canceled";
       default: return "Unknown";
     }
   };
@@ -234,6 +277,17 @@ const Bookings = () => {
                             className="flex-1"
                           >
                             View Report
+                          </Button>
+                        )}
+                        {(order.status === "pending" || order.status === "confirmed") && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleCancelBooking(order.id, order.order_number)}
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Cancel
                           </Button>
                         )}
                         <Button
