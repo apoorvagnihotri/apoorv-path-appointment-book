@@ -75,6 +75,27 @@ Furture Plans:
 
 ---
 
+## Progress Update - 2025-08-07 (Afternoon)
+
+### Android APK Build Setup Complete
+- Successfully configured Capacitor for Android development
+- Added Android platform to the project using `npx cap add android`
+- Resolved Java compatibility issues by using Android Studio's JBR (JetBrains Runtime)
+- Updated Gradle to version 8.10.2 for better Java 21 support
+- Updated Android Gradle Plugin to version 8.7.0
+- **Successfully built debug APK** for client testing
+- APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
+- Configured proper `.gitignore` rules for Android project (commits config files, ignores build artifacts)
+- Ready for client testing on Android devices
+
+### Development Environment
+- Using Android Studio installation at `/home/apoorv/Downloads/android-studio/bin`
+- Java environment: Android Studio's JBR 21.0.6
+- Target SDK: Android API 33
+- Minimum SDK: Android API 22 (supports Android 5.1+)
+
 **Next Steps:**
-- Consider adding support for "paid" status and refund logic in the future.
-- Add more granular status transitions and admin controls if needed.
+- Test APK with client on Android device
+- Consider adding support for "paid" status and refund logic in the future
+- Add more granular status transitions and admin controls if needed
+- Potentially create release APK with signing for production distribution
