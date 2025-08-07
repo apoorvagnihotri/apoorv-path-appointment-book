@@ -56,3 +56,25 @@ Problems:
 
 Furture Plans:
 - Allow the user to sign up with numbers that are whatsapp supported. Tell them that this will be used to send them reports.
+
+## Progress Update - 2025-08-07
+
+### Booking Cancellation Feature
+- Added support for canceling bookings from both the bookings list and booking details page.
+- Updated status handling to include `canceled` (with red badge and text).
+- Only bookings with status `pending` or `confirmed` can be canceled by the user.
+- Added confirmation dialog before canceling a booking.
+- UI updates immediately after cancellation, reflecting the new status.
+- Past bookings and future bookings are handled separately, and cancellation updates both lists if needed.
+- Booking details page now also shows a cancel button for eligible bookings and a message for canceled bookings.
+
+### Other Improvements
+- Bookings page now shows only future bookings by default, with a button to load past bookings.
+- Improved section headers and visual distinction between upcoming and past bookings.
+- All status badges and logic updated to support new and future statuses.
+
+---
+
+**Next Steps:**
+- Consider adding support for "paid" status and refund logic in the future.
+- Add more granular status transitions and admin controls if needed.
