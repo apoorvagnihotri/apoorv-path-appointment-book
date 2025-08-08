@@ -6,9 +6,10 @@ interface ServiceCardProps {
   icon: LucideIcon;
   onClick?: () => void;
   className?: string;
+  iconColor?: string;
 }
 
-export function ServiceCard({ title, icon: Icon, onClick, className }: ServiceCardProps) {
+export function ServiceCard({ title, icon: Icon, onClick, className, iconColor = "text-primary" }: ServiceCardProps) {
   return (
     <button
       onClick={onClick}
@@ -22,7 +23,7 @@ export function ServiceCard({ title, icon: Icon, onClick, className }: ServiceCa
         className
       )}
     >
-      <Icon className="h-12 w-12 text-primary mb-3" />
+      <Icon className={cn("h-12 w-12 mb-3", iconColor)} />
       <span className="text-sm font-medium text-foreground text-center leading-tight">
         {title}
       </span>

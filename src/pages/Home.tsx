@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { Search, PhoneCall, MapPin, TestTube, Gift, Heart, Camera, MessageSquare, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet, Bell } from "lucide-react";
+import { useState, useEffect, forwardRef } from "react";
+import { Search, PhoneCall, TestTube, Gift, Heart, Camera, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet, Bell } from "lucide-react";
+import type { LucideIcon, LucideProps } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -50,6 +51,13 @@ const iconMap = {
   Bone,
   Droplet,
 };
+
+// Add a lightweight WhatsApp icon compatible with ServiceCard (LucideIcon signature)
+const WhatsAppIcon = forwardRef<SVGSVGElement, LucideProps>((props, ref) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" xmlns="http://www.w3.org/2000/svg" ref={ref} {...props}>
+    <path d="M12 2a10 10 0 0 0-8.66 14.99L2 22l5.2-1.37A10 10 0 1 0 12 2zm5.46 14.1c-.23.65-1.32 1.24-1.84 1.32-.49.08-1.12.11-1.8-.11-.42-.13-.96-.31-1.65-.61-2.9-1.27-4.78-4.22-4.93-4.42-.15-.2-1.18-1.57-1.18-3 0-1.43.75-2.12 1.02-2.41.27-.29.59-.36.79-.36.2 0 .4.002.57.01.18.009.43-.07.68.52.26.63.88 2.17.96 2.33.08.16.13.35.025.57-.11.24-.17.39-.33.6-.16.2-.34.45-.49.6-.16.16-.33.33-.14.64.2.32.9 1.48 1.93 2.4 1.33 1.19 2.45 1.56 2.78 1.73.34.17.54.15.74-.09.2-.23.85-1 1.08-1.34.23-.34.46-.28.77-.17.31.11 1.97.93 2.31 1.1.34.17.57.25.65.39.08.14.08.79-.15 1.43z"/>
+  </svg>
+)) as LucideIcon;
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -161,7 +169,7 @@ const Home = () => {
     },
     {
       title: "Get Help (WhatsApp)",
-      icon: MessageSquare,
+      icon: WhatsAppIcon,
       onClick: handleWhatsApp,
     },
   ];
@@ -178,35 +186,31 @@ const Home = () => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <Button
                 onClick={handleCall}
                 size="icon"
                 variant="secondary"
-                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
+                className="w-12 h-12 bg-white text-blue-900 border-2 border-white shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <img 
-                  src="/lovable-uploads/f81599a4-f902-4c17-b832-66f9fea63ba4.png" 
-                  alt="Call" 
-                  className="h-5 w-5"
-                />
+                <PhoneCall className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth={2} />
               </Button>
               
               <Button
                 onClick={() => navigate("/prescription")}
                 size="icon"
                 variant="secondary"
-                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
+                className="w-12 h-12 bg-white text-blue-900 border-2 border-white shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <Camera className="h-5 w-5" />
+                <Camera className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth={2} />
               </Button>
               
               <Button
                 size="icon"
                 variant="secondary"
-                className="bg-white/10 hover:bg-white/20 border-white/20 shadow-md text-white"
+                className="w-12 h-12 bg-white text-blue-900 border-2 border-white shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <Bell className="h-5 w-5" />
+                <Bell className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth={2} />
               </Button>
             </div>
           </div>
@@ -275,20 +279,23 @@ const Home = () => {
       {/* Services Section */}
       <div className="px-6 mb-8">
         <h2 className="text-lg font-semibold text-foreground mb-4">
-          Our Services
+          Book a test / package
         </h2>
         
         <ServiceGrid>
           {services.map((service) => {
             let iconBgColor = "bg-card";
+            let iconColor = "text-primary";
+            
             if (service.title === "Tests") {
               iconBgColor = "bg-red-50";
             } else if (service.title === "Health Packages") {
               iconBgColor = "bg-blue-50";
             } else if (service.title === "Other Services") {
               iconBgColor = "bg-green-50";
-            } else if (service.title === "WhatsApp") {
-              iconBgColor = "bg-teal-50";
+            } else if (service.title.includes("WhatsApp")) {
+              iconBgColor = "bg-green-50";
+              iconColor = "text-green-600";
             }
 
             return (
@@ -297,6 +304,7 @@ const Home = () => {
                 title={service.title}
                 icon={service.icon}
                 onClick={service.onClick}
+                iconColor={iconColor}
                 className={`${iconBgColor} !shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] border-none`}
               />
             );

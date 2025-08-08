@@ -170,6 +170,10 @@ const Bookings = () => {
     return null;
   }
 
+  // Separate orders into active and cancelled
+  const cancelledOrders = orders.filter(order => order.status === 'canceled');
+  const activeOrders = orders.filter(order => order.status !== 'canceled');
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -191,7 +195,7 @@ const Bookings = () => {
             {/* Future Bookings Section */}
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-foreground">Upcoming Bookings</h2>
-              {orders.length === 0 ? (
+              {activeOrders.length === 0 ? (
                 <div className="text-center py-8">
                   <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground mb-4">No upcoming bookings</p>
@@ -203,7 +207,7 @@ const Bookings = () => {
                   </Button>
                 </div>
               ) : (
-                orders.map((order) => {
+                activeOrders.map((order) => {
                   const appointmentDate = order.appointment_date ? 
                     new Date(order.appointment_date).toLocaleDateString('en-US', { 
                       weekday: 'short', 
@@ -220,7 +224,7 @@ const Bookings = () => {
                   const displayName = testNames.length > 50 ? testNames.substring(0, 50) + '...' : testNames;
 
                   return (
-                    <Card key={order.id} className="p-4 shadow-card">
+                    <Card key={order.id} className={`p-4 shadow-card ${order.status === 'canceled' ? 'opacity-50' : ''}`}>
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <h3 className="font-medium text-foreground mb-1">
@@ -304,6 +308,91 @@ const Bookings = () => {
                 })
               )}
             </div>
+
+            {/* Cancelled Bookings Section */}
+            {cancelledOrders.length > 0 && (
+              <div className="space-y-4 pt-6 border-t">
+                <h2 className="text-lg font-semibold text-foreground">Cancelled Bookings</h2>
+                {cancelledOrders.map((order) => {
+                  const appointmentDate = order.appointment_date ? 
+                    new Date(order.appointment_date).toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    }) : 
+                    new Date(order.created_at).toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    });
+
+                  const testNames = order.order_items.map(item => item.item_name).join(', ');
+                  const displayName = testNames.length > 50 ? testNames.substring(0, 50) + '...' : testNames;
+
+                  return (
+                    <Card key={order.id} className="p-4 shadow-card opacity-75">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <h3 className="font-medium text-foreground mb-1">
+                            {displayName}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mb-2">
+                            Order #{order.order_number}
+                          </p>
+                          <Badge className={getStatusColor(order.status)}>
+                            {getStatusText(order.status)}
+                          </Badge>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-semibold text-primary">
+                            ₹{order.total_amount}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          <span>{appointmentDate}</span>
+                        </div>
+                        {order.appointment_time && (
+                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                            <Clock className="h-4 w-4" />
+                            <span>{order.appointment_time}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4" />
+                          <span>
+                            {order.collection_type === "home" ? "Home Collection" : "Lab Visit - Sneh Nagar"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex space-x-2">
+                        {order.status === "completed" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                          >
+                            View Report
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="px-6"
+                          onClick={() => navigate(`/booking/${order.id}`)}
+                        >
+                          Details
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Load Past Bookings Button */}
             {!showPastOrders && (

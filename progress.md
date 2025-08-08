@@ -99,3 +99,14 @@ Furture Plans:
 - Consider adding support for "paid" status and refund logic in the future
 - Add more granular status transitions and admin controls if needed
 - Potentially create release APK with signing for production distribution
+
+## Progress Update - 2025-08-08
+
+### Home Page Updates
+- Updated "Our Service" text to "Book Test/Package".
+- Changed the "Get Help" icon from a message icon to a professional green WhatsApp icon with the label "Get help (WhatsApp)".
+
+### My Booking Page Updates
+- Hidden past bookings by default, showing only real-time future bookings.
+
+---
