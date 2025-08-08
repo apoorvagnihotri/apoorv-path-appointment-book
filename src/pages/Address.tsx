@@ -1,4 +1,4 @@
-import { ChevronLeft, MapPin, Plus, Home, Building2 } from "lucide-react";
+import { ChevronLeft, MapPin, Plus, Home, Building2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,8 @@ const Address = () => {
   const { toast } = useToast();
 
   // Collection type state
-  const [collectionType, setCollectionType] = useState<'home' | 'lab'>('home');
+  // Initialize with no selection. Will be set from sessionStorage if available.
+  const [collectionType, setCollectionType] = useState<'' | 'home' | 'lab'>('');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -222,27 +223,65 @@ const Address = () => {
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Choose Collection Type</h2>
             <RadioGroup 
-              value={collectionType} 
+              value={collectionType}
               onValueChange={handleCollectionTypeChange}
               className="space-y-4"
             >
-              <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                <RadioGroupItem value="home" id="home" />
-                <Label htmlFor="home" className="flex items-center cursor-pointer flex-1">
-                  <Home className="h-5 w-5 mr-3 text-primary" />
-                  <div>
-                    <div className="font-medium">Home Collection</div>
-                    <div className="text-sm text-muted-foreground">Our team will visit your location</div>
+              <div
+                className={`flex items-center space-x-3 p-4 border rounded-lg transition-colors cursor-pointer ${
+                  collectionType === 'home' ? 'bg-primary/10 border-primary ring-2 ring-primary/20' : 'hover:bg-accent/50'
+                }`}
+                onClick={() => handleCollectionTypeChange('home')}
+                role="button"
+                aria-pressed={collectionType === 'home'}
+              >
+                {/* Hide the default radio and show green check like in Cart */}
+                <RadioGroupItem value="home" id="home" className="hidden" />
+                <div className="h-5 w-5 rounded-sm mr-2 flex items-center justify-center border" aria-hidden>
+                  {collectionType === 'home' && (
+                    <div className="h-5 w-5 bg-green-500 rounded-sm flex items-center justify-center">
+                      <Check className="h-3 w-3 text-white" />
+                    </div>
+                  )}
+                </div>
+                <Label htmlFor="home" className="flex items-center cursor-pointer flex-1 justify-between">
+                  <div className="flex items-center">
+                    <Home className="h-5 w-5 mr-3 text-primary" />
+                    <div>
+                      <div className="font-medium flex items-center gap-2">
+                        Home Collection
+                      </div>
+                      <div className="text-sm text-muted-foreground">Our team will visit your location</div>
+                    </div>
                   </div>
                 </Label>
               </div>
-              <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                <RadioGroupItem value="lab" id="lab" />
-                <Label htmlFor="lab" className="flex items-center cursor-pointer flex-1">
-                  <Building2 className="h-5 w-5 mr-3 text-primary" />
-                  <div>
-                    <div className="font-medium">Lab Collection</div>
-                    <div className="text-sm text-muted-foreground">Visit our lab for sample collection</div>
+              <div
+                className={`flex items-center space-x-3 p-4 border rounded-lg transition-colors cursor-pointer ${
+                  collectionType === 'lab' ? 'bg-primary/10 border-primary ring-2 ring-primary/20' : 'hover:bg-accent/50'
+                }`}
+                onClick={() => handleCollectionTypeChange('lab')}
+                role="button"
+                aria-pressed={collectionType === 'lab'}
+              >
+                {/* Hide the default radio and show green check like in Cart */}
+                <RadioGroupItem value="lab" id="lab" className="hidden" />
+                <div className="h-5 w-5 rounded-sm mr-2 flex items-center justify-center border" aria-hidden>
+                  {collectionType === 'lab' && (
+                    <div className="h-5 w-5 bg-green-500 rounded-sm flex items-center justify-center">
+                      <Check className="h-3 w-3 text-white" />
+                    </div>
+                  )}
+                </div>
+                <Label htmlFor="lab" className="flex items-center cursor-pointer flex-1 justify-between">
+                  <div className="flex items-center">
+                    <Building2 className="h-5 w-5 mr-3 text-primary" />
+                    <div>
+                      <div className="font-medium flex items-center gap-2">
+                        Lab Collection
+                      </div>
+                      <div className="text-sm text-muted-foreground">Visit our lab for sample collection</div>
+                    </div>
                   </div>
                 </Label>
               </div>
@@ -279,16 +318,21 @@ const Address = () => {
 
           {/* Lab Collection Info */}
           {collectionType === 'lab' && (
-            <Card className="p-6 bg-accent/20">
-              <div className="flex items-center mb-4">
-                <Building2 className="h-5 w-5 text-primary mr-2" />
-                <h2 className="text-xl font-semibold">Lab Collection Selected</h2>
+            <Card className="p-6 border-primary bg-primary/10 shadow-md ring-2 ring-primary/20">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center">
+                  <MapPin className="h-5 w-5 text-primary mr-2" />
+                  <h2 className="text-xl font-semibold">Apoorv Pathology Lab</h2>
+                </div>
+                <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded flex items-center gap-1">
+                  <Check className="h-3 w-3" />
+                  Selected
+                </span>
               </div>
               <div className="space-y-3 text-muted-foreground">
-                <p>You have selected lab collection. Please visit our lab between 6 am - 10 pm for your sample.</p>
+                <p>Please visit our lab between 6 am - 10 pm for your sample.</p>
                 <div className="bg-background p-4 rounded-lg border">
-                  <h3 className="font-medium text-foreground mb-2">Lab Address:</h3>
-                  <p className="text-sm">Apoorv Pathology Lab</p>
+                  <h3 className="font-medium text-foreground mb-2">Lab Address</h3>
                   <p className="text-sm">O-13, Garha Rd, Nove Adaresh Colony</p>
                   <p className="text-sm">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
                   <p className="text-sm">Phone: +91 98765 43210</p>
@@ -440,7 +484,7 @@ const Address = () => {
             </div>
           </div>
         ) : null
-      ) : (
+      ) : collectionType === 'lab' ? (
         /* Lab Collection - Direct Continue Button */
         <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg z-30">
           <div className="px-6 py-4">
@@ -452,7 +496,7 @@ const Address = () => {
             </Button>
           </div>
         </div>
-      )}
+      ) : null}
 
       <BottomNavigation />
     </div>

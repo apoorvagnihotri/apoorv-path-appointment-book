@@ -109,4 +109,12 @@ Furture Plans:
 ### My Booking Page Updates
 - Hidden past bookings by default, showing only real-time future bookings.
 
+- Lab selections no longer require scheduling, streamlining the user flow.
+- Improved navigation between the cart and booking pages.
+- Visual updates to the booking list:
+    - WhatsApp icon is now green.
+    - Top three bookings are highlighted.
+    - Canceled bookings have a muted appearance.
+    - Bookings can now be grouped.
+
 ---

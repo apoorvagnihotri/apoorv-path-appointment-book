@@ -49,6 +49,10 @@ const BookingDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handleCall = () => {
+    window.open("tel:+919993522579", "_self");
+  };
+
   useEffect(() => {
     if (user && id) {
       fetchOrderDetails();
@@ -362,7 +366,7 @@ const BookingDetails = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => {/* Handle call lab */}}
+              onClick={handleCall}
             >
               <Phone className="h-4 w-4 mr-2" />
               Call Lab
