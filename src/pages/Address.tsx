@@ -492,7 +492,7 @@ const Address = () => {
               className="w-full min-h-[3rem] bg-gradient-medical hover:shadow-button"
               onClick={() => navigate('/payment')}
             >
-              Continue to Payment
+              Continue to Confirm
             </Button>
           </div>
         </div>

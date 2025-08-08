@@ -118,3 +118,5 @@ Furture Plans:
     - Bookings can now be grouped.
 
 ---
+- Connected "call lab" button on the "Booking Details" page.
+- Connected "call lab" button on the "Bookings" page.

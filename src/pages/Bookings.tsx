@@ -144,6 +144,10 @@ const Bookings = () => {
     }
   };
 
+  const handleCall = () => {
+    window.open("tel:+919993522579", "_self");
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "confirmed": return "bg-accent text-accent-foreground";
@@ -269,6 +273,7 @@ const Bookings = () => {
                             variant="outline"
                             size="sm"
                             className="flex-1"
+                            onClick={handleCall}
                           >
                             <Phone className="h-4 w-4 mr-2" />
                             Call Lab

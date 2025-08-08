@@ -129,18 +129,27 @@ const Payment = () => {
         }
       }
 
+      const isLab = collectionType === 'lab';
+      const paymentMethodLabel = isLab
+        ? 'Cash on Collection'
+        : selectedPaymentMethod === 'cash'
+          ? 'Cash on Collection'
+          : `Online (${selectedOnlineType?.toUpperCase()})`;
+      const status = (isLab || selectedPaymentMethod === 'cash') ? 'confirmed' : 'pending';
+      const paymentStatus = (isLab || selectedPaymentMethod === 'cash') ? 'pending' : 'completed';
+
       // Create the order
       const orderData = {
         user_id: user!.id,
-        status: selectedPaymentMethod === 'cash' ? 'confirmed' : 'pending',
-        payment_method: selectedPaymentMethod === 'cash' ? 'Cash on Collection' : `Online (${selectedOnlineType?.toUpperCase()})`,
-        payment_status: selectedPaymentMethod === 'cash' ? 'pending' : 'completed',
+        status,
+        payment_method: paymentMethodLabel,
+        payment_status: paymentStatus,
         total_amount: cartSummary.total,
         subtotal: cartSummary.subtotal,
         lab_charges: cartSummary.labCharges,
         home_collection_charges: cartSummary.homeCollection,
-        appointment_date: collectionType === 'lab' ? null : selectedDate,
-        appointment_time: collectionType === 'lab' ? null : selectedTime,
+        appointment_date: isLab ? null : selectedDate,
+        appointment_time: isLab ? null : selectedTime,
         collection_type: collectionType,
         collection_address: collectionType === 'home' && selectedAddress ? {
           first_name: selectedAddress.first_name,
@@ -218,7 +227,7 @@ const Payment = () => {
     }
   };
 
-  const canProceed = selectedPaymentMethod === 'cash';
+  const canProceed = collectionType === 'lab' || selectedPaymentMethod === 'cash';
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -245,7 +254,7 @@ const Payment = () => {
           {/* Test Booking Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Your Test Booking Summary</CardTitle>
+              <CardTitle>Booking Summary</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {(() => {
@@ -422,56 +431,58 @@ const Payment = () => {
           </Card>
 
           {/* Payment Method Selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Select Payment Method</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Online Payment */}
-              <div 
-                className={`border-2 rounded-lg p-4 transition-colors relative ${
-                  'border-muted bg-muted/20 cursor-not-allowed opacity-60'
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-[3rem] h-[3rem] bg-muted rounded-full flex items-center justify-center">
-                    <CreditCard className="h-6 w-6 text-muted-foreground" />
+          {collectionType === 'home' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Select Payment Method</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Online Payment */}
+                <div 
+                  className={`border-2 rounded-lg p-4 transition-colors relative ${
+                    'border-muted bg-muted/20 cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-[3rem] h-[3rem] bg-muted rounded-full flex items-center justify-center">
+                      <CreditCard className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-muted-foreground">Online Payment</h3>
+                      <p className="text-sm text-muted-foreground">UPI, Card, Wallet options</p>
+                    </div>
+                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
+                      Coming Soon
+                    </Badge>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-muted-foreground">Online Payment</h3>
-                    <p className="text-sm text-muted-foreground">UPI, Card, Wallet options</p>
-                  </div>
-                  <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                    Coming Soon
-                  </Badge>
                 </div>
-              </div>
 
 
-              {/* Cash Payment */}
-              <div 
-                className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                  selectedPaymentMethod === 'cash' 
-                    ? 'border-primary bg-primary/5' 
-                    : 'border-border hover:border-primary/50'
-                }`}
-                onClick={() => handlePaymentMethodSelect('cash')}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-[3rem] h-[3rem] bg-accent rounded-full flex items-center justify-center">
-                    <Banknote className="h-6 w-6 text-accent-foreground" />
+                {/* Cash Payment */}
+                <div 
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
+                    selectedPaymentMethod === 'cash' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border hover:border-primary/50'
+                  }`}
+                  onClick={() => handlePaymentMethodSelect('cash')}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-[3rem] h-[3rem] bg-accent rounded-full flex items-center justify-center">
+                      <Banknote className="h-6 w-6 text-accent-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium">Pay by Cash / Card / UPI</h3>
+                      <p className="text-sm text-muted-foreground">Pay during sample collection</p>
+                    </div>
+                    {selectedPaymentMethod === 'cash' && (
+                      <Badge variant="default">Selected</Badge>
+                    )}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium">Pay by Cash / Card / UPI</h3>
-                    <p className="text-sm text-muted-foreground">Pay during sample collection</p>
-                  </div>
-                  {selectedPaymentMethod === 'cash' && (
-                    <Badge variant="default">Selected</Badge>
-                  )}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
