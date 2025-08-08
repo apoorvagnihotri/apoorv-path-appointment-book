@@ -212,7 +212,6 @@ export type Database = {
           created_at: string
           home_collection_charges: number | null
           id: string
-          lab_charges: number | null
           order_number: string
           payment_method: string | null
           payment_status: string
@@ -229,7 +228,6 @@ export type Database = {
           created_at?: string
           home_collection_charges?: number | null
           id?: string
-          lab_charges?: number | null
           order_number?: string
           payment_method?: string | null
           payment_status?: string
@@ -246,7 +244,6 @@ export type Database = {
           created_at?: string
           home_collection_charges?: number | null
           id?: string
-          lab_charges?: number | null
           order_number?: string
           payment_method?: string | null
           payment_status?: string

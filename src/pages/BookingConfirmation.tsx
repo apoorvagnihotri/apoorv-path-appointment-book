@@ -16,7 +16,6 @@ interface OrderDetails {
   payment_status: string;
   total_amount: number;
   subtotal: number;
-  lab_charges: number;
   home_collection_charges: number;
   appointment_date: string;
   appointment_time: string;
@@ -367,10 +366,6 @@ const BookingConfirmation = () => {
             <div className="flex justify-between">
               <span>Subtotal</span>
               <span>₹{orderDetails.subtotal}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Lab Charges</span>
-              <span>₹{orderDetails.lab_charges}</span>
             </div>
             {orderDetails.collection_type === 'home' && orderDetails.home_collection_charges > 0 && (
               <div className="flex justify-between">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, CreditCard, Banknote, Smartphone, Wallet, MapPin, Home, Building2, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, CreditCard, Banknote, Smartphone, Wallet, MapPin, Home, Building2, Calendar, Clock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -73,12 +73,11 @@ const Payment = () => {
   const homeCollectionCharges = collectionType === 'home' ? 100 : 0;
   const cartSummary = {
     subtotal: filteredSubtotal,
-    labCharges: 50,
     homeCollection: homeCollectionCharges,
-    total: filteredSubtotal + 50 + homeCollectionCharges
+    total: filteredSubtotal + homeCollectionCharges
   };
   
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('cash');
   const [selectedOnlineType, setSelectedOnlineType] = useState<OnlinePaymentType>(null);
   const [loading, setLoading] = useState(false);
 
@@ -146,7 +145,6 @@ const Payment = () => {
         payment_status: paymentStatus,
         total_amount: cartSummary.total,
         subtotal: cartSummary.subtotal,
-        lab_charges: cartSummary.labCharges,
         home_collection_charges: cartSummary.homeCollection,
         appointment_date: isLab ? null : selectedDate,
         appointment_time: isLab ? null : selectedTime,
@@ -320,10 +318,6 @@ const Payment = () => {
                   <span>Subtotal</span>
                   <span>₹{cartSummary.subtotal}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Lab Charges</span>
-                  <span>₹{cartSummary.labCharges}</span>
-                </div>
                 {collectionType === 'home' && (
                   <div className="flex justify-between">
                     <span>Home Collection</span>
@@ -341,7 +335,7 @@ const Payment = () => {
           {/* Collection & Appointment Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Collection & Appointment Details</CardTitle>
+              <CardTitle>Appointment Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Collection Type */}
@@ -437,28 +431,7 @@ const Payment = () => {
                 <CardTitle>Select Payment Method</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Online Payment */}
-                <div 
-                  className={`border-2 rounded-lg p-4 transition-colors relative ${
-                    'border-muted bg-muted/20 cursor-not-allowed opacity-60'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-[3rem] h-[3rem] bg-muted rounded-full flex items-center justify-center">
-                      <CreditCard className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium text-muted-foreground">Online Payment</h3>
-                      <p className="text-sm text-muted-foreground">UPI, Card, Wallet options</p>
-                    </div>
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                      Coming Soon
-                    </Badge>
-                  </div>
-                </div>
-
-
-                {/* Cash Payment */}
+                {/* Cash Payment (moved to top) */}
                 <div 
                   className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
                     selectedPaymentMethod === 'cash' 
@@ -476,8 +449,31 @@ const Payment = () => {
                       <p className="text-sm text-muted-foreground">Pay during sample collection</p>
                     </div>
                     {selectedPaymentMethod === 'cash' && (
-                      <Badge variant="default">Selected</Badge>
+                      <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded flex items-center gap-1">
+                        <Check className="h-3 w-3" />
+                        Selected
+                      </span>
                     )}
+                  </div>
+                </div>
+
+                {/* Online Payment (reduced size) */}
+                <div 
+                  className={
+                    'border-2 rounded-lg p-3 transition-colors relative border-muted bg-muted/20 cursor-not-allowed opacity-60'
+                  }
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                      <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-sm text-muted-foreground">Online Payment</h3>
+                      <p className="text-xs text-muted-foreground">UPI, Card, Wallet options</p>
+                    </div>
+                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200 text-xs px-2 py-0.5">
+                      Coming Soon
+                    </Badge>
                   </div>
                 </div>
               </CardContent>
