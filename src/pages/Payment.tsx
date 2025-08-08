@@ -120,10 +120,13 @@ const Payment = () => {
       const selectedDate = sessionStorage.getItem('selectedDate');
       const selectedTime = sessionStorage.getItem('selectedTime');
       
-      if (!selectedDate || !selectedTime) {
-        toast.error("Please select date and time for your appointment");
-        navigate('/schedule');
-        return;
+      // For lab collection, scheduling is not required
+      if (collectionType === 'home') {
+        if (!selectedDate || !selectedTime) {
+          toast.error("Please select date and time for your appointment");
+          navigate('/schedule');
+          return;
+        }
       }
 
       // Create the order
@@ -136,8 +139,8 @@ const Payment = () => {
         subtotal: cartSummary.subtotal,
         lab_charges: cartSummary.labCharges,
         home_collection_charges: cartSummary.homeCollection,
-        appointment_date: selectedDate,
-        appointment_time: selectedTime,
+        appointment_date: collectionType === 'lab' ? null : selectedDate,
+        appointment_time: collectionType === 'lab' ? null : selectedTime,
         collection_type: collectionType,
         collection_address: collectionType === 'home' && selectedAddress ? {
           first_name: selectedAddress.first_name,
@@ -378,9 +381,11 @@ const Payment = () => {
                   <div className="flex-1">
                     <h3 className="font-medium mb-1">Lab Address</h3>
                     <div className="text-sm text-muted-foreground space-y-1">
-                      <p className="font-medium text-foreground">Apoorv Path Lab</p>
-                      <p>123 Medical Center Road</p>
-                      <p>City Center, Mumbai - 400001</p>
+                      <p className="font-medium text-foreground">Apoorv Pathology Lab</p>
+                      <p>O-13, Garha Rd, Nove Adaresh Colony</p>
+                      <p>Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
+                      <p>Opening Times: 6 am - 10 pm (Everyday)</p>
+                      <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline">View on Google Maps</a>
                       <p>Phone: +91 98765 43210</p>
                     </div>
                   </div>
@@ -388,7 +393,7 @@ const Payment = () => {
               )}
 
               {/* Appointment Date & Time */}
-              {selectedDate && selectedTime && (
+              {collectionType === 'home' && selectedDate && selectedTime && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3 p-3 border rounded-lg">
                     <Calendar className="h-5 w-5 text-primary" />

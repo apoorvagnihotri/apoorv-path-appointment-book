@@ -172,6 +172,9 @@ const Address = () => {
     if (value === 'lab') {
       setSelectedAddressId(null);
       sessionStorage.removeItem('selectedAddress');
+      // Clear any previously selected schedule since lab doesn't require scheduling
+      sessionStorage.removeItem('selectedDate');
+      sessionStorage.removeItem('selectedTime');
     }
   };
 
@@ -282,15 +285,17 @@ const Address = () => {
                 <h2 className="text-xl font-semibold">Lab Collection Selected</h2>
               </div>
               <div className="space-y-3 text-muted-foreground">
-                <p>You have selected lab collection. Please visit our lab at your scheduled time for sample collection.</p>
+                <p>You have selected lab collection. Please visit our lab between 6 am - 10 pm for your sample.</p>
                 <div className="bg-background p-4 rounded-lg border">
                   <h3 className="font-medium text-foreground mb-2">Lab Address:</h3>
-                  <p className="text-sm">Apoorv Path Lab</p>
-                  <p className="text-sm">123 Medical Center Road</p>
-                  <p className="text-sm">City Center, Mumbai - 400001</p>
+                  <p className="text-sm">Apoorv Pathology Lab</p>
+                  <p className="text-sm">O-13, Garha Rd, Nove Adaresh Colony</p>
+                  <p className="text-sm">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
                   <p className="text-sm">Phone: +91 98765 43210</p>
+                  <p className="text-sm">Opening Times: 6 am - 10 pm (Everyday)</p>
+                  <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline text-sm">View on Google Maps</a>
                 </div>
-                <p className="text-sm">No address selection required. You can proceed to schedule your appointment.</p>
+                <p className="text-sm">No scheduling required. You can proceed to payment.</p>
               </div>
             </Card>
           )}
@@ -441,9 +446,9 @@ const Address = () => {
           <div className="px-6 py-4">
             <Button 
               className="w-full min-h-[3rem] bg-gradient-medical hover:shadow-button"
-              onClick={() => navigate('/schedule')}
+              onClick={() => navigate('/payment')}
             >
-              Continue to Schedule Appointment
+              Continue to Payment
             </Button>
           </div>
         </div>

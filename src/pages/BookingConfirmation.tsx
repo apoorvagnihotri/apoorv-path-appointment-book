@@ -181,17 +181,32 @@ const BookingConfirmation = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Date</span>
-              <span className="font-medium">{formatDate(orderDetails.appointment_date)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Time Slot</span>
-              <span className="font-medium">{orderDetails.appointment_time}</span>
-            </div>
+            {orderDetails.collection_type === 'home' ? (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-medium">{orderDetails.appointment_date ? formatDate(orderDetails.appointment_date) : formatDate(orderDetails.created_at)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Time Slot</span>
+                  <span className="font-medium">{orderDetails.appointment_time || 'Not scheduled'}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Scheduling</span>
+                  <Badge variant="secondary" className="bg-green-50 text-green-700">Not Required</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Lab Timings</span>
+                  <span className="font-medium">6 am - 10 pm (Everyday)</span>
+                </div>
+              </>
+            )}
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Collection Type</span>
-              <Badge variant="secondary" className={orderDetails.collection_type === 'home' ? "bg-blue-50 text-blue-700" : "bg-green-50 text-green-700"}>
+              <Badge variant="secondary" className={orderDetails.collection_type === 'home' ? 'bg-blue-50 text-blue-700' : 'bg-green-50 text-green-700'}>
                 {orderDetails.collection_type === 'home' ? (
                   <>
                     <Home className="h-3 w-3 mr-1" />
@@ -263,15 +278,16 @@ const BookingConfirmation = () => {
               <div className="space-y-2">
                 <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                   <h3 className="font-medium text-green-800 mb-2">Lab Address:</h3>
-                  <p className="text-sm text-green-700">Apoorv Path Lab</p>
-                  <p className="text-sm text-green-700">123 Medical Center Road</p>
-                  <p className="text-sm text-green-700">City Center, Mumbai - 400001</p>
+                  <p className="text-sm text-green-700">Apoorv Pathology Lab</p>
+                  <p className="text-sm text-green-700">O-13, Garha Rd, Nove Adaresh Colony</p>
+                  <p className="text-sm text-green-700">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
+                  <p className="text-sm text-green-700">Opening Times: 6 am - 10 pm (Everyday)</p>
+                  <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-sm text-green-800 underline">View on Google Maps</a>
                   <p className="text-sm text-green-700">Phone: +91 98765 43210</p>
                 </div>
                 <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
                   <p className="text-sm text-amber-800">
-                    Please visit our lab at the scheduled time for sample collection.
-                    Bring a valid ID and your booking reference.
+                    No scheduling required. Please visit our lab between 6 am and 10 pm on a day that suits you.
                   </p>
                 </div>
               </div>

@@ -29,6 +29,9 @@ const Members = () => {
   const { toast } = useToast();
   const { items: cartItems } = useCart();
   
+  // Read collection type from session storage to control flow
+  const collectionType = sessionStorage.getItem('collectionType') || 'home';
+  
   // Remove any potential duplicate cart items using useMemo to prevent recalculation
   const uniqueCartItems = useMemo(() => 
     cartItems.filter((item, index, array) => 
@@ -109,7 +112,8 @@ const Members = () => {
     if (selectedMembers.length > 1) {
       setShowTestSelection(true);
     } else {
-      navigate('/schedule');
+      const ct = sessionStorage.getItem('collectionType') || 'home';
+      navigate(ct === 'lab' ? '/payment' : '/schedule');
     }
   };
 
@@ -124,7 +128,8 @@ const Members = () => {
     ).filter(Boolean);
     sessionStorage.setItem('selectedMemberDetails', JSON.stringify(selectedMemberDetails));
     
-    navigate('/schedule');
+    const ct = sessionStorage.getItem('collectionType') || 'home';
+    navigate(ct === 'lab' ? '/payment' : '/schedule');
   };
 
   // Check if at least one test is selected for at least one member
@@ -289,7 +294,7 @@ const Members = () => {
                 <>
                   Select Tests for Members <ArrowRight className="h-4 w-4 ml-2" />
                 </> : 
-                'Book a slot'
+                (collectionType === 'lab' ? 'Proceed to Payment' : 'Book a slot')
               ) : 
               `Select ${selectedMembers.length === 0 ? 'at least one' : 'a'} member to continue`
             }
