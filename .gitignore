@@ -26,3 +26,4 @@ dist-ssr
 # Capacitor
 # The android folder is managed by its own .gitignore
 # No need to exclude it here since it has proper gitignore rules
+.vercel
