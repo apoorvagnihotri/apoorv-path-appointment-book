@@ -23,7 +23,7 @@ export function ServiceCard({ title, icon: Icon, onClick, className, iconColor =
         className
       )}
     >
-      <Icon className={cn("h-12 w-12 mb-3", iconColor)} />
+      <Icon className={cn("h-12 w-12 mb-3 stroke-[1.5]", iconColor)} />
       <span className="text-sm font-medium text-foreground text-center leading-tight">
         {title}
       </span>
