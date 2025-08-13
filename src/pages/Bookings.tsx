@@ -314,7 +314,7 @@ const Bookings = () => {
                           variant="outline"
                           size="sm"
                           className="px-6 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
-                          onClick={() => navigate(`/booking/${order.id}`)}
+                          onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                         >
                           Details
                         </Button>
@@ -396,7 +396,7 @@ const Bookings = () => {
                           variant="outline"
                           size="sm"
                           className="px-6 border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
-                          onClick={() => navigate(`/booking/${order.id}`)}
+                          onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                         >
                           Details
                         </Button>
@@ -504,7 +504,7 @@ const Bookings = () => {
                             variant="outline"
                             size="sm"
                             className="border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
-                            onClick={() => navigate(`/booking/${order.id}`)}
+                            onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                           >
                             Details
                           </Button>

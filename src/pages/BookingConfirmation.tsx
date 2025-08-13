@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { CheckCircle, Calendar, Clock, MapPin, User, Phone, CreditCard, FileText, Home, Building2 } from "lucide-react";
+import { CheckCircle, Calendar, Clock, MapPin, User, Phone, CreditCard, FileText, Home, Building2, Clock as ClockIcon, FileIcon, DollarSign, Utensils, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -39,7 +39,10 @@ const BookingConfirmation = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('orderId');
+  const { id: paramId } = useParams<{ id: string }>();
+  
+  // Get order ID from either URL params or query params
+  const orderId = paramId || searchParams.get('orderId');
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -255,7 +258,7 @@ const BookingConfirmation = () => {
                   <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-700">
                       Our technician will visit this address for sample collection.
-                      Please ensure someone is available at the scheduled time.
+                      Please ensure patient is available at the scheduled time.
                     </p>
                   </div>
                 </div>
@@ -388,27 +391,45 @@ const BookingConfirmation = () => {
         </Card>
 
         {/* Important Instructions */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardHeader>
-            <CardTitle className="text-blue-800">Important Instructions</CardTitle>
+        <Card className="bg-gray-50 border-gray-200">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-gray-800 text-lg font-semibold">Important Instructions</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-blue-700">• Keep your booking reference handy</p>
-            {orderDetails.collection_type === 'home' ? (
-              <>
-                <p className="text-sm text-blue-700">• Be available at the scheduled time</p>
-                <p className="text-sm text-blue-700">• Keep the payment amount ready</p>
-                <p className="text-sm text-blue-700">• Ensure the collection address is accessible</p>
-              </>
-            ) : (
-              <>
-                <p className="text-sm text-blue-700">• Visit our lab at the scheduled time</p>
-                <p className="text-sm text-blue-700">• Bring a valid photo ID</p>
-                <p className="text-sm text-blue-700">• Carry the exact payment amount</p>
-              </>
-            )}
-            <p className="text-sm text-blue-700">• Fast for 12 hours if required for your tests</p>
-            <p className="text-sm text-blue-700">• Contact us if you need to reschedule</p>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <ClockIcon className="h-4 w-4 text-blue-600" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Be available at your scheduled time</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <FileIcon className="h-4 w-4 text-green-600" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Keep your doctor's prescription handy</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-yellow-600" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Keep the payment ready</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                <Utensils className="h-4 w-4 text-orange-600" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Fast for 12 hours if your test requires it</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <PhoneCall className="h-4 w-4 text-purple-600" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Contact us if you need to reschedule</p>
+            </div>
           </CardContent>
         </Card>
 
