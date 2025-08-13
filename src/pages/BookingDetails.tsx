@@ -202,7 +202,6 @@ const BookingDetails = () => {
             </button>
             <div>
               <h1 className="text-lg font-semibold">Booking Details</h1>
-              <p className="text-sm opacity-90">Order #{order.order_number}</p>
             </div>
           </div>
         </div>
@@ -212,30 +211,11 @@ const BookingDetails = () => {
       <div className="px-6 py-4 space-y-6">
         {/* Order Status */}
         <Card className="p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Order Status</h2>
-              <Badge className={getStatusColor(order.status)}>
-                {getStatusText(order.status)}
-              </Badge>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-primary">₹{order.total_amount}</p>
-              <p className="text-sm text-muted-foreground">Total Amount</p>
-            </div>
-          </div>
-          
-          <Separator className="my-4" />
-          
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-muted-foreground">Payment Method</p>
-              <p className="font-medium">{order.payment_method || 'Not specified'}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Payment Status</p>
-              <p className="font-medium">{order.payment_status || 'Pending'}</p>
-            </div>
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold mb-2">Order Status</h2>
+            <Badge className={getStatusColor(order.status)}>
+              {getStatusText(order.status)}
+            </Badge>
           </div>
         </Card>
 
@@ -335,30 +315,30 @@ const BookingDetails = () => {
           
           <Separator className="my-4" />
           
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-4">
             <p className="font-semibold">Total Amount</p>
             <p className="text-xl font-bold text-primary">₹{order.total_amount}</p>
           </div>
-        </Card>
-
-        {/* Order Information */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Order Information</h2>
+          
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Order Number</span>
-              <span className="font-medium">{order.order_number}</span>
+            <div>
+              <p className="text-muted-foreground">Payment Method</p>
+              <p className="font-medium">{order.payment_method || 'Not specified'}</p>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Order Date</span>
-              <span className="font-medium">{formatDate(order.created_at)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Order ID</span>
-              <span className="font-medium text-xs">{order.id}</span>
+            <div>
+              <p className="text-muted-foreground">Payment Status</p>
+              <p
+                className="font-medium"
+                style={{
+                  color: (order.payment_status || 'Pending') === 'Pending' ? '#FF0000' : undefined
+                }}
+              >
+                {order.payment_status || 'Pending'}
+              </p>
             </div>
           </div>
         </Card>
+
 
         {/* Action Buttons */}
         <div className="space-y-3">
@@ -401,14 +381,6 @@ const BookingDetails = () => {
             </div>
           )}
           
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => {/* Handle download invoice */}}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Download Invoice
-          </Button>
         </div>
       </div>
 
