@@ -248,10 +248,7 @@ const Bookings = () => {
                           <h3 className="font-medium text-foreground mb-1">
                             {displayName}
                           </h3>
-                          <p className="text-xs text-muted-foreground mb-2">
-                            Order #{order.order_number}
-                          </p>
-                          <Badge className={getStatusColor(order.status)}>
+                          <Badge className={order.status === 'completed' ? 'bg-green-200 text-green-800' : order.status === 'confirmed' ? 'bg-green-200 text-green-800' : 'bg-green-100 text-green-700'}>
                             {getStatusText(order.status)}
                           </Badge>
                         </div>
@@ -355,10 +352,7 @@ const Bookings = () => {
                           <h3 className="font-medium text-foreground mb-1">
                             {displayName}
                           </h3>
-                          <p className="text-xs text-muted-foreground mb-2">
-                            Order #{order.order_number}
-                          </p>
-                          <Badge className={getStatusColor(order.status)}>
+                          <Badge className="bg-red-100 text-red-700">
                             {getStatusText(order.status)}
                           </Badge>
                         </div>
@@ -466,10 +460,7 @@ const Bookings = () => {
                             <h3 className="font-medium text-foreground mb-1">
                               {displayName}
                             </h3>
-                            <p className="text-xs text-muted-foreground mb-2">
-                              Order #{order.order_number}
-                            </p>
-                            <Badge className={getStatusColor(order.status)}>
+                            <Badge className="bg-gray-200 text-gray-700">
                               {getStatusText(order.status)}
                             </Badge>
                           </div>
