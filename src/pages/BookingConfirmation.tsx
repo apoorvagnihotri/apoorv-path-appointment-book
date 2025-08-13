@@ -172,8 +172,8 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserCheck className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                <UserCheck className="h-5 w-5 text-blue-500 stroke-[1.5]" />
               </div>
               <span className="text-xl font-semibold text-gray-800">Patient Information</span>
             </CardTitle>
@@ -207,8 +207,8 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <CalendarCheck className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
+                <CalendarCheck className="h-5 w-5 text-purple-500 stroke-[1.5]" />
               </div>
               <span className="text-xl font-semibold text-gray-800">Schedule Details</span>
             </CardTitle>
@@ -260,15 +260,15 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg ${
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 orderDetails.collection_type === 'home'
-                  ? 'bg-gradient-to-br from-green-400 to-green-600'
-                  : 'bg-gradient-to-br from-orange-400 to-orange-600'
+                  ? 'bg-green-50'
+                  : 'bg-orange-50'
               }`}>
                 {orderDetails.collection_type === 'home' ? (
-                  <Home className="h-5 w-5 text-white" />
+                  <Home className="h-5 w-5 text-green-500 stroke-[1.5]" />
                 ) : (
-                  <Building2 className="h-5 w-5 text-white" />
+                  <Building2 className="h-5 w-5 text-orange-500 stroke-[1.5]" />
                 )}
               </div>
               <span className="text-xl font-semibold text-gray-800">
@@ -302,8 +302,8 @@ const BookingConfirmation = () => {
                   </p>
                   <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                     <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Shield className="h-4 w-4 text-blue-600" />
+                      <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Shield className="h-4 w-4 text-blue-500 stroke-[1.5]" />
                       </div>
                       <p className="text-sm text-blue-700 leading-relaxed">
                         Our technician will visit this address for sample collection.
@@ -322,8 +322,8 @@ const BookingConfirmation = () => {
               <div className="space-y-4">
                 <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
                   <div className="flex items-start space-x-3 mb-3">
-                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <MapPinIcon className="h-4 w-4 text-green-600" />
+                    <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+                      <MapPinIcon className="h-4 w-4 text-green-500 stroke-[1.5]" />
                     </div>
                     <h3 className="font-semibold text-green-800">Lab Address:</h3>
                   </div>
@@ -338,8 +338,8 @@ const BookingConfirmation = () => {
                 </div>
                 <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl border border-amber-100">
                   <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Clock className="h-4 w-4 text-amber-600" />
+                    <div className="w-8 h-8 bg-amber-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Clock className="h-4 w-4 text-amber-500 stroke-[1.5]" />
                     </div>
                     <p className="text-sm text-amber-800 leading-relaxed">
                       No scheduling required. Please visit our lab between 6 am and 10 pm on a day that suits you.
@@ -355,8 +355,8 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <FileText className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center">
+                <FileText className="h-5 w-5 text-indigo-500 stroke-[1.5]" />
               </div>
               <span className="text-xl font-semibold text-gray-800">Test Details</span>
             </CardTitle>
@@ -417,8 +417,8 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Receipt className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center">
+                <Receipt className="h-5 w-5 text-emerald-500 stroke-[1.5]" />
               </div>
               <span className="text-xl font-semibold text-gray-800">Payment Details</span>
             </CardTitle>
@@ -447,8 +447,8 @@ const BookingConfirmation = () => {
             </div>
             <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-4">
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <DollarSign className="h-4 w-4 text-yellow-600" />
+                <div className="w-8 h-8 bg-yellow-50 rounded-full flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="h-4 w-4 text-yellow-500 stroke-[1.5]" />
                 </div>
                 <div>
                   <p className="text-sm text-yellow-800 font-semibold">
@@ -467,44 +467,44 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-                <AlertCircle className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-amber-500 stroke-[1.5]" />
               </div>
               <span className="text-xl font-semibold text-gray-800">Important Instructions</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <ClockIcon className="h-4 w-4 text-blue-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
+                <ClockIcon className="h-4 w-4 text-blue-500 stroke-[1.5]" />
               </div>
               <p className="text-sm text-gray-700 font-medium">Be available at your scheduled time</p>
             </div>
             
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <FileIcon className="h-4 w-4 text-green-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-green-50 rounded-full flex items-center justify-center">
+                <FileIcon className="h-4 w-4 text-green-500 stroke-[1.5]" />
               </div>
               <p className="text-sm text-gray-700 font-medium">Keep your doctor's prescription handy</p>
             </div>
             
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                <DollarSign className="h-4 w-4 text-yellow-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-yellow-50 rounded-full flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-yellow-500 stroke-[1.5]" />
               </div>
               <p className="text-sm text-gray-700 font-medium">Keep the payment ready</p>
             </div>
             
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                <Utensils className="h-4 w-4 text-orange-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-orange-50 rounded-full flex items-center justify-center">
+                <Utensils className="h-4 w-4 text-orange-500 stroke-[1.5]" />
               </div>
               <p className="text-sm text-gray-700 font-medium">Fast for 12 hours if your test requires it</p>
             </div>
             
             <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <PhoneCall className="h-4 w-4 text-purple-600" />
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center">
+                <PhoneCall className="h-4 w-4 text-purple-500 stroke-[1.5]" />
               </div>
               <p className="text-sm text-gray-700 font-medium">Contact us if you need to reschedule</p>
             </div>
@@ -515,7 +515,7 @@ const BookingConfirmation = () => {
         <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 to-emerald-50">
           <CardContent className="text-center py-6">
             <div className="flex items-center justify-center space-x-2 mb-2">
-              <Ticket className="h-4 w-4 text-green-600" />
+              <Ticket className="h-4 w-4 text-green-500 stroke-[1.5]" />
               <p className="text-sm text-green-700 font-medium">Booking Reference</p>
             </div>
             <p className="text-[10px] sm:text-[12px] font-bold text-green-700 tracking-wider">{orderDetails.order_number}</p>
