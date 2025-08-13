@@ -24,7 +24,7 @@ import {
 const ManageAddresses = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { saveAddress, getAddresses, deleteAddress, loading } = useAddresses();
+  const { saveAddress, getAddresses, updateAddress, deleteAddress, loading } = useAddresses();
   const { toast } = useToast();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -137,8 +137,14 @@ const ManageAddresses = () => {
       return;
     }
 
-    const addressData = editingAddress ? { ...formData, id: editingAddress.id } : formData;
-    const savedAddress = await saveAddress(addressData);
+    let savedAddress;
+    if (editingAddress) {
+      // Update existing address
+      savedAddress = await updateAddress(editingAddress.id!, formData);
+    } else {
+      // Create new address
+      savedAddress = await saveAddress(formData);
+    }
     
     if (savedAddress) {
       toast({

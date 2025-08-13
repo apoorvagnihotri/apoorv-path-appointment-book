@@ -105,7 +105,7 @@ const Account = () => {
           <div className="space-y-2 text-sm">
             <div className="flex items-center space-x-2 text-muted-foreground">
               <Phone className="h-4 w-4" />
-              <span>{profile?.mobile_number || user?.phone || "Phone not added"}</span>
+              <span>{profile?.mobile_number || user?.user_metadata?.mobile_number || "Phone not added"}</span>
             </div>
             <div className="flex items-center space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />

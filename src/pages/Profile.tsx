@@ -14,6 +14,7 @@ const Profile = () => {
   
   const [formData, setFormData] = useState({
     full_name: '',
+    mobile_number: '',
     date_of_birth: '',
     sex: '',
   });
@@ -24,6 +25,7 @@ const Profile = () => {
     if (profile) {
       setFormData({
         full_name: profile.full_name || '',
+        mobile_number: profile.mobile_number || '',
         date_of_birth: profile.date_of_birth || '',
         sex: profile.sex || '',
       });
@@ -44,6 +46,7 @@ const Profile = () => {
     // Filter out empty values
     const updateData: any = {
       full_name: formData.full_name || null,
+      mobile_number: formData.mobile_number || null,
       date_of_birth: formData.date_of_birth || null,
     };
     
@@ -111,18 +114,19 @@ const Profile = () => {
               />
             </div>
 
-            {/* Phone Number (Read-only) */}
+            {/* Phone Number (Editable) */}
             <div className="space-y-2">
               <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
-                type="text"
-                value={profile?.mobile_number || 'Not provided'}
-                disabled
-                className="w-full bg-muted text-muted-foreground"
+                type="tel"
+                value={formData.mobile_number}
+                onChange={(e) => handleInputChange('mobile_number', e.target.value)}
+                placeholder="Enter your mobile number"
+                className="w-full"
               />
               <p className="text-xs text-muted-foreground">
-                Phone number cannot be changed as it's used for verification
+                Mobile number for receiving test reports and notifications
               </p>
             </div>
 
