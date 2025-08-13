@@ -259,7 +259,16 @@ const Payment = () => {
                 // Group items by member
                 const itemsByMember = filteredCartItems.reduce((acc: any, item) => {
                   const memberId = item.memberId || 'self';
-                  const memberName = item.memberInfo?.name || 'You';
+                  // Get actual patient name instead of "You"
+                  let memberName = item.memberInfo?.name;
+                  
+                  // If it's the main user (self) and no member info, use actual user name
+                  if (!memberName && memberId === 'self') {
+                    memberName = user?.user_metadata?.full_name ||
+                                user?.user_metadata?.name ||
+                                user?.email?.split('@')[0] ||
+                                'Patient';
+                  }
                   
                   if (!acc[memberId]) {
                     acc[memberId] = {
@@ -283,20 +292,14 @@ const Payment = () => {
 
                 return Object.entries(itemsByMember).map(([memberId, memberData]: [string, any]) => (
                   <div key={memberId} className="space-y-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center">
                       <h3 className="font-semibold text-lg flex items-center">
                         <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
                         <span>{memberData.name}</span>
                         {memberData.age && memberData.gender && (
                           <span className="text-sm text-muted-foreground ml-2">({memberData.age} yrs, {memberData.gender})</span>
                         )}
-                        {memberData.name === 'You' && user?.user_metadata?.name && (
-                          <span className="text-sm text-muted-foreground ml-2">({user.user_metadata.name})</span>
-                        )}
                       </h3>
-                      <span className="text-sm text-muted-foreground">
-                        ₹{memberData.items.reduce((sum: number, item: any) => sum + item.price, 0)}
-                      </span>
                     </div>
                     <div className="ml-5 space-y-1">
                       {memberData.items.map((item: any, itemIndex: number) => (
