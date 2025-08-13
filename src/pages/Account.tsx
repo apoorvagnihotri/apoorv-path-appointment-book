@@ -43,7 +43,7 @@ const Account = () => {
     {
       icon: MapPin,
       title: "My Addresses",
-      subtitle: "Manage delivery addresses",
+      subtitle: "Manage Sample Collection Address",
       onClick: () => navigate('/manage-addresses')
     },
     {
