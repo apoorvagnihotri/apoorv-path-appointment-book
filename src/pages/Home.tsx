@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef } from "react";
-import { Search, PhoneCall, TestTube, Gift, Heart, Camera, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet, Bell } from "lucide-react";
+import { Search, PhoneCall, TestTube, Gift, Heart, Camera, ShieldCheck, CheckCircle, Coins, Trophy, User, Thermometer, Pill, Droplets, Activity, Ribbon, Dumbbell, Baby, Egg, AlertTriangle, Bone, Droplet, Bell, Stethoscope, FlaskConical, HeartHandshake } from "lucide-react";
 import type { LucideIcon, LucideProps } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -154,17 +154,17 @@ const Home = () => {
   const services = [
     {
       title: "Tests",
-      icon: TestTube,
+      icon: FlaskConical,
       onClick: () => navigate("/tests"),
     },
     {
       title: "Health Packages",
-      icon: Gift,
+      icon: HeartHandshake,
       onClick: () => navigate("/packages"),
     },
     {
       title: "Other Services",
-      icon: Heart,
+      icon: Stethoscope,
       onClick: () => navigate("/services"),
     },
     {
@@ -193,7 +193,7 @@ const Home = () => {
                 variant="secondary"
                 className="w-12 h-12 bg-white text-blue-900 border-2 border-white shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <PhoneCall className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth={2} />
+                <PhoneCall className="h-10 w-10 stroke-[1.5]" fill="none" stroke="currentColor" />
               </Button>
               
               <Button
@@ -202,7 +202,7 @@ const Home = () => {
                 variant="secondary"
                 className="w-12 h-12 bg-white text-blue-900 border-2 border-white shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <Camera className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth={2} />
+                <Camera className="h-10 w-10 stroke-[1.5]" fill="none" stroke="currentColor" />
               </Button>
               
               <Button
@@ -210,7 +210,7 @@ const Home = () => {
                 variant="secondary"
                 className="w-12 h-12 bg-white text-blue-900 border-2 border-white shadow-[inset_-2px_-2px_4px_rgba(0,0,0,0.2),inset_2px_2px_4px_rgba(255,255,255,0.8),2px_2px_8px_rgba(0,0,0,0.3)] hover:bg-gray-50 hover:scale-105 active:scale-95 transition-all duration-200"
               >
-                <Bell className="h-10 w-10" fill="none" stroke="currentColor" strokeWidth={2} />
+                <Bell className="h-10 w-10 stroke-[1.5]" fill="none" stroke="currentColor" />
               </Button>
             </div>
           </div>
@@ -223,7 +223,7 @@ const Home = () => {
           <Popover open={showSearchResults && searchQuery.length >= 3} onOpenChange={setShowSearchResults}>
             <PopoverTrigger asChild>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground stroke-[1.5]" />
                 <Input
                   placeholder="Search for Tests..."
                   value={searchQuery}
@@ -289,13 +289,16 @@ const Home = () => {
             
             if (service.title === "Tests") {
               iconBgColor = "bg-red-50";
+              iconColor = "text-red-500";
             } else if (service.title === "Health Packages") {
               iconBgColor = "bg-blue-50";
+              iconColor = "text-blue-500";
             } else if (service.title === "Other Services") {
               iconBgColor = "bg-green-50";
+              iconColor = "text-green-500";
             } else if (service.title.includes("WhatsApp")) {
               iconBgColor = "bg-green-50";
-              iconColor = "text-green-600";
+              iconColor = "text-green-500";
             }
 
             return (
@@ -323,7 +326,7 @@ const Home = () => {
           {/* Trusted by Doctors */}
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-2 hover-scale">
-              <ShieldCheck className="h-6 w-6 text-blue-600" />
+              <ShieldCheck className="h-6 w-6 text-blue-500 stroke-[1.5]" />
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">Trusted by<br />Doctors</p>
           </div>
@@ -331,7 +334,7 @@ const Home = () => {
           {/* 100% Report Accuracy */}
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-2 hover-scale">
-              <CheckCircle className="h-6 w-6 text-green-600" />
+              <CheckCircle className="h-6 w-6 text-green-500 stroke-[1.5]" />
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">100% report<br />accuracy<br />guaranteed</p>
           </div>
@@ -339,7 +342,7 @@ const Home = () => {
           {/* Save Money */}
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mb-2 hover-scale">
-              <Coins className="h-6 w-6 text-amber-600" />
+              <Coins className="h-6 w-6 text-amber-500 stroke-[1.5]" />
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">Save Money</p>
           </div>
@@ -347,8 +350,8 @@ const Home = () => {
           {/* 25+ Years Experience */}
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mb-2 hover-scale relative">
-              <Trophy className="h-6 w-6 text-purple-600" />
-              <span className="absolute -top-1 -right-1 text-[8px] font-bold text-purple-600 bg-purple-100 rounded-full px-1">25</span>
+              <Trophy className="h-6 w-6 text-purple-500 stroke-[1.5]" />
+              <span className="absolute -top-1 -right-1 text-[8px] font-bold text-purple-500 bg-purple-100 rounded-full px-1">25</span>
             </div>
             <p className="text-xs font-medium text-muted-foreground leading-tight">More than<br />25 years<br />experience</p>
           </div>
