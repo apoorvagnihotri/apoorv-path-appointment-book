@@ -147,23 +147,6 @@ const Account = () => {
         </Card>
       </div>
 
-      {/* Lab Information */}
-      <div className="px-6 py-6">
-        <Card className="p-4 shadow-card">
-          <h3 className="font-medium text-foreground mb-3">Lab Information</h3>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4" />
-              <span>Apoorv Pathology Lab, Sneh Nagar, Jabalpur</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Phone className="h-4 w-4" />
-              <span>+91 70000 00000</span>
-            </div>
-          </div>
-        </Card>
-      </div>
-
       {/* Logout */}
       <div className="px-6">
         <Button 
