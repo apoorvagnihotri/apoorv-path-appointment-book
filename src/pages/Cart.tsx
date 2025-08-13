@@ -100,27 +100,13 @@ const Cart = () => {
                   <span>₹{totalPrice}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <div className="flex items-center space-x-1">
-                    <span>Home collection</span>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-3 w-3 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-xs text-xs">
-                            With health packages, our technician carry multiple instruments like weighing machine, bp instrument, etc. Therefore, it costs more than when booking just a test.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <span>₹{items.some(item => item.package) ? 200 : 100}</span>
+                  <span>Home Collection Fee</span>
+                  <span>₹100</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-primary">₹{totalPrice + (items.some(item => item.package) ? 200 : 100)}</span>
+                  <span className="text-primary">₹{totalPrice + 100}</span>
                 </div>
               </div>
 
