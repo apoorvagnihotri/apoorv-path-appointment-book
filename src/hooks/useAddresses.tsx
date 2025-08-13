@@ -32,8 +32,17 @@ export const useAddresses = () => {
     setError(null);
 
     try {
+      // Check if user has any existing addresses
+      const { data: existingAddresses } = await (supabase as any)
+        .from('addresses')
+        .select('id')
+        .eq('user_id', user.id);
+
+      // If this is the user's first address, make it default automatically
+      const shouldBeDefault = addressData.is_default || (existingAddresses && existingAddresses.length === 0);
+
       // If this is set as default, first unset all other addresses as default
-      if (addressData.is_default) {
+      if (shouldBeDefault) {
         await (supabase as any)
           .from('addresses')
           .update({ is_default: false })
@@ -44,6 +53,7 @@ export const useAddresses = () => {
         .from('addresses')
         .insert({
           ...addressData,
+          is_default: shouldBeDefault,
           user_id: user.id,
         })
         .select()

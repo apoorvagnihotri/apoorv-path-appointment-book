@@ -111,7 +111,11 @@ const Account = () => {
               <MapPin className="h-4 w-4" />
               <span>
                 {addresses && addresses.length > 0
-                  ? `${addresses[0].street_address}, ${addresses[0].city}`
+                  ? (() => {
+                      // Find default address first, fallback to first address
+                      const defaultAddress = addresses.find(addr => addr.is_default) || addresses[0];
+                      return `${defaultAddress.street_address}, ${defaultAddress.city}`;
+                    })()
                   : "Address not added"
                 }
               </span>

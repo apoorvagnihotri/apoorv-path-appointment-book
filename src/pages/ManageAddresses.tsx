@@ -78,10 +78,10 @@ const ManageAddresses = () => {
     setShowForm(false);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: field === 'is_default' ? value : value
     }));
   };
 
@@ -359,12 +359,25 @@ const ManageAddresses = () => {
 
                 <div>
                   <Label htmlFor="landmark">Landmark (Optional)</Label>
-                  <Input 
-                    id="landmark" 
+                  <Input
+                    id="landmark"
                     placeholder="Enter nearby landmark"
                     value={formData.landmark}
                     onChange={(e) => handleInputChange('landmark', e.target.value)}
                   />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isDefault"
+                    checked={formData.is_default}
+                    onChange={(e) => handleInputChange('is_default', e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <Label htmlFor="isDefault" className="text-sm font-normal">
+                    Set as default address
+                  </Label>
                 </div>
 
                 <div className="flex space-x-4 pt-4">
