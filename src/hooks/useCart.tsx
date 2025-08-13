@@ -249,11 +249,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Cart Cleared",
-        description: "All items have been removed from your cart.",
-      });
-
       fetchCartItems();
     } catch (error) {
       console.error('Error clearing cart:', error);
