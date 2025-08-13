@@ -253,9 +253,6 @@ const Bookings = () => {
                           <h3 className="font-medium text-green-800 mb-1">
                             {displayName}
                           </h3>
-                          <p className="text-xs text-green-600 mb-2">
-                            Order #{order.order_number}
-                          </p>
                           <Badge className={order.status === 'completed' ? 'bg-green-200 text-green-800' : order.status === 'confirmed' ? 'bg-green-200 text-green-800' : 'bg-green-100 text-green-700'}>
                             {getStatusText(order.status)}
                           </Badge>
@@ -363,9 +360,6 @@ const Bookings = () => {
                           <h3 className="font-medium text-gray-600 mb-1">
                             {displayName}
                           </h3>
-                          <p className="text-xs text-gray-500 mb-2">
-                            Order #{order.order_number}
-                          </p>
                           <Badge className="bg-red-100 text-red-700">
                             {getStatusText(order.status)}
                           </Badge>
@@ -471,9 +465,6 @@ const Bookings = () => {
                             <h3 className="font-medium text-gray-700 mb-1">
                               {displayName}
                             </h3>
-                            <p className="text-xs text-gray-500 mb-2">
-                              Order #{order.order_number}
-                            </p>
                             <Badge className="bg-gray-200 text-gray-700">
                               {getStatusText(order.status)}
                             </Badge>
