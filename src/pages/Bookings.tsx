@@ -291,7 +291,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-green-300 text-green-700 hover:bg-green-100"
+                            className="flex-1 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
                             onClick={handleCall}
                           >
                             <Phone className="h-4 w-4 mr-2" />
@@ -302,7 +302,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-green-300 text-green-700 hover:bg-green-100"
+                            className="flex-1 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
                           >
                             View Report
                           </Button>
@@ -311,7 +311,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600 hover:bg-red-50 hover:text-red-600"
                             onClick={() => handleCancelBooking(order.id, order.order_number)}
                           >
                             <X className="h-4 w-4 mr-2" />
@@ -321,7 +321,7 @@ const Bookings = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="px-6 border-green-300 text-green-700 hover:bg-green-100"
+                          className="px-6 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
                           onClick={() => navigate(`/booking/${order.id}`)}
                         >
                           Details
@@ -400,7 +400,7 @@ const Bookings = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="px-6 border-gray-300 text-gray-600 hover:bg-gray-100"
+                          className="px-6 border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
                           onClick={() => navigate(`/booking/${order.id}`)}
                         >
                           Details
@@ -509,7 +509,7 @@ const Bookings = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-100"
+                              className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
                             >
                               View Report
                             </Button>
@@ -517,7 +517,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-gray-300 text-gray-600 hover:bg-gray-100"
+                            className="border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
                             onClick={() => navigate(`/booking/${order.id}`)}
                           >
                             Details
@@ -525,7 +525,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-green-300 text-green-700 hover:bg-green-50"
+                            className="border-green-300 text-green-700 hover:bg-green-50 hover:text-green-700"
                             onClick={() => handleRebook(order)}
                           >
                             <RotateCcw className="h-4 w-4 mr-2" />
