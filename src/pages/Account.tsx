@@ -68,7 +68,7 @@ const Account = () => {
       icon: Phone,
       title: "Contact Support",
       subtitle: "Get help and support",
-      onClick: () => window.open("tel:+917000000000", "_self")
+      onClick: () => navigate('/contact-support')
     }
   ];
 
