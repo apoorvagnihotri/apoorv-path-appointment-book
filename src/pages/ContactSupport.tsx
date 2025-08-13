@@ -45,7 +45,7 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={() => handlePhoneCall('9993522579')}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-blue-400 hover:bg-blue-500 text-white"
               >
                 <Phone className="h-6 w-6" />
                 <div className="text-left">
@@ -61,7 +61,7 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={() => handlePhoneCall('7610259348')}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-green-600 hover:bg-green-700 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-emerald-400 hover:bg-emerald-500 text-white"
               >
                 <Phone className="h-6 w-6" />
                 <div className="text-left">
@@ -77,7 +77,7 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={() => handlePhoneCall('8770276578')}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-purple-600 hover:bg-purple-700 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-violet-400 hover:bg-violet-500 text-white"
               >
                 <Phone className="h-6 w-6" />
                 <div className="text-left">
@@ -93,7 +93,7 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={handleEmailSupport}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-orange-600 hover:bg-orange-700 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-amber-400 hover:bg-amber-500 text-white"
               >
                 <Mail className="h-6 w-6" />
                 <div className="text-left">
