@@ -108,9 +108,11 @@ const ContactSupport = () => {
         <Card className="shadow-card bg-blue-50 border-blue-200">
           <CardContent className="p-4">
             <h3 className="font-semibold text-blue-900 mb-2">Support Hours</h3>
+            <p className="text-blue-800 text-sm mb-3">
+              Working Hours: 6:00 AM – 10:00 PM (Every Day)
+            </p>
             <p className="text-blue-800 text-sm">
-              Our support team is available Monday to Saturday, 9:00 AM to 6:00 PM.
-              For urgent matters, please call our lab contact number.
+              Lab Address: O-13, Sneh Nagar, Jabalpur, MP
             </p>
           </CardContent>
         </Card>
