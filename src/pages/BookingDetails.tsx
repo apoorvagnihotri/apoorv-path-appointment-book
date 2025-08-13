@@ -324,7 +324,7 @@ const BookingDetails = () => {
             <div>
               <p className="text-muted-foreground">Payment Method</p>
               <p className="font-medium">
-                {(order.payment_method === 'cash' || order.payment_method === 'Cash on collection') ? 'Cash / UPI' : (order.payment_method || 'Not specified')}
+                {(order.payment_method === 'cash' || order.payment_method === 'Cash on collection') ? 'Cash / UPI on collection' : (order.payment_method || 'Not specified')}
               </p>
             </div>
             <div>
