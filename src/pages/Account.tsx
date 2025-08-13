@@ -92,9 +92,6 @@ const Account = () => {
               <h2 className="text-lg font-semibold text-foreground">
                 {profile?.full_name || user?.email || "Guest User"}
               </h2>
-              <p className="text-sm text-muted-foreground">
-                {profile?.mobile_number || user?.phone || "Phone not added"}
-              </p>
             </div>
             <Button 
               size="sm" 
