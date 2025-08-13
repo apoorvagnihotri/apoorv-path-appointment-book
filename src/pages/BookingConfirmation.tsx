@@ -129,15 +129,7 @@ const BookingConfirmation = () => {
         </div>
       </div>
 
-      <div className="px-6 py-6 space-y-6 pb-24">
-        {/* Booking Reference */}
-        <Card className="bg-green-50 border-green-200">
-          <CardContent className="p-4 text-center">
-            <p className="text-sm text-muted-foreground">Booking Reference</p>
-            <p className="text-xl font-bold text-green-700">{orderDetails.order_number}</p>
-          </CardContent>
-        </Card>
-
+      <div className="px-6 py-6 space-y-6 pb-32">
         {/* Patient Information */}
         <Card>
           <CardHeader>
@@ -419,6 +411,12 @@ const BookingConfirmation = () => {
             <p className="text-sm text-blue-700">• Contact us if you need to reschedule</p>
           </CardContent>
         </Card>
+
+        {/* Booking Reference - Moved to bottom */}
+        <div className="text-center py-4">
+          <p className="text-xs text-muted-foreground mb-1">Booking Reference</p>
+          <p className="text-sm font-medium text-green-600">{orderDetails.order_number}</p>
+        </div>
 
         {/* Action Buttons */}
         <div className="fixed bottom-6 left-6 right-6 z-10 space-y-3">
