@@ -5,17 +5,33 @@ import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { useAddresses, Address } from "@/hooks/useAddresses";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Account = () => {
   const { user, signOut } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
+  const { getAddresses, loading: addressesLoading } = useAddresses();
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await signOut();
     navigate('/');
   };
+
+  // Fetch addresses when component mounts
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      if (user) {
+        const addressData = await getAddresses();
+        setAddresses(addressData);
+      }
+    };
+    
+    fetchAddresses();
+  }, [user, getAddresses]);
 
   const menuItems = [
     {
@@ -96,7 +112,12 @@ const Account = () => {
             </div>
             <div className="flex items-center space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>Address not added</span>
+              <span>
+                {addresses && addresses.length > 0
+                  ? `${addresses[0].street_address}, ${addresses[0].city}`
+                  : "Address not added"
+                }
+              </span>
             </div>
           </div>
         </Card>
