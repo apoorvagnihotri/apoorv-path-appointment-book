@@ -60,9 +60,9 @@ const Register = () => {
 
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="mb-8">
-          <img 
-            src={apoorvLogo} 
-            alt="Apoorv Pathology Lab" 
+          <img
+            src={apoorvLogo}
+            alt="Apoorv Pathology Lab"
             className="w-20 h-20 object-contain"
           />
         </div>

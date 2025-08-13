@@ -14,9 +14,9 @@ const Welcome = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
         {/* Logo */}
         <div className="mb-8">
-          <img 
-            src={apoorvLogo} 
-            alt="Apoorv Pathology Lab" 
+          <img
+            src={apoorvLogo}
+            alt="Apoorv Pathology Lab"
             className="w-24 h-24 object-contain"
           />
         </div>
