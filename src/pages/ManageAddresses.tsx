@@ -48,7 +48,7 @@ const ManageAddresses = () => {
       }
     };
     loadAddresses();
-  }, [user]);
+  }, [user, getAddresses]);
 
   // Handle user authentication check
   useEffect(() => {
@@ -120,25 +120,41 @@ const ManageAddresses = () => {
       return;
     }
 
-    let savedAddress;
-    if (editingAddress) {
-      // Update existing address
-      savedAddress = await updateAddress(editingAddress.id!, formData);
-    } else {
-      // Create new address
-      savedAddress = await saveAddress(formData);
-    }
-    
-    if (savedAddress) {
-      toast({
-        title: "Success",
-        description: editingAddress ? "Address updated successfully!" : "Address added successfully!",
-      });
+    try {
+      let savedAddress;
+      if (editingAddress) {
+        // Update existing address
+        savedAddress = await updateAddress(editingAddress.id!, formData);
+      } else {
+        // Create new address
+        savedAddress = await saveAddress(formData);
+      }
       
-      // Refresh addresses list
-      const updatedAddresses = await getAddresses();
-      setAddresses(updatedAddresses);
-      resetForm();
+      if (savedAddress) {
+        toast({
+          title: "Success",
+          description: editingAddress ? "Address updated successfully!" : "Address added successfully!",
+        });
+        
+        // Refresh addresses list
+        const updatedAddresses = await getAddresses();
+        setAddresses(updatedAddresses);
+        resetForm();
+      } else {
+        // Show error if save operation failed
+        toast({
+          title: "Error",
+          description: editingAddress ? "Failed to update address. Please try again." : "Failed to save address. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error in handleSave:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
