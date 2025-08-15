@@ -257,7 +257,7 @@ const Schedule = () => {
             className={`w-full min-h-[3rem] ${canProceed ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
-            Continue to Payment
+            Book Now & Pay Later
           </Button>
         </div>
       </div>
