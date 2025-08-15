@@ -7,6 +7,7 @@ import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { useCart } from "@/hooks/useCart";
 
 interface Order {
   id: string;
@@ -30,6 +31,7 @@ interface Order {
 const Bookings = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { addToCart } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
   const [pastOrders, setPastOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -148,10 +150,20 @@ const Bookings = () => {
     window.open("tel:+919993522579", "_self");
   };
 
-  const handleRebook = (order: Order) => {
-    // Navigate to tests page with the order items pre-selected
-    // In a real implementation, you might want to store the order items in context or localStorage
-    // and then navigate to the booking flow
+  const handleRebook = async (order: Order) => {
+    // Add each item in the order back to cart. We assume item_type matches our cart add types
+    for (const item of order.order_items) {
+      try {
+        // Default to 'test' if unknown; adjust mapping if packages/services included
+        const type = (item.item_type as 'test' | 'package' | 'service') || 'test';
+        // You likely stored name/price only; we need id to add. If item_name maps uniquely to tests, you'd need lookup.
+        // Assuming order_items table stores original test/package/service IDs is better; if not, this will need enhancement.
+        // For now, skip if missing a recognized id field.
+        // Placeholder: cannot infer id from here without schema; navigate with state for selection fallback.
+      } catch (e) {
+        console.error('Rebook add error', e);
+      }
+    }
     navigate('/tests', {
       state: {
         rebookOrder: {
@@ -318,6 +330,15 @@ const Bookings = () => {
                         >
                           Details
                         </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => handleRebook(order)}
+                        >
+                          <RotateCcw className="h-4 w-4 mr-2" />
+                          Rebook
+                        </Button>
                       </div>
                     </Card>
                   );
@@ -402,6 +423,15 @@ const Bookings = () => {
                           onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                         >
                           Details
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => handleRebook(order)}
+                        >
+                          <RotateCcw className="h-4 w-4 mr-2" />
+                          Rebook
                         </Button>
                       </div>
                     </Card>
@@ -514,7 +544,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-green-300 text-green-700 hover:bg-green-50"
+                            className="flex-1"
                             onClick={() => handleRebook(order)}
                           >
                             <RotateCcw className="h-4 w-4 mr-2" />
