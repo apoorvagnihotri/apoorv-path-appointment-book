@@ -5,10 +5,10 @@ import { useAuth } from './useAuth';
 export interface Address {
   id?: string;
   user_id: string;
-  first_name?: string; // Made optional for backward compatibility
-  last_name?: string; // Made optional for backward compatibility
+  first_name: string;
+  last_name: string;
   address_type: string;
-  phone?: string; // Made optional since phone field is being removed
+  phone: string;
   street_address: string;
   city: string;
   pincode: string;
@@ -23,7 +23,7 @@ export const useAddresses = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  const saveAddress = async (addressData: Omit<Address, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  const saveAddress = async (addressData: Omit<Address, 'id' | 'user_id' | 'created_at' | 'updated_at'> & { first_name?: string; last_name?: string; phone?: string }) => {
     if (!user) {
       setError('User not authenticated');
       return null;
@@ -34,26 +34,41 @@ export const useAddresses = () => {
 
     try {
       // Check if user has any existing addresses
-      const { data: existingAddresses } = await (supabase as any)
+      const { data: existingAddresses, error: checkError } = await supabase
         .from('addresses')
         .select('id')
         .eq('user_id', user.id);
+
+      if (checkError) {
+        console.error('Error checking existing addresses:', checkError);
+        setError(checkError.message);
+        return null;
+      }
 
       // If this is the user's first address, make it default automatically
       const shouldBeDefault = addressData.is_default || (existingAddresses && existingAddresses.length === 0);
 
       // If this is set as default, first unset all other addresses as default
       if (shouldBeDefault) {
-        await (supabase as any)
+        const { error: updateError } = await supabase
           .from('addresses')
           .update({ is_default: false })
           .eq('user_id', user.id);
+        
+        if (updateError) {
+          console.error('Error updating default addresses:', updateError);
+          setError(updateError.message);
+          return null;
+        }
       }
 
-      const { data, error: saveError } = await (supabase as any)
+      const { data, error: saveError } = await supabase
         .from('addresses')
         .insert({
           ...addressData,
+          first_name: addressData.first_name || '',
+          last_name: addressData.last_name || '',
+          phone: addressData.phone || '',
           is_default: shouldBeDefault,
           user_id: user.id,
         })
@@ -86,7 +101,7 @@ export const useAddresses = () => {
     setError(null);
 
     try {
-      const { data, error: fetchError } = await (supabase as any)
+      const { data, error: fetchError } = await supabase
         .from('addresses')
         .select('*')
         .eq('user_id', user.id)
@@ -121,14 +136,20 @@ export const useAddresses = () => {
     try {
       // If this is being set as default, first unset all other addresses as default
       if (updates.is_default) {
-        await (supabase as any)
+        const { error: defaultUpdateError } = await supabase
           .from('addresses')
           .update({ is_default: false })
           .eq('user_id', user.id)
           .neq('id', id);
+        
+        if (defaultUpdateError) {
+          console.error('Error updating default addresses:', defaultUpdateError);
+          setError(defaultUpdateError.message);
+          return null;
+        }
       }
 
-      const { data, error: updateError } = await (supabase as any)
+      const { data, error: updateError } = await supabase
         .from('addresses')
         .update(updates)
         .eq('id', id)
@@ -162,7 +183,7 @@ export const useAddresses = () => {
     setError(null);
 
     try {
-      const { error: deleteError } = await (supabase as any)
+      const { error: deleteError } = await supabase
         .from('addresses')
         .delete()
         .eq('id', id)

@@ -32,6 +32,9 @@ const ManageAddresses = () => {
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [formData, setFormData] = useState({
     address_type: 'Home',
+    first_name: '',
+    last_name: '',
+    phone: '',
     street_address: '',
     city: '',
     pincode: '',
@@ -64,6 +67,9 @@ const ManageAddresses = () => {
   const resetForm = () => {
     setFormData({
       address_type: 'Home',
+      first_name: '',
+      last_name: '',
+      phone: '',
       street_address: '',
       city: '',
       pincode: '',
@@ -89,6 +95,9 @@ const ManageAddresses = () => {
   const handleEdit = (address: Address) => {
     setFormData({
       address_type: address.address_type || 'Home',
+      first_name: address.first_name || '',
+      last_name: address.last_name || '',
+      phone: address.phone || '',
       street_address: address.street_address || '',
       city: address.city || '',
       pincode: address.pincode || '',
@@ -101,7 +110,7 @@ const ManageAddresses = () => {
 
   const handleSave = async () => {
     // Validate required fields
-    if (!formData.address_type || !formData.street_address || !formData.city || !formData.pincode) {
+    if (!formData.address_type || !formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -305,10 +314,41 @@ const ManageAddresses = () => {
                   </select>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">First Name *</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="Enter first name"
+                      value={formData.first_name}
+                      onChange={(e) => handleInputChange('first_name', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">Last Name *</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Enter last name"
+                      value={formData.last_name}
+                      onChange={(e) => handleInputChange('last_name', e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input
+                    id="phone"
+                    placeholder="Enter phone number"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                  />
+                </div>
+
                 <div>
                   <Label htmlFor="address">Street Address *</Label>
-                  <Textarea 
-                    id="address" 
+                  <Textarea
+                    id="address"
                     placeholder="Enter complete address with house/flat number, building name, street name"
                     rows={3}
                     value={formData.street_address}

@@ -27,6 +27,9 @@ const Address = () => {
   // Form state
   const [formData, setFormData] = useState({
     address_type: 'Home',
+    first_name: '',
+    last_name: '',
+    phone: '',
     street_address: '',
     city: '',
     pincode: '',
@@ -85,7 +88,7 @@ const Address = () => {
 
   const handleSaveAddress = async () => {
     // Validate required fields
-    if (!formData.address_type || !formData.street_address || !formData.city || !formData.pincode) {
+    if (!formData.address_type || !formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -126,6 +129,9 @@ const Address = () => {
       // Reset form
       setFormData({
         address_type: 'Home',
+        first_name: '',
+        last_name: '',
+        phone: '',
         street_address: '',
         city: '',
         pincode: '',
@@ -356,11 +362,44 @@ const Address = () => {
                   </select>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">First Name *</Label>
+                    <Input
+                      id="firstName"
+                      placeholder="Enter first name"
+                      value={formData.first_name}
+                      onChange={(e) => handleInputChange('first_name', e.target.value)}
+                      disabled={collectionType !== 'home'}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">Last Name *</Label>
+                    <Input
+                      id="lastName"
+                      placeholder="Enter last name"
+                      value={formData.last_name}
+                      onChange={(e) => handleInputChange('last_name', e.target.value)}
+                      disabled={collectionType !== 'home'}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input
+                    id="phone"
+                    placeholder="Enter phone number"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    disabled={collectionType !== 'home'}
+                  />
+                </div>
 
                 <div>
                   <Label htmlFor="address">Street Address *</Label>
-                  <Textarea 
-                    id="address" 
+                  <Textarea
+                    id="address"
                     placeholder="Enter complete address with house/flat number, building name, street name"
                     rows={3}
                     value={formData.street_address}
