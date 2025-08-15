@@ -194,9 +194,7 @@ const BookingConfirmation = () => {
             <div className="flex justify-between">
               <span className="text-muted-foreground">Phone</span>
               <span className="font-medium">
-                {orderDetails.customer_details?.phone || 
-                 orderDetails.collection_address?.phone || 
-                 user?.user_metadata?.mobile_number || 
+                {user?.user_metadata?.mobile_number ||
                  "Not provided"}
               </span>
             </div>
@@ -284,7 +282,7 @@ const BookingConfirmation = () => {
               orderDetails.collection_address ? (
                 <div className="space-y-2">
                   <p className="font-medium">
-                    {orderDetails.collection_address.first_name} {orderDetails.collection_address.last_name}
+                    {orderDetails.collection_address.address_type}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {orderDetails.collection_address.street_address}
@@ -297,9 +295,6 @@ const BookingConfirmation = () => {
                       Landmark: {orderDetails.collection_address.landmark}
                     </p>
                   )}
-                  <p className="text-sm text-muted-foreground">
-                    Phone: {orderDetails.collection_address.phone}
-                  </p>
                   <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
                     <div className="flex items-start space-x-3">
                       <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">

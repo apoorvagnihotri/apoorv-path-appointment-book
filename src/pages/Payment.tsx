@@ -150,9 +150,7 @@ const Payment = () => {
         appointment_time: isLab ? null : selectedTime,
         collection_type: collectionType,
         collection_address: collectionType === 'home' && selectedAddress ? {
-          first_name: selectedAddress.first_name,
-          last_name: selectedAddress.last_name,
-          phone: selectedAddress.phone,
+          address_type: selectedAddress.address_type,
           street_address: selectedAddress.street_address,
           city: selectedAddress.city,
           pincode: selectedAddress.pincode,
@@ -161,7 +159,7 @@ const Payment = () => {
         customer_details: {
           name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
           email: user.email,
-          phone: user.user_metadata?.mobile_number || selectedAddress?.phone || null
+          phone: user.user_metadata?.mobile_number || null
         }
       };
 
@@ -369,12 +367,11 @@ const Payment = () => {
                     <h3 className="font-medium mb-1">Collection Address</h3>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p className="font-medium text-foreground">
-                        {selectedAddress.first_name} {selectedAddress.last_name}
+                        {selectedAddress.address_type}
                       </p>
                       <p>{selectedAddress.street_address}</p>
                       <p>{selectedAddress.city} - {selectedAddress.pincode}</p>
                       {selectedAddress.landmark && <p>Landmark: {selectedAddress.landmark}</p>}
-                      <p>Phone: {selectedAddress.phone}</p>
                     </div>
                   </div>
                 </div>
