@@ -3,6 +3,7 @@ import { ArrowLeft, Phone, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { BottomNavigation } from '@/components/ui/bottom-navigation';
 
 const ContactSupport = () => {
   const navigate = useNavigate();
@@ -117,6 +118,8 @@ const ContactSupport = () => {
           </CardContent>
         </Card>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 };
