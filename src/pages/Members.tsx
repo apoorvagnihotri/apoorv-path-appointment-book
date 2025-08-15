@@ -202,7 +202,7 @@ const Members = () => {
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
-            <h1 className="text-2xl font-semibold ml-8">Family</h1>
+            <h1 className="text-2xl font-semibold ml-8">Select Patients</h1>
           </div>
         </div>
       </div>
@@ -217,20 +217,20 @@ const Members = () => {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>Select Members</CardTitle>
+                <CardTitle>Patients</CardTitle>
                 <Button
                   onClick={() => setShowAddForm(!showAddForm)}
                   className="bg-gradient-medical text-white hover:shadow-button"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Member
+                  Add Patients
                 </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
                 {loading ? (
-                  <p className="text-center text-muted-foreground">Loading members...</p>
+                  <p className="text-center text-muted-foreground">Loading patients...</p>
                 ) : (
                   <>
                     {members.map((member) => (
@@ -273,7 +273,7 @@ const Members = () => {
           {!loading && selectedMembers.length === 0 && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
               <p className="text-sm text-yellow-800">
-                Please select at least one member to continue
+                Please select at least one patient to continue
               </p>
             </div>
           )}
@@ -296,7 +296,7 @@ const Members = () => {
                 </> : 
                 (collectionType === 'lab' ? 'Proceed to Payment' : 'Book a slot')
               ) : 
-              `Select ${selectedMembers.length === 0 ? 'at least one' : 'a'} member to continue`
+              `Select ${selectedMembers.length === 0 ? 'at least one' : 'a'} patient to continue`
             }
           </Button>
         </div>

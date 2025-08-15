@@ -530,7 +530,7 @@ const BookingConfirmation = () => {
             View My Bookings
           </Button>
           <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             variant="outline"
             className="w-full h-12"
             size="lg"

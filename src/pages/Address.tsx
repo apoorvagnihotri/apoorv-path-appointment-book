@@ -468,7 +468,7 @@ const Address = () => {
                 onClick={() => navigate('/members')}
                 disabled={!selectedAddressId}
               >
-                {selectedAddressId ? 'Continue with Selected Address' : 'Please Select an Address'}
+                {selectedAddressId ? 'Continue to select patients' : 'Please Select an Address'}
               </Button>
             </div>
           </div>
@@ -481,7 +481,7 @@ const Address = () => {
               className="w-full min-h-[3rem] bg-gradient-medical hover:shadow-button"
               onClick={() => navigate('/payment')}
             >
-              Continue to Confirm
+              Review your booking
             </Button>
           </div>
         </div>
