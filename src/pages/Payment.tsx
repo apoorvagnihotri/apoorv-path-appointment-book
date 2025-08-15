@@ -239,7 +239,7 @@ const Payment = () => {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-lg font-semibold">Payment</h1>
+            <h1 className="text-lg font-semibold">Review your Booking</h1>
           </div>
         </div>
       </div>
