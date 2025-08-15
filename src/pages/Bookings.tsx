@@ -248,7 +248,7 @@ const Bookings = () => {
                           <h3 className="font-medium text-foreground mb-1">
                             {displayName}
                           </h3>
-                          <Badge className={order.status === 'completed' ? 'bg-green-200 text-green-800' : order.status === 'confirmed' ? 'bg-green-200 text-green-800' : 'bg-green-100 text-green-700'}>
+                          <Badge className={getStatusColor(order.status)}>
                             {getStatusText(order.status)}
                           </Badge>
                         </div>
@@ -283,7 +283,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
+                            className="flex-1"
                             onClick={handleCall}
                           >
                             <Phone className="h-4 w-4 mr-2" />
@@ -294,7 +294,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
+                            className="flex-1"
                           >
                             View Report
                           </Button>
@@ -303,7 +303,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:bg-red-50 hover:text-red-600"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={() => handleCancelBooking(order.id, order.order_number)}
                           >
                             <X className="h-4 w-4 mr-2" />
@@ -313,7 +313,7 @@ const Bookings = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="px-6 border-green-300 text-green-700 hover:bg-green-100 hover:text-green-700"
+                          className="px-6"
                           onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                         >
                           Details
@@ -352,7 +352,10 @@ const Bookings = () => {
                           <h3 className="font-medium text-foreground mb-1">
                             {displayName}
                           </h3>
-                          <Badge className="bg-red-100 text-red-700">
+                          <p className="text-xs text-muted-foreground mb-2">
+                            Order #{order.order_number}
+                          </p>
+                          <Badge className={getStatusColor(order.status)}>
                             {getStatusText(order.status)}
                           </Badge>
                         </div>
@@ -395,7 +398,7 @@ const Bookings = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="px-6 border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
+                          className="px-6"
                           onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                         >
                           Details
@@ -460,7 +463,7 @@ const Bookings = () => {
                             <h3 className="font-medium text-foreground mb-1">
                               {displayName}
                             </h3>
-                            <Badge className="bg-gray-200 text-gray-700">
+                            <Badge className={getStatusColor(order.status)}>
                               {getStatusText(order.status)}
                             </Badge>
                           </div>
@@ -495,7 +498,7 @@ const Bookings = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
+                              className="flex-1"
                             >
                               View Report
                             </Button>
@@ -503,7 +506,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-gray-300 text-gray-600 hover:bg-gray-100 hover:text-gray-600"
+                            className="px-6"
                             onClick={() => navigate(`/booking-confirmation/${order.id}`)}
                           >
                             Details
@@ -511,7 +514,7 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="border-green-300 text-green-700 hover:bg-green-50 hover:text-green-700"
+                            className="border-green-300 text-green-700 hover:bg-green-50"
                             onClick={() => handleRebook(order)}
                           >
                             <RotateCcw className="h-4 w-4 mr-2" />
