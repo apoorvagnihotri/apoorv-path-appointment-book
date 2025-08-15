@@ -110,7 +110,7 @@ const Schedule = () => {
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
-            <h1 className="text-2xl font-semibold ml-8">Schedule Appointment</h1>
+            <h1 className="text-2xl font-semibold ml-8">Book a Slot</h1>
           </div>
         </div>
       </div>
