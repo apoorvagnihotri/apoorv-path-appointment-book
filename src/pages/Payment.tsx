@@ -389,7 +389,7 @@ const Payment = () => {
                       <p>Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
                       <p>Opening Times: 6 am - 10 pm (Everyday)</p>
                       <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline">View on Google Maps</a>
-                      <p>Phone: +91 98765 43210</p>
+                      <p>Phone: 9993522579, +91 4017923</p>
                     </div>
                   </div>
                 </div>
@@ -498,7 +498,7 @@ const Payment = () => {
               </>
             ) : (
               <>
-                <span className="text-xl font-bold">Confirm</span>
+                <span className="text-xl font-bold">Book Now & Pay Later</span>
                 <span className="ml-2 text-lg">✓</span>
               </>
             )}
