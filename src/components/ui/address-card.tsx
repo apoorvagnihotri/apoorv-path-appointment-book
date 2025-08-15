@@ -28,7 +28,7 @@ export const AddressCard = ({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <MapPin className="h-4 w-4 text-primary" />
-            <p className="font-semibold">{address.address_type}</p>
+            <p className="font-semibold">{address.first_name} {address.last_name}</p>
             {isSelected && (
               <span className="text-xs bg-green-500 text-white px-2 py-1 rounded flex items-center gap-1">
                 <Check className="h-3 w-3" />
@@ -36,8 +36,8 @@ export const AddressCard = ({
               </span>
             )}
           </div>
-          
           <div className="space-y-1 text-sm">
+            <p className="text-muted-foreground">{address.phone}</p>
             <p>{address.street_address}</p>
             <p>{address.city}, {address.pincode}</p>
             {address.landmark && (

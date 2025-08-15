@@ -26,7 +26,6 @@ const Address = () => {
 
   // Form state
   const [formData, setFormData] = useState({
-    address_type: 'Home',
     first_name: '',
     last_name: '',
     phone: '',
@@ -88,7 +87,7 @@ const Address = () => {
 
   const handleSaveAddress = async () => {
     // Validate required fields
-    if (!formData.address_type || !formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
+    if (!formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -128,7 +127,6 @@ const Address = () => {
       
       // Reset form
       setFormData({
-        address_type: 'Home',
         first_name: '',
         last_name: '',
         phone: '',
@@ -198,7 +196,7 @@ const Address = () => {
               <ChevronLeft className="h-6 w-6" />
             </button>
             <h1 className="text-2xl font-semibold ml-8">
-              Select an Address
+              Address Details
             </h1>
           </div>
         </div>
@@ -347,21 +345,6 @@ const Address = () => {
               </div>
 
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="addressType">Address Type *</Label>
-                  <select
-                    id="addressType"
-                    value={formData.address_type}
-                    onChange={(e) => handleInputChange('address_type', e.target.value)}
-                    disabled={collectionType !== 'home'}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="Home">Home</option>
-                    <option value="Office">Office</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name *</Label>

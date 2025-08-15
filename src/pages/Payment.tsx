@@ -150,7 +150,9 @@ const Payment = () => {
         appointment_time: isLab ? null : selectedTime,
         collection_type: collectionType,
         collection_address: collectionType === 'home' && selectedAddress ? {
-          address_type: selectedAddress.address_type,
+          first_name: selectedAddress.first_name,
+          last_name: selectedAddress.last_name,
+          phone: selectedAddress.phone,
           street_address: selectedAddress.street_address,
           city: selectedAddress.city,
           pincode: selectedAddress.pincode,
@@ -367,11 +369,12 @@ const Payment = () => {
                     <h3 className="font-medium mb-1">Collection Address</h3>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p className="font-medium text-foreground">
-                        {selectedAddress.address_type}
+                        {selectedAddress.first_name} {selectedAddress.last_name}
                       </p>
                       <p>{selectedAddress.street_address}</p>
                       <p>{selectedAddress.city} - {selectedAddress.pincode}</p>
                       {selectedAddress.landmark && <p>Landmark: {selectedAddress.landmark}</p>}
+                      <p>Phone: {selectedAddress.phone}</p>
                     </div>
                   </div>
                 </div>

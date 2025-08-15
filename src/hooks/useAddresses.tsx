@@ -7,7 +7,6 @@ export interface Address {
   user_id: string;
   first_name: string;
   last_name: string;
-  address_type: string;
   phone: string;
   street_address: string;
   city: string;
@@ -23,7 +22,7 @@ export const useAddresses = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  const saveAddress = async (addressData: Omit<Address, 'id' | 'user_id' | 'created_at' | 'updated_at'> & { first_name?: string; last_name?: string; phone?: string }) => {
+  const saveAddress = async (addressData: Omit<Address, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     if (!user) {
       setError('User not authenticated');
       return null;
@@ -45,16 +44,13 @@ export const useAddresses = () => {
         return null;
       }
 
-      // If this is the user's first address, make it default automatically
       const shouldBeDefault = addressData.is_default || (existingAddresses && existingAddresses.length === 0);
 
-      // If this is set as default, first unset all other addresses as default
       if (shouldBeDefault) {
         const { error: updateError } = await supabase
           .from('addresses')
-          .update({ is_default: false })
-          .eq('user_id', user.id);
-        
+            .update({ is_default: false })
+            .eq('user_id', user.id);
         if (updateError) {
           console.error('Error updating default addresses:', updateError);
           setError(updateError.message);
@@ -66,9 +62,6 @@ export const useAddresses = () => {
         .from('addresses')
         .insert({
           ...addressData,
-          first_name: addressData.first_name || '',
-          last_name: addressData.last_name || '',
-          phone: addressData.phone || '',
           is_default: shouldBeDefault,
           user_id: user.id,
         })
@@ -96,10 +89,8 @@ export const useAddresses = () => {
       setError('User not authenticated');
       return [];
     }
-
     setLoading(true);
     setError(null);
-
     try {
       const { data, error: fetchError } = await supabase
         .from('addresses')
@@ -107,13 +98,11 @@ export const useAddresses = () => {
         .eq('user_id', user.id)
         .order('is_default', { ascending: false })
         .order('created_at', { ascending: false });
-
       if (fetchError) {
         console.error('Error fetching addresses:', fetchError);
         setError(fetchError.message);
         return [];
       }
-
       return data || [];
     } catch (err) {
       console.error('Error fetching addresses:', err);
@@ -129,26 +118,21 @@ export const useAddresses = () => {
       setError('User not authenticated');
       return null;
     }
-
     setLoading(true);
     setError(null);
-
     try {
-      // If this is being set as default, first unset all other addresses as default
       if (updates.is_default) {
         const { error: defaultUpdateError } = await supabase
           .from('addresses')
           .update({ is_default: false })
           .eq('user_id', user.id)
           .neq('id', id);
-        
         if (defaultUpdateError) {
           console.error('Error updating default addresses:', defaultUpdateError);
-          setError(defaultUpdateError.message);
-          return null;
+            setError(defaultUpdateError.message);
+            return null;
         }
       }
-
       const { data, error: updateError } = await supabase
         .from('addresses')
         .update(updates)
@@ -156,13 +140,11 @@ export const useAddresses = () => {
         .eq('user_id', user.id)
         .select()
         .single();
-
       if (updateError) {
         console.error('Error updating address:', updateError);
         setError(updateError.message);
         return null;
       }
-
       return data;
     } catch (err) {
       console.error('Error updating address:', err);
@@ -178,23 +160,19 @@ export const useAddresses = () => {
       setError('User not authenticated');
       return false;
     }
-
     setLoading(true);
     setError(null);
-
     try {
       const { error: deleteError } = await supabase
         .from('addresses')
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);
-
       if (deleteError) {
         console.error('Error deleting address:', deleteError);
         setError(deleteError.message);
         return false;
       }
-
       return true;
     } catch (err) {
       console.error('Error deleting address:', err);
@@ -205,12 +183,5 @@ export const useAddresses = () => {
     }
   };
 
-  return {
-    saveAddress,
-    getAddresses,
-    updateAddress,
-    deleteAddress,
-    loading,
-    error,
-  };
+  return { saveAddress, getAddresses, updateAddress, deleteAddress, loading, error };
 };

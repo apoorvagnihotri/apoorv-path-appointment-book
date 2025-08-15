@@ -17,7 +17,9 @@ interface OrderItem {
 }
 
 interface CollectionAddress {
-  address_type: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
   street_address: string;
   city: string;
   pincode: string;
@@ -261,15 +263,9 @@ const BookingDetails = () => {
               <div className="flex items-center space-x-3">
                 <User className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="font-medium">
-                    {order.collection_address.address_type}
-                  </p>
-                  <p className="text-sm text-muted-foreground">Contact Person</p>
+                  <h3 className="font-semibold text-lg">{order.collection_address.first_name} {order.collection_address.last_name}</h3>
+                  <p className="text-sm text-muted-foreground mb-1">{order.collection_address.phone}</p>
                 </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-primary" />
               </div>
               
               <div className="flex items-start space-x-3">

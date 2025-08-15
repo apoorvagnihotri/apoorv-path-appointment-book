@@ -125,3 +125,12 @@ Furture Plans:
 
 Things to work on:
 - Rebook button doesn't work. Fix it.
+
+## Progress Update - 2025-08-15
+
+### Revert Address Changes
+- Reverted recent refactor that introduced `address_type` field.
+- Restored original address schema using: first_name, last_name, phone, street_address, city, pincode, landmark, is_default.
+- Updated hooks and pages (Address, ManageAddresses, Payment, BookingConfirmation, BookingDetails, AddressCard) to remove `address_type` usage.
+- Added rollback migration `20250815000002_remove_address_type.sql` to drop the `address_type` column and related constraint if present.
+- Ensured order creation now embeds full name & phone in `collection_address` again.

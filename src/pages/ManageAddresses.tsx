@@ -31,7 +31,6 @@ const ManageAddresses = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [formData, setFormData] = useState({
-    address_type: 'Home',
     first_name: '',
     last_name: '',
     phone: '',
@@ -66,7 +65,6 @@ const ManageAddresses = () => {
 
   const resetForm = () => {
     setFormData({
-      address_type: 'Home',
       first_name: '',
       last_name: '',
       phone: '',
@@ -81,10 +79,7 @@ const ManageAddresses = () => {
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: field === 'is_default' ? value : value
-    }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleAddNew = () => {
@@ -94,7 +89,6 @@ const ManageAddresses = () => {
 
   const handleEdit = (address: Address) => {
     setFormData({
-      address_type: address.address_type || 'Home',
       first_name: address.first_name || '',
       last_name: address.last_name || '',
       phone: address.phone || '',
@@ -110,10 +104,20 @@ const ManageAddresses = () => {
 
   const handleSave = async () => {
     // Validate required fields
-    if (!formData.address_type || !formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
+    if (!formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate phone number
+    if (formData.phone.length < 10) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid phone number",
         variant: "destructive",
       });
       return;
@@ -225,20 +229,19 @@ const ManageAddresses = () => {
               </Button>
             </Card>
           ) : (
-            addresses.map((address) => (
+            addresses.map(address => (
               <Card key={address.id} className="p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
-                      <h3 className="font-semibold text-lg">
-                        {address.address_type}
-                      </h3>
+                      <h3 className="font-semibold text-lg">{address.first_name} {address.last_name}</h3>
                       {address.is_default && (
-                        <span className="ml-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
-                          Default
-                        </span>
+                        <span className="ml-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">Default</span>
                       )}
                     </div>
+                    <p className="text-sm text-muted-foreground mb-1">
+                      {address.phone}
+                    </p>
                     <p className="text-sm text-muted-foreground mb-1">
                       {address.street_address}
                     </p>
@@ -300,20 +303,6 @@ const ManageAddresses = () => {
             </CardHeader>
             <CardContent className="px-0 pb-0">
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="addressType">Address Type *</Label>
-                  <select
-                    id="addressType"
-                    value={formData.address_type}
-                    onChange={(e) => handleInputChange('address_type', e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="Home">Home</option>
-                    <option value="Office">Office</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name *</Label>
