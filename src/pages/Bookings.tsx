@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Clock, MapPin, Phone, X } from "lucide-react";
+import { Calendar, Clock, MapPin, Phone, X, RotateCcw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -146,6 +146,20 @@ const Bookings = () => {
 
   const handleCall = () => {
     window.open("tel:+919993522579", "_self");
+  };
+
+  const handleRebook = (order: Order) => {
+    // Navigate to tests page with the order items pre-selected
+    // In a real implementation, you might want to store the order items in context or localStorage
+    // and then navigate to the booking flow
+    navigate('/tests', {
+      state: {
+        rebookOrder: {
+          items: order.order_items,
+          previousOrderNumber: order.order_number
+        }
+      }
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -498,10 +512,19 @@ const Bookings = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="px-6"
+                            className="border-gray-300 text-gray-600 hover:bg-gray-100"
                             onClick={() => navigate(`/booking/${order.id}`)}
                           >
                             Details
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-green-300 text-green-700 hover:bg-green-50"
+                            onClick={() => handleRebook(order)}
+                          >
+                            <RotateCcw className="h-4 w-4 mr-2" />
+                            Rebook
                           </Button>
                         </div>
                       </Card>

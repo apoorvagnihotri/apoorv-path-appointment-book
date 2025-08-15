@@ -56,7 +56,7 @@ const Account = () => {
       icon: Calendar,
       title: "My Bookings", 
       subtitle: "View appointment history",
-      onClick: () => console.log("Navigate to bookings")
+      onClick: () => navigate('/bookings')
     },
     {
       icon: FileText,

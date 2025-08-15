@@ -120,3 +120,8 @@ Furture Plans:
 ---
 - Connected "call lab" button on the "Booking Details" page.
 - Connected "call lab" button on the "Bookings" page.
+
+
+
+Things to work on:
+- Rebook button doesn't work. Fix it.
