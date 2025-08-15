@@ -31,9 +31,7 @@ const ManageAddresses = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    phone: '',
+    address_type: 'Home',
     street_address: '',
     city: '',
     pincode: '',
@@ -65,9 +63,7 @@ const ManageAddresses = () => {
 
   const resetForm = () => {
     setFormData({
-      first_name: '',
-      last_name: '',
-      phone: '',
+      address_type: 'Home',
       street_address: '',
       city: '',
       pincode: '',
@@ -92,9 +88,7 @@ const ManageAddresses = () => {
 
   const handleEdit = (address: Address) => {
     setFormData({
-      first_name: address.first_name || '',
-      last_name: address.last_name || '',
-      phone: address.phone || '',
+      address_type: address.address_type || 'Home',
       street_address: address.street_address || '',
       city: address.city || '',
       pincode: address.pincode || '',
@@ -107,21 +101,10 @@ const ManageAddresses = () => {
 
   const handleSave = async () => {
     // Validate required fields
-    if (!formData.first_name || !formData.last_name || !formData.phone || 
-        !formData.street_address || !formData.city || !formData.pincode) {
+    if (!formData.address_type || !formData.street_address || !formData.city || !formData.pincode) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate phone number
-    if (formData.phone.length < 10) {
-      toast({
-        title: "Validation Error",
-        description: "Please enter a valid phone number",
         variant: "destructive",
       });
       return;
@@ -223,7 +206,7 @@ const ManageAddresses = () => {
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
                       <h3 className="font-semibold text-lg">
-                        {address.first_name} {address.last_name}
+                        {address.address_type}
                       </h3>
                       {address.is_default && (
                         <span className="ml-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
@@ -231,7 +214,6 @@ const ManageAddresses = () => {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-1">{address.phone}</p>
                     <p className="text-sm text-muted-foreground mb-1">
                       {address.street_address}
                     </p>
@@ -285,44 +267,26 @@ const ManageAddresses = () => {
 
         {/* Add/Edit Form */}
         {showForm && (
-          <Card className="p-6">
-            <CardHeader className="px-0 pt-0">
-              <CardTitle>
+          <Card className="p-6 border-2 border-primary/20 shadow-lg">
+            <CardHeader className="px-0 pt-0 pb-4">
+              <CardTitle className="text-xl font-semibold text-primary">
                 {editingAddress ? 'Edit Address' : 'Add New Address'}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-0 pb-0">
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="firstName">First Name *</Label>
-                    <Input 
-                      id="firstName" 
-                      placeholder="Enter first name"
-                      value={formData.first_name}
-                      onChange={(e) => handleInputChange('first_name', e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName">Last Name *</Label>
-                    <Input 
-                      id="lastName" 
-                      placeholder="Enter last name"
-                      value={formData.last_name}
-                      onChange={(e) => handleInputChange('last_name', e.target.value)}
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <Label htmlFor="phone">Phone Number *</Label>
-                  <Input 
-                    id="phone" 
-                    type="tel" 
-                    placeholder="Enter phone number"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
-                  />
+                  <Label htmlFor="addressType">Address Type *</Label>
+                  <select
+                    id="addressType"
+                    value={formData.address_type}
+                    onChange={(e) => handleInputChange('address_type', e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="Home">Home</option>
+                    <option value="Office">Office</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </div>
 
                 <div>
@@ -380,17 +344,20 @@ const ManageAddresses = () => {
                   </Label>
                 </div>
 
-                <div className="flex space-x-4 pt-4">
-                  <Button 
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-gray-200 mt-6">
+                  <Button
                     onClick={handleSave}
-                    className="bg-gradient-medical hover:shadow-button"
+                    className="bg-gradient-medical hover:shadow-button text-white px-8 py-3 font-medium text-base w-full sm:w-auto"
                     disabled={loading}
+                    size="lg"
                   >
-                    {loading ? 'Saving...' : (editingAddress ? 'Update Address' : 'Add Address')}
+                    {loading ? 'Saving...' : (editingAddress ? 'Update Address' : 'Save Address')}
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
                     onClick={resetForm}
+                    size="lg"
+                    className="px-8 py-3 text-base w-full sm:w-auto"
                   >
                     Cancel
                   </Button>

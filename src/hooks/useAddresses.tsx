@@ -5,9 +5,10 @@ import { useAuth } from './useAuth';
 export interface Address {
   id?: string;
   user_id: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
+  first_name?: string; // Made optional for backward compatibility
+  last_name?: string; // Made optional for backward compatibility
+  address_type: string;
+  phone?: string; // Made optional since phone field is being removed
   street_address: string;
   city: string;
   pincode: string;
