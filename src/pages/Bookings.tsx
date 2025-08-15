@@ -330,15 +330,17 @@ const Bookings = () => {
                         >
                           Details
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="flex-1"
-                          onClick={() => handleRebook(order)}
-                        >
-                          <RotateCcw className="h-4 w-4 mr-2" />
-                          Rebook
-                        </Button>
+                        {order.status !== 'confirmed' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                            onClick={() => handleRebook(order)}
+                          >
+                            <RotateCcw className="h-4 w-4 mr-2" />
+                            Rebook
+                          </Button>
+                        )}
                       </div>
                     </Card>
                   );
