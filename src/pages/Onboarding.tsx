@@ -91,9 +91,9 @@ const Onboarding = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center">
-          <img 
-            src={apoorvLogo} 
-            alt="Apoorv Pathology Lab" 
+          <img
+            src={apoorvLogo}
+            alt="Apoorv Pathology Lab"
             className="w-10 h-10 object-contain mr-3"
           />
           <h1 className="text-xl font-semibold text-foreground">Getting Started</h1>

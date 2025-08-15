@@ -5,17 +5,33 @@ import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
+import { useAddresses, Address } from "@/hooks/useAddresses";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Account = () => {
   const { user, signOut } = useAuth();
   const { profile, loading: profileLoading } = useProfile();
+  const { getAddresses, loading: addressesLoading } = useAddresses();
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await signOut();
     navigate('/');
   };
+
+  // Fetch addresses when component mounts
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      if (user) {
+        const addressData = await getAddresses();
+        setAddresses(addressData);
+      }
+    };
+    
+    fetchAddresses();
+  }, [user, getAddresses]);
 
   const menuItems = [
     {
@@ -27,7 +43,7 @@ const Account = () => {
     {
       icon: MapPin,
       title: "My Addresses",
-      subtitle: "Manage delivery addresses",
+      subtitle: "Manage Sample Collection Address",
       onClick: () => navigate('/manage-addresses')
     },
     {
@@ -38,9 +54,9 @@ const Account = () => {
     },
     {
       icon: Calendar,
-      title: "My Bookings", 
+      title: "My Bookings",
       subtitle: "View appointment history",
-      onClick: () => console.log("Navigate to bookings")
+      onClick: () => navigate('/bookings')
     },
     {
       icon: FileText,
@@ -52,7 +68,7 @@ const Account = () => {
       icon: Phone,
       title: "Contact Support",
       subtitle: "Get help and support",
-      onClick: () => window.open("tel:+917000000000", "_self")
+      onClick: () => navigate('/contact-support')
     }
   ];
 
@@ -76,9 +92,6 @@ const Account = () => {
               <h2 className="text-lg font-semibold text-foreground">
                 {profile?.full_name || user?.email || "Guest User"}
               </h2>
-              <p className="text-sm text-muted-foreground">
-                {profile?.mobile_number || user?.phone || "Phone not added"}
-              </p>
             </div>
             <Button 
               size="sm" 
@@ -92,11 +105,20 @@ const Account = () => {
           <div className="space-y-2 text-sm">
             <div className="flex items-center space-x-2 text-muted-foreground">
               <Phone className="h-4 w-4" />
-              <span>{profile?.mobile_number || user?.phone || "Phone not added"}</span>
+              <span>{profile?.mobile_number || user?.user_metadata?.mobile_number || "Phone not added"}</span>
             </div>
             <div className="flex items-center space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>Address not added</span>
+              <span>
+                {addresses && addresses.length > 0
+                  ? (() => {
+                      // Find default address first, fallback to first address
+                      const defaultAddress = addresses.find(addr => addr.is_default) || addresses[0];
+                      return `${defaultAddress.street_address}, ${defaultAddress.city}`;
+                    })()
+                  : "Address not added"
+                }
+              </span>
             </div>
           </div>
         </Card>
@@ -122,23 +144,6 @@ const Account = () => {
               {index < menuItems.length - 1 && <Separator />}
             </div>
           ))}
-        </Card>
-      </div>
-
-      {/* Lab Information */}
-      <div className="px-6 py-6">
-        <Card className="p-4 shadow-card">
-          <h3 className="font-medium text-foreground mb-3">Lab Information</h3>
-          <div className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4" />
-              <span>Apoorv Pathology Lab, Sneh Nagar, Jabalpur</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Phone className="h-4 w-4" />
-              <span>+91 70000 00000</span>
-            </div>
-          </div>
         </Card>
       </div>
 

@@ -31,9 +31,9 @@ const Auth = () => {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
-          <img 
-            src={apoorvLogo} 
-            alt="Apoorv Pathology Lab" 
+          <img
+            src={apoorvLogo}
+            alt="Apoorv Pathology Lab"
             className="w-20 h-20 object-contain mx-auto mb-4"
           />
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
@@ -110,9 +110,9 @@ const Auth = () => {
 
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="mb-8">
-          <img 
-            src={apoorvLogo} 
-            alt="Apoorv Pathology Lab" 
+          <img
+            src={apoorvLogo}
+            alt="Apoorv Pathology Lab"
             className="w-20 h-20 object-contain"
           />
         </div>

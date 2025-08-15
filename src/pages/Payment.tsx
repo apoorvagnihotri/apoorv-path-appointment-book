@@ -150,9 +150,7 @@ const Payment = () => {
         appointment_time: isLab ? null : selectedTime,
         collection_type: collectionType,
         collection_address: collectionType === 'home' && selectedAddress ? {
-          first_name: selectedAddress.first_name,
-          last_name: selectedAddress.last_name,
-          phone: selectedAddress.phone,
+          address_type: selectedAddress.address_type,
           street_address: selectedAddress.street_address,
           city: selectedAddress.city,
           pincode: selectedAddress.pincode,
@@ -161,7 +159,7 @@ const Payment = () => {
         customer_details: {
           name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Customer',
           email: user.email,
-          phone: user.user_metadata?.mobile_number || selectedAddress?.phone || null
+          phone: user.user_metadata?.mobile_number || null
         }
       };
 
@@ -241,7 +239,7 @@ const Payment = () => {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <h1 className="text-lg font-semibold">Payment</h1>
+            <h1 className="text-lg font-semibold">Review your Booking</h1>
           </div>
         </div>
       </div>
@@ -259,7 +257,16 @@ const Payment = () => {
                 // Group items by member
                 const itemsByMember = filteredCartItems.reduce((acc: any, item) => {
                   const memberId = item.memberId || 'self';
-                  const memberName = item.memberInfo?.name || 'You';
+                  // Get actual patient name instead of "You"
+                  let memberName = item.memberInfo?.name;
+                  
+                  // If it's the main user (self) and no member info, use actual user name
+                  if (!memberName && memberId === 'self') {
+                    memberName = user?.user_metadata?.full_name ||
+                                user?.user_metadata?.name ||
+                                user?.email?.split('@')[0] ||
+                                'Patient';
+                  }
                   
                   if (!acc[memberId]) {
                     acc[memberId] = {
@@ -283,20 +290,14 @@ const Payment = () => {
 
                 return Object.entries(itemsByMember).map(([memberId, memberData]: [string, any]) => (
                   <div key={memberId} className="space-y-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center">
                       <h3 className="font-semibold text-lg flex items-center">
                         <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
                         <span>{memberData.name}</span>
                         {memberData.age && memberData.gender && (
                           <span className="text-sm text-muted-foreground ml-2">({memberData.age} yrs, {memberData.gender})</span>
                         )}
-                        {memberData.name === 'You' && user?.user_metadata?.name && (
-                          <span className="text-sm text-muted-foreground ml-2">({user.user_metadata.name})</span>
-                        )}
                       </h3>
-                      <span className="text-sm text-muted-foreground">
-                        ₹{memberData.items.reduce((sum: number, item: any) => sum + item.price, 0)}
-                      </span>
                     </div>
                     <div className="ml-5 space-y-1">
                       {memberData.items.map((item: any, itemIndex: number) => (
@@ -366,12 +367,11 @@ const Payment = () => {
                     <h3 className="font-medium mb-1">Collection Address</h3>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p className="font-medium text-foreground">
-                        {selectedAddress.first_name} {selectedAddress.last_name}
+                        {selectedAddress.address_type}
                       </p>
                       <p>{selectedAddress.street_address}</p>
                       <p>{selectedAddress.city} - {selectedAddress.pincode}</p>
                       {selectedAddress.landmark && <p>Landmark: {selectedAddress.landmark}</p>}
-                      <p>Phone: {selectedAddress.phone}</p>
                     </div>
                   </div>
                 </div>
@@ -389,7 +389,7 @@ const Payment = () => {
                       <p>Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
                       <p>Opening Times: 6 am - 10 pm (Everyday)</p>
                       <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline">View on Google Maps</a>
-                      <p>Phone: +91 98765 43210</p>
+                      <p>Phone: 9993522579, +91 4017923</p>
                     </div>
                   </div>
                 </div>
@@ -498,7 +498,7 @@ const Payment = () => {
               </>
             ) : (
               <>
-                <span className="text-xl font-bold">Confirm</span>
+                <span className="text-xl font-bold">Book Now & Pay Later</span>
                 <span className="ml-2 text-lg">✓</span>
               </>
             )}

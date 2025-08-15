@@ -24,13 +24,14 @@ import {
 const ManageAddresses = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { saveAddress, getAddresses, deleteAddress, loading } = useAddresses();
+  const { saveAddress, getAddresses, updateAddress, deleteAddress, loading } = useAddresses();
   const { toast } = useToast();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [formData, setFormData] = useState({
+    address_type: 'Home',
     first_name: '',
     last_name: '',
     phone: '',
@@ -50,7 +51,7 @@ const ManageAddresses = () => {
       }
     };
     loadAddresses();
-  }, [user]);
+  }, [user, getAddresses]);
 
   // Handle user authentication check
   useEffect(() => {
@@ -65,6 +66,7 @@ const ManageAddresses = () => {
 
   const resetForm = () => {
     setFormData({
+      address_type: 'Home',
       first_name: '',
       last_name: '',
       phone: '',
@@ -78,10 +80,10 @@ const ManageAddresses = () => {
     setShowForm(false);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: field === 'is_default' ? value : value
     }));
   };
 
@@ -92,6 +94,7 @@ const ManageAddresses = () => {
 
   const handleEdit = (address: Address) => {
     setFormData({
+      address_type: address.address_type || 'Home',
       first_name: address.first_name || '',
       last_name: address.last_name || '',
       phone: address.phone || '',
@@ -107,21 +110,10 @@ const ManageAddresses = () => {
 
   const handleSave = async () => {
     // Validate required fields
-    if (!formData.first_name || !formData.last_name || !formData.phone || 
-        !formData.street_address || !formData.city || !formData.pincode) {
+    if (!formData.address_type || !formData.first_name || !formData.last_name || !formData.phone || !formData.street_address || !formData.city || !formData.pincode) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Validate phone number
-    if (formData.phone.length < 10) {
-      toast({
-        title: "Validation Error",
-        description: "Please enter a valid phone number",
         variant: "destructive",
       });
       return;
@@ -137,19 +129,41 @@ const ManageAddresses = () => {
       return;
     }
 
-    const addressData = editingAddress ? { ...formData, id: editingAddress.id } : formData;
-    const savedAddress = await saveAddress(addressData);
-    
-    if (savedAddress) {
-      toast({
-        title: "Success",
-        description: editingAddress ? "Address updated successfully!" : "Address added successfully!",
-      });
+    try {
+      let savedAddress;
+      if (editingAddress) {
+        // Update existing address
+        savedAddress = await updateAddress(editingAddress.id!, formData);
+      } else {
+        // Create new address
+        savedAddress = await saveAddress(formData);
+      }
       
-      // Refresh addresses list
-      const updatedAddresses = await getAddresses();
-      setAddresses(updatedAddresses);
-      resetForm();
+      if (savedAddress) {
+        toast({
+          title: "Success",
+          description: editingAddress ? "Address updated successfully!" : "Address added successfully!",
+        });
+        
+        // Refresh addresses list
+        const updatedAddresses = await getAddresses();
+        setAddresses(updatedAddresses);
+        resetForm();
+      } else {
+        // Show error if save operation failed
+        toast({
+          title: "Error",
+          description: editingAddress ? "Failed to update address. Please try again." : "Failed to save address. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error in handleSave:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -217,7 +231,7 @@ const ManageAddresses = () => {
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
                       <h3 className="font-semibold text-lg">
-                        {address.first_name} {address.last_name}
+                        {address.address_type}
                       </h3>
                       {address.is_default && (
                         <span className="ml-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded-full">
@@ -225,7 +239,6 @@ const ManageAddresses = () => {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-1">{address.phone}</p>
                     <p className="text-sm text-muted-foreground mb-1">
                       {address.street_address}
                     </p>
@@ -279,19 +292,33 @@ const ManageAddresses = () => {
 
         {/* Add/Edit Form */}
         {showForm && (
-          <Card className="p-6">
-            <CardHeader className="px-0 pt-0">
-              <CardTitle>
+          <Card className="p-6 border-2 border-primary/20 shadow-lg">
+            <CardHeader className="px-0 pt-0 pb-4">
+              <CardTitle className="text-xl font-semibold text-primary">
                 {editingAddress ? 'Edit Address' : 'Add New Address'}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-0 pb-0">
               <div className="space-y-4">
+                <div>
+                  <Label htmlFor="addressType">Address Type *</Label>
+                  <select
+                    id="addressType"
+                    value={formData.address_type}
+                    onChange={(e) => handleInputChange('address_type', e.target.value)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="Home">Home</option>
+                    <option value="Office">Office</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name *</Label>
-                    <Input 
-                      id="firstName" 
+                    <Input
+                      id="firstName"
                       placeholder="Enter first name"
                       value={formData.first_name}
                       onChange={(e) => handleInputChange('first_name', e.target.value)}
@@ -299,8 +326,8 @@ const ManageAddresses = () => {
                   </div>
                   <div>
                     <Label htmlFor="lastName">Last Name *</Label>
-                    <Input 
-                      id="lastName" 
+                    <Input
+                      id="lastName"
                       placeholder="Enter last name"
                       value={formData.last_name}
                       onChange={(e) => handleInputChange('last_name', e.target.value)}
@@ -310,9 +337,8 @@ const ManageAddresses = () => {
 
                 <div>
                   <Label htmlFor="phone">Phone Number *</Label>
-                  <Input 
-                    id="phone" 
-                    type="tel" 
+                  <Input
+                    id="phone"
                     placeholder="Enter phone number"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
@@ -321,8 +347,8 @@ const ManageAddresses = () => {
 
                 <div>
                   <Label htmlFor="address">Street Address *</Label>
-                  <Textarea 
-                    id="address" 
+                  <Textarea
+                    id="address"
                     placeholder="Enter complete address with house/flat number, building name, street name"
                     rows={3}
                     value={formData.street_address}
@@ -353,25 +379,41 @@ const ManageAddresses = () => {
 
                 <div>
                   <Label htmlFor="landmark">Landmark (Optional)</Label>
-                  <Input 
-                    id="landmark" 
+                  <Input
+                    id="landmark"
                     placeholder="Enter nearby landmark"
                     value={formData.landmark}
                     onChange={(e) => handleInputChange('landmark', e.target.value)}
                   />
                 </div>
 
-                <div className="flex space-x-4 pt-4">
-                  <Button 
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isDefault"
+                    checked={formData.is_default}
+                    onChange={(e) => handleInputChange('is_default', e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <Label htmlFor="isDefault" className="text-sm font-normal">
+                    Set as default address
+                  </Label>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-gray-200 mt-6">
+                  <Button
                     onClick={handleSave}
-                    className="bg-gradient-medical hover:shadow-button"
+                    className="bg-gradient-medical hover:shadow-button text-white px-8 py-3 font-medium text-base w-full sm:w-auto"
                     disabled={loading}
+                    size="lg"
                   >
-                    {loading ? 'Saving...' : (editingAddress ? 'Update Address' : 'Add Address')}
+                    {loading ? 'Saving...' : (editingAddress ? 'Update Address' : 'Save Address')}
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
                     onClick={resetForm}
+                    size="lg"
+                    className="px-8 py-3 text-base w-full sm:w-auto"
                   >
                     Cancel
                   </Button>

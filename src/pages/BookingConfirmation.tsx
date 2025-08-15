@@ -1,10 +1,34 @@
 import { useEffect, useState } from "react";
-import { CheckCircle, Calendar, Clock, MapPin, User, Phone, CreditCard, FileText, Home, Building2 } from "lucide-react";
+import {
+  CheckCircle,
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  Phone,
+  CreditCard,
+  FileText,
+  Home,
+  Building2,
+  Clock as ClockIcon,
+  FileIcon,
+  DollarSign,
+  Utensils,
+  PhoneCall,
+  UserCheck,
+  CalendarCheck,
+  MapPinIcon,
+  Receipt,
+  AlertCircle,
+  Ticket,
+  Heart,
+  Shield
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -39,7 +63,10 @@ const BookingConfirmation = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('orderId');
+  const { id: paramId } = useParams<{ id: string }>();
+  
+  // Get order ID from either URL params or query params
+  const orderId = paramId || searchParams.get('orderId');
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,23 +146,36 @@ const BookingConfirmation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
-        <div className="px-6 py-6 text-center">
-          <CheckCircle className="h-16 w-16 mx-auto mb-4 text-white" />
-          <h1 className="text-2xl font-bold mb-2">Booking Confirmed!</h1>
-          <p className="text-primary-foreground/90">Your test appointment has been successfully booked</p>
+      <div className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white">
+        <div className="px-6 py-8 text-center">
+          <div className="relative">
+            <div className="w-20 h-20 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <CheckCircle className="h-12 w-12 text-white drop-shadow-lg" />
+            </div>
+            <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+              <Heart className="h-4 w-4 text-yellow-800" />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold mb-3 drop-shadow-sm">Booking Confirmed!</h1>
+          <p className="text-white/90 text-lg">Your test appointment has been successfully booked</p>
+          <div className="mt-4 inline-flex items-center space-x-2 bg-white/20 rounded-full px-4 py-2 backdrop-blur-sm">
+            <Ticket className="h-4 w-4" />
+            <span className="text-[10px] sm:text-[12px] font-medium">#{orderDetails.order_number}</span>
+          </div>
         </div>
       </div>
 
       <div className="px-6 py-6 space-y-6 pb-32">
         {/* Patient Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <User className="h-5 w-5" />
-              <span>Patient Information</span>
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                <UserCheck className="h-5 w-5 text-blue-500 stroke-[1.5]" />
+              </div>
+              <span className="text-xl font-semibold text-gray-800">Patient Information</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -154,9 +194,7 @@ const BookingConfirmation = () => {
             <div className="flex justify-between">
               <span className="text-muted-foreground">Phone</span>
               <span className="font-medium">
-                {orderDetails.customer_details?.phone || 
-                 orderDetails.collection_address?.phone || 
-                 user?.user_metadata?.mobile_number || 
+                {user?.user_metadata?.mobile_number ||
                  "Not provided"}
               </span>
             </div>
@@ -164,11 +202,13 @@ const BookingConfirmation = () => {
         </Card>
 
         {/* Schedule Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Calendar className="h-5 w-5" />
-              <span>Schedule Details</span>
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center">
+                <CalendarCheck className="h-5 w-5 text-purple-500 stroke-[1.5]" />
+              </div>
+              <span className="text-xl font-semibold text-gray-800">Schedule Details</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -215,17 +255,23 @@ const BookingConfirmation = () => {
         </Card>
 
         {/* Collection Address */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              {orderDetails.collection_type === 'home' ? (
-                <Home className="h-5 w-5" />
-              ) : (
-                <Building2 className="h-5 w-5" />
-              )}
-              <span>
-                {orderDetails.collection_type === 'home' 
-                  ? 'Sample Collection Address' 
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                orderDetails.collection_type === 'home'
+                  ? 'bg-green-50'
+                  : 'bg-orange-50'
+              }`}>
+                {orderDetails.collection_type === 'home' ? (
+                  <Home className="h-5 w-5 text-green-500 stroke-[1.5]" />
+                ) : (
+                  <Building2 className="h-5 w-5 text-orange-500 stroke-[1.5]" />
+                )}
+              </div>
+              <span className="text-xl font-semibold text-gray-800">
+                {orderDetails.collection_type === 'home'
+                  ? 'Sample Collection Address'
                   : 'Lab Visit Details'
                 }
               </span>
@@ -236,7 +282,7 @@ const BookingConfirmation = () => {
               orderDetails.collection_address ? (
                 <div className="space-y-2">
                   <p className="font-medium">
-                    {orderDetails.collection_address.first_name} {orderDetails.collection_address.last_name}
+                    {orderDetails.collection_address.address_type}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {orderDetails.collection_address.street_address}
@@ -249,14 +295,16 @@ const BookingConfirmation = () => {
                       Landmark: {orderDetails.collection_address.landmark}
                     </p>
                   )}
-                  <p className="text-sm text-muted-foreground">
-                    Phone: {orderDetails.collection_address.phone}
-                  </p>
-                  <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-700">
-                      Our technician will visit this address for sample collection.
-                      Please ensure someone is available at the scheduled time.
-                    </p>
+                  <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Shield className="h-4 w-4 text-blue-500 stroke-[1.5]" />
+                      </div>
+                      <p className="text-sm text-blue-700 leading-relaxed">
+                        Our technician will visit this address for sample collection.
+                        Please ensure patient is available at the scheduled time.
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -266,20 +314,32 @@ const BookingConfirmation = () => {
                 </p>
               )
             ) : (
-              <div className="space-y-2">
-                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <h3 className="font-medium text-green-800 mb-2">Lab Address:</h3>
-                  <p className="text-sm text-green-700">Apoorv Pathology Lab</p>
-                  <p className="text-sm text-green-700">O-13, Garha Rd, Nove Adaresh Colony</p>
-                  <p className="text-sm text-green-700">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
-                  <p className="text-sm text-green-700">Opening Times: 6 am - 10 pm (Everyday)</p>
-                  <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-sm text-green-800 underline">View on Google Maps</a>
-                  <p className="text-sm text-green-700">Phone: +91 98765 43210</p>
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                  <div className="flex items-start space-x-3 mb-3">
+                    <div className="w-8 h-8 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+                      <MapPinIcon className="h-4 w-4 text-green-500 stroke-[1.5]" />
+                    </div>
+                    <h3 className="font-semibold text-green-800">Lab Address:</h3>
+                  </div>
+                  <div className="ml-11 space-y-1">
+                    <p className="text-sm text-green-700 font-medium">Apoorv Pathology Lab</p>
+                    <p className="text-sm text-green-700">O-13, Garha Rd, Nove Adaresh Colony</p>
+                    <p className="text-sm text-green-700">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
+                    <p className="text-sm text-green-700">Opening Times: 6 am - 10 pm (Everyday)</p>
+                    <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-sm text-green-800 underline hover:text-green-900 transition-colors">View on Google Maps</a>
+                    <p className="text-sm text-green-700">Phone: +91 98765 43210</p>
+                  </div>
                 </div>
-                <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
-                  <p className="text-sm text-amber-800">
-                    No scheduling required. Please visit our lab between 6 am and 10 pm on a day that suits you.
-                  </p>
+                <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl border border-amber-100">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-8 h-8 bg-amber-50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Clock className="h-4 w-4 text-amber-500 stroke-[1.5]" />
+                    </div>
+                    <p className="text-sm text-amber-800 leading-relaxed">
+                      No scheduling required. Please visit our lab between 6 am and 10 pm on a day that suits you.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -287,11 +347,13 @@ const BookingConfirmation = () => {
         </Card>
 
         {/* Test Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5" />
-              <span>Test Details</span>
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center">
+                <FileText className="h-5 w-5 text-indigo-500 stroke-[1.5]" />
+              </div>
+              <span className="text-xl font-semibold text-gray-800">Test Details</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -347,11 +409,13 @@ const BookingConfirmation = () => {
         </Card>
 
         {/* Payment Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <CreditCard className="h-5 w-5" />
-              <span>Payment Details</span>
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-emerald-50 rounded-full flex items-center justify-center">
+                <Receipt className="h-5 w-5 text-emerald-500 stroke-[1.5]" />
+              </div>
+              <span className="text-xl font-semibold text-gray-800">Payment Details</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -376,47 +440,82 @@ const BookingConfirmation = () => {
                 {orderDetails.payment_method}
               </Badge>
             </div>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <p className="text-sm text-yellow-800 font-medium">
-                💰 Amount Due: ₹{orderDetails.total_amount}
-              </p>
-              <p className="text-xs text-yellow-700 mt-1">
-                Payment will be collected during sample collection
-              </p>
+            <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-yellow-50 rounded-full flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="h-4 w-4 text-yellow-500 stroke-[1.5]" />
+                </div>
+                <div>
+                  <p className="text-sm text-yellow-800 font-semibold">
+                    Amount Due: ₹{orderDetails.total_amount}
+                  </p>
+                  <p className="text-xs text-yellow-700 mt-1 leading-relaxed">
+                    Payment will be collected during sample collection
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Important Instructions */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardHeader>
-            <CardTitle className="text-blue-800">Important Instructions</CardTitle>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-amber-500 stroke-[1.5]" />
+              </div>
+              <span className="text-xl font-semibold text-gray-800">Important Instructions</span>
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-blue-700">• Keep your booking reference handy</p>
-            {orderDetails.collection_type === 'home' ? (
-              <>
-                <p className="text-sm text-blue-700">• Be available at the scheduled time</p>
-                <p className="text-sm text-blue-700">• Keep the payment amount ready</p>
-                <p className="text-sm text-blue-700">• Ensure the collection address is accessible</p>
-              </>
-            ) : (
-              <>
-                <p className="text-sm text-blue-700">• Visit our lab at the scheduled time</p>
-                <p className="text-sm text-blue-700">• Bring a valid photo ID</p>
-                <p className="text-sm text-blue-700">• Carry the exact payment amount</p>
-              </>
-            )}
-            <p className="text-sm text-blue-700">• Fast for 12 hours if required for your tests</p>
-            <p className="text-sm text-blue-700">• Contact us if you need to reschedule</p>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
+                <ClockIcon className="h-4 w-4 text-blue-500 stroke-[1.5]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Be available at your scheduled time</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-green-50 rounded-full flex items-center justify-center">
+                <FileIcon className="h-4 w-4 text-green-500 stroke-[1.5]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Keep your doctor's prescription handy</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-yellow-50 rounded-full flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-yellow-500 stroke-[1.5]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Keep the payment ready</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-orange-50 rounded-full flex items-center justify-center">
+                <Utensils className="h-4 w-4 text-orange-500 stroke-[1.5]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Fast for 12 hours if your test requires it</p>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-purple-50 rounded-full flex items-center justify-center">
+                <PhoneCall className="h-4 w-4 text-purple-500 stroke-[1.5]" />
+              </div>
+              <p className="text-sm text-gray-700 font-medium">Contact us if you need to reschedule</p>
+            </div>
           </CardContent>
         </Card>
 
         {/* Booking Reference - Moved to bottom */}
-        <div className="text-center py-4">
-          <p className="text-xs text-muted-foreground mb-1">Booking Reference</p>
-          <p className="text-sm font-medium text-green-600">{orderDetails.order_number}</p>
-        </div>
+        <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 to-emerald-50">
+          <CardContent className="text-center py-6">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Ticket className="h-4 w-4 text-green-500 stroke-[1.5]" />
+              <p className="text-sm text-green-700 font-medium">Booking Reference</p>
+            </div>
+            <p className="text-[10px] sm:text-[12px] font-bold text-green-700 tracking-wider">{orderDetails.order_number}</p>
+          </CardContent>
+        </Card>
 
         {/* Action Buttons */}
         <div className="fixed bottom-6 left-6 right-6 z-10 space-y-3">
