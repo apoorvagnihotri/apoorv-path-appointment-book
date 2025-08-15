@@ -257,7 +257,7 @@ const Schedule = () => {
             className={`w-full min-h-[3rem] ${canProceed ? 'bg-gradient-medical' : 'bg-gray-300 cursor-not-allowed'}`}
             size="lg"
           >
-            Book Now & Pay Later
+            Review Your Booking
           </Button>
         </div>
       </div>
