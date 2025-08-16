@@ -325,7 +325,8 @@ const Address = () => {
                   <h3 className="font-medium text-foreground mb-2">Lab Address</h3>
                   <p className="text-sm">O-13, Garha Rd, Nove Adaresh Colony</p>
                   <p className="text-sm">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
-                  <p className="text-sm">Phone: +91 98765 43210</p>
+                  <p className="text-sm">Phone: 9993522579</p>
+                  <p className="text-sm">Phone: 07614017923</p>
                   <p className="text-sm">Opening Times: 6 am - 10 pm (Everyday)</p>
                   <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline text-sm">View on Google Maps</a>
                 </div>
