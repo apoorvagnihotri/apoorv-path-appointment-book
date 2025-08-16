@@ -196,7 +196,7 @@ const Address = () => {
               <ChevronLeft className="h-6 w-6" />
             </button>
             <h1 className="text-2xl font-semibold ml-8">
-              Address Details
+              Select an Address
             </h1>
           </div>
         </div>
