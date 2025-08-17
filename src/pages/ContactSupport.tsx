@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Building2, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,9 +17,9 @@ const ContactSupport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="bg-gradient-medical text-primary-foreground">
+    <div className="min-h-screen bg-background relative">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-gradient-medical text-primary-foreground z-40">
         <div className="flex items-center justify-between px-6 py-4">
           <button
             onClick={() => navigate(-1)}
@@ -33,8 +33,9 @@ const ContactSupport = () => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-6 py-6 space-y-6">
+      {/* Scrollable Content */}
+      <div className="pt-16 pb-20 overflow-y-auto">
+        <div className="px-6 py-6 space-y-6">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-foreground mb-2">Get Help</h2>
           <p className="text-muted-foreground">Choose how you'd like to contact our support team</p>
@@ -46,12 +47,12 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={() => handlePhoneCall('9993522579')}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-blue-400 hover:bg-blue-500 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-slate-100 hover:bg-slate-200 text-foreground border border-slate-200"
               >
-                <Phone className="h-6 w-6" />
+                <Building2 className="h-6 w-6" />
                 <div className="text-left">
                   <div className="font-semibold text-base">Lab Contact</div>
-                  <div className="text-sm opacity-90">9993522579</div>
+                  <div className="text-sm opacity-70">9993522579</div>
                 </div>
               </Button>
             </CardContent>
@@ -62,12 +63,12 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={() => handlePhoneCall('7610259348')}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-emerald-400 hover:bg-emerald-500 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-emerald-50 hover:bg-emerald-100 text-foreground border border-emerald-200"
               >
-                <Phone className="h-6 w-6" />
+                <User className="h-6 w-6" />
                 <div className="text-left">
                   <div className="font-semibold text-base">Technician 1</div>
-                  <div className="text-sm opacity-90">7610259348</div>
+                  <div className="text-sm opacity-70">7610259348</div>
                 </div>
               </Button>
             </CardContent>
@@ -78,12 +79,12 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={() => handlePhoneCall('8770276578')}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-violet-400 hover:bg-violet-500 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-indigo-50 hover:bg-indigo-100 text-foreground border border-indigo-200"
               >
-                <Phone className="h-6 w-6" />
+                <User className="h-6 w-6" />
                 <div className="text-left">
                   <div className="font-semibold text-base">Technician 2</div>
-                  <div className="text-sm opacity-90">8770276578</div>
+                  <div className="text-sm opacity-70">8770276578</div>
                 </div>
               </Button>
             </CardContent>
@@ -94,12 +95,12 @@ const ContactSupport = () => {
             <CardContent className="p-4">
               <Button
                 onClick={handleEmailSupport}
-                className="w-full flex items-center justify-start space-x-4 h-16 bg-amber-400 hover:bg-amber-500 text-white"
+                className="w-full flex items-center justify-start space-x-4 h-16 bg-amber-50 hover:bg-amber-100 text-foreground border border-amber-200"
               >
                 <Mail className="h-6 w-6" />
                 <div className="text-left">
                   <div className="font-semibold text-base">Email Support</div>
-                  <div className="text-sm opacity-90">apoorvpath@gmail.com</div>
+                  <div className="text-sm opacity-70">apoorvpath@gmail.com</div>
                 </div>
               </Button>
             </CardContent>
@@ -117,6 +118,7 @@ const ContactSupport = () => {
             </p>
           </CardContent>
         </Card>
+        </div>
       </div>
 
       <BottomNavigation />
