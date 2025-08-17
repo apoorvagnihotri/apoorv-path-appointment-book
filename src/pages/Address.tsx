@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LAB_INFO } from "@/lib/constants";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
@@ -312,7 +313,7 @@ const Address = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center">
                   <MapPin className="h-5 w-5 text-primary mr-2" />
-                  <h2 className="text-xl font-semibold">Apoorv Pathology Lab</h2>
+                  <h2 className="text-xl font-semibold">{LAB_INFO.name}</h2>
                 </div>
                 <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded flex items-center gap-1">
                   <Check className="h-3 w-3" />
@@ -320,15 +321,15 @@ const Address = () => {
                 </span>
               </div>
               <div className="space-y-3 text-muted-foreground">
-                <p>Please visit our lab between 6 am - 10 pm for your sample.</p>
+                <p>Please visit our lab between {LAB_INFO.hours} for your sample.</p>
                 <div className="bg-background p-4 rounded-lg border">
                   <h3 className="font-medium text-foreground mb-2">Lab Address</h3>
-                  <p className="text-sm">O-13, Garha Rd, Nove Adaresh Colony</p>
-                  <p className="text-sm">Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
-                  <p className="text-sm">Phone: 9993522579</p>
-                  <p className="text-sm">Phone: 07614017923</p>
-                  <p className="text-sm">Opening Times: 6 am - 10 pm (Everyday)</p>
-                  <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline text-sm">View on Google Maps</a>
+                  <p className="text-sm">{LAB_INFO.address.line1}</p>
+                  <p className="text-sm">{LAB_INFO.address.line2}</p>
+                  <p className="text-sm">Phone: {LAB_INFO.phone.primary}</p>
+                  <p className="text-sm">Phone: {LAB_INFO.phone.secondary}</p>
+                  <p className="text-sm">Opening Times: {LAB_INFO.hours}</p>
+                  <a href={LAB_INFO.mapUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline text-sm">View on Google Maps</a>
                 </div>
                 <p className="text-sm">No scheduling required. You can proceed to payment.</p>
               </div>

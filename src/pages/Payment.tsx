@@ -9,6 +9,7 @@ import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LAB_INFO } from "@/lib/constants";
 
 type PaymentMethod = 'online' | 'cash' | null;
 type OnlinePaymentType = 'upi' | 'card' | 'wallet' | null;
@@ -387,12 +388,13 @@ const Payment = () => {
                   <div className="flex-1">
                     <h3 className="font-medium mb-1">Lab Address</h3>
                     <div className="text-sm text-muted-foreground space-y-1">
-                      <p className="font-medium text-foreground">Apoorv Pathology Lab</p>
-                      <p>O-13, Garha Rd, Nove Adaresh Colony</p>
-                      <p>Sneh Nagar, Jabalpur, Madhya Pradesh 482002, India</p>
-                      <p>Opening Times: 6 am - 10 pm (Everyday)</p>
-                      <a href="https://maps.app.goo.gl/Dc3Za1qJXA4fJB977" target="_blank" rel="noopener noreferrer" className="text-primary underline">View on Google Maps</a>
-                      <p>Phone: 9993522579, +91 4017923</p>
+                      <p className="font-medium text-foreground">{LAB_INFO.name}</p>
+                      <p>{LAB_INFO.address.line1}</p>
+                      <p>{LAB_INFO.address.line2}</p>
+                      <p>Opening Times: {LAB_INFO.hours}</p>
+                      <a href={LAB_INFO.mapUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">View on Google Maps</a>
+                      <p>Phone: {LAB_INFO.phone.primary}</p>
+                      <p>Phone: {LAB_INFO.phone.secondary}</p>
                     </div>
                   </div>
                 </div>
