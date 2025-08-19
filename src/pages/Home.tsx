@@ -8,6 +8,7 @@ import { ServiceCard, ServiceGrid } from "@/components/ui/service-card";
 import { BottomNavigation } from "@/components/ui/bottom-navigation";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useProfile } from "@/hooks/useProfile";
 import {
   Command,
   CommandEmpty,
@@ -66,6 +67,7 @@ const Home = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { profile } = useProfile();
 
   const handleCall = () => {
     window.open("tel:+919993522579", "_self");
@@ -174,6 +176,15 @@ const Home = () => {
     },
   ];
 
+  // Get the greeting name - use first name if available, otherwise fall back to "Patient"
+  const getGreetingName = () => {
+    if (profile?.full_name) {
+      const firstName = profile.full_name.split(' ')[0];
+      return firstName;
+    }
+    return "Patient";
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -182,7 +193,7 @@ const Home = () => {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
               <div>
-                <p className="text-sm opacity-90">Hi, Patient</p>
+                <p className="text-lg opacity-90 font-medium">Hi, {getGreetingName()}</p>
               </div>
             </div>
             
