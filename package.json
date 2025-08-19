@@ -12,7 +12,11 @@
     "cap:init": "npx cap init",
     "cap:android": "npx cap add android",
     "cap:sync": "npx cap sync",
-    "cap:run": "npx cap run android"
+    "cap:run": "npx cap run android",
+    "email:deploy": "npx supabase functions deploy send-booking-email && npx supabase functions deploy verify-email && npx supabase functions deploy process-escalations",
+    "email:test": "tsx scripts/test-email-system.ts",
+    "email:check": "tsx scripts/test-email-system.ts check",
+    "email:escalate": "curl -X POST https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1/process-escalations -H \"Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY\""
   },
   "dependencies": {
     "@capacitor/android": "^5.0.0",

@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LAB_INFO } from "@/lib/constants";
+import { EmailNotificationService, type EmailNotificationData } from "@/lib/emailNotificationService";
 
 type PaymentMethod = 'online' | 'cash' | null;
 type OnlinePaymentType = 'upi' | 'card' | 'wallet' | null;
@@ -201,6 +202,48 @@ const Payment = () => {
         .insert(orderItems);
 
       if (itemsError) throw itemsError;
+
+      // Send email notification to apoorvpath@gmail.com
+      try {
+        const emailData: EmailNotificationData = {
+          orderId: order.id,
+          recipientEmail: 'apoorvpath@gmail.com',
+          emailType: 'booking_notification',
+          orderDetails: {
+            orderNumber: order.order_number || `ORD-${order.id.slice(0, 8)}`,
+            customerName: orderData.customer_details.name,
+            customerEmail: orderData.customer_details.email,
+            customerPhone: orderData.customer_details.phone,
+            totalAmount: cartSummary.total,
+            appointmentDate: selectedDate,
+            appointmentTime: selectedTime,
+            collectionType: collectionType,
+            collectionAddress: selectedAddress,
+            items: filteredCartItems.map(item => {
+              const displayItem = item.test || item.package || item.service;
+              return {
+                name: displayItem!.name,
+                price: displayItem!.price,
+                memberName: item.memberInfo?.name || (item.memberId === 'self' ? 
+                  (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Patient') : 
+                  undefined)
+              };
+            })
+          }
+        };
+
+        const emailResult = await EmailNotificationService.sendBookingNotification(emailData);
+        
+        if (emailResult.success) {
+          console.log('Email notification sent successfully');
+        } else {
+          console.error('Failed to send email notification:', emailResult.error);
+          // Don't fail the entire order process for email issues
+        }
+      } catch (emailError) {
+        console.error('Email notification error:', emailError);
+        // Don't fail the entire order process for email issues
+      }
 
       // Clear cart and session storage
       clearCart();

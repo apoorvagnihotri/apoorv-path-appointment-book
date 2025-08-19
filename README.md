@@ -59,6 +59,30 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (Database, Auth, Edge Functions)
+- Capacitor (Mobile App Development)
+
+## Email Notification System
+
+This application includes an automated email notification system for booking confirmations:
+
+### Features
+- **Instant Notifications**: Sends email to `apoorvpath@gmail.com` when bookings are confirmed
+- **Verification Tracking**: Tracks if emails are opened via verification links
+- **Auto-Escalation**: Escalates to `deepaagni@gmail.com` if not verified within 2 hours
+- **Professional Templates**: HTML email templates with booking details
+
+### Setup
+See `EMAIL_NOTIFICATION_SETUP.md` for detailed setup instructions.
+
+### Quick Setup
+1. Set up Resend account and get API key
+2. Add `RESEND_API_KEY` to Supabase environment variables
+3. Deploy edge functions: `supabase functions deploy`
+4. Apply database migration: `supabase db push`
+5. Set up cron job for escalations
+
+The system automatically sends notifications when bookings are confirmed on the payment page.
 
 ## How can I deploy this project?
 
