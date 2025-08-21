@@ -193,7 +193,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Apoorv Pathology <bookings@apoorvpath.com>',
+        from: 'Apoorv Pathology <office@apoorvpathology.com>',
         to: [emailData.recipientEmail],
         subject: subject,
         html: htmlContent,
