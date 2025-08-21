@@ -34,8 +34,21 @@ interface EmailData {
 
 // HTML Email Template
 function createBookingEmailTemplate(data: EmailData): string {
-  const { orderDetails, verificationToken } = data;
-  const isEscalation = data.emailData.emailType === 'escalation';
+  console.log('Template function received data:', JSON.stringify(data, null, 2))
+  
+  const { verificationToken, emailData } = data;
+  
+  if (!emailData) {
+    throw new Error('emailData is missing from the request')
+  }
+  
+  const { orderDetails } = emailData;
+  
+  if (!orderDetails) {
+    throw new Error('orderDetails is missing from emailData')
+  }
+  
+  const isEscalation = emailData.emailType === 'escalation';
   
   const verificationUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/verify-email?token=${verificationToken}`;
   
@@ -143,7 +156,10 @@ serve(async (req) => {
   }
 
   try {
-    const { notificationId, verificationToken, emailData }: EmailData = await req.json()
+    const requestBody = await req.json()
+    console.log('Received request body:', JSON.stringify(requestBody, null, 2))
+    
+    const { notificationId, verificationToken, emailData }: EmailData = requestBody
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
