@@ -82,7 +82,7 @@ function createBookingEmailTemplate(data: EmailData): string {
         ${isEscalation ? `
         <div class="alert">
             <h3>⚠️ ESCALATION NOTICE</h3>
-            <p>This booking notification was sent to <strong>apoorvpath@gmail.com</strong> but hasn't been verified. Please review and assign to a lab technician immediately.</p>
+            <p>This booking notification was sent to <strong>office@bookings.apoorvpathology.com</strong> but hasn't been verified. Please review and assign to a lab technician immediately.</p>
         </div>
         ` : `
         <div class="alert">
@@ -185,6 +185,10 @@ serve(async (req) => {
       ? `🚨 URGENT: Unverified Booking - Order #${emailData.orderDetails.orderNumber}`
       : `🧬 New Booking Confirmation - Order #${emailData.orderDetails.orderNumber}`;
 
+    // Verify domain is properly set
+    const fromEmail = 'office@bookings.apoorvpathology.com';
+    console.log(`Sending email from: ${fromEmail} to: ${emailData.recipientEmail}`);
+    
     // Send email using Resend
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -193,7 +197,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Apoorv Pathology <office@apoorvpathology.com>',
+        from: `Apoorv Pathology <${fromEmail}>`,
         to: [emailData.recipientEmail],
         subject: subject,
         html: htmlContent,
@@ -206,6 +210,13 @@ serve(async (req) => {
 
     if (!emailResponse.ok) {
       const errorText = await emailResponse.text()
+      console.error('Resend API Error Details:', {
+        status: emailResponse.status,
+        statusText: emailResponse.statusText,
+        error: errorText,
+        from: fromEmail,
+        to: emailData.recipientEmail
+      });
       throw new Error(`Resend API error: ${errorText}`)
     }
 
