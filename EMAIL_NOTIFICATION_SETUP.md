@@ -6,7 +6,7 @@ This guide explains how to set up the email notification system for the Apoorv P
 
 ### Services Overview
 1. **Supabase Edge Functions** - Server-side functions for email processing
-2. **Resend** - Professional email delivery service
+2. **AWS SES (Simple Email Service)** - Professional email delivery service
 3. **Supabase Database** - Email tracking and escalation management
 4. **Supabase Cron** - Automated escalation scheduling
 
@@ -21,14 +21,16 @@ This guide explains how to set up the email notification system for the Apoorv P
   - TypeScript support
 - **Alternative**: Could use AWS Lambda, Vercel Functions, or other serverless platforms
 
-#### Resend Email Service
+#### AWS SES Email Service
 - **Purpose**: Reliable email delivery
 - **Benefits**:
-  - High deliverability rates
+  - High deliverability rates (99%+)
+  - Cost-effective ($0.10 per 1000 emails)
+  - Integrated with AWS ecosystem
+  - Advanced bounce and complaint handling
   - Professional email templates
-  - Good developer experience
-  - Reasonable pricing
-- **Alternatives**: SendGrid, Mailgun, AWS SES, or Nodemailer with SMTP
+  - Excellent reputation management
+- **Alternatives**: SendGrid, Mailgun, Resend, or Nodemailer with SMTP
 
 #### Database Tables
 - `email_notifications`: Track all sent emails and their status
@@ -57,11 +59,56 @@ This creates:
 - `email_escalations` table
 - Helper functions for verification and escalation
 
-### 2. Email Service Setup (Resend)
+### 2. Email Service Setup (AWS SES)
 
-1. Sign up for [Resend](https://resend.com) account
-2. Get your API key from the dashboard
-3. Add domain verification (optional, can use resend domain initially)
+#### Step 2.1: AWS Account Setup
+1. **Login to AWS Console**
+2. **Navigate to SES** (Simple Email Service)
+3. **Select your preferred region** (e.g., us-east-2 for Ohio)
+
+#### Step 2.2: Domain Verification
+1. **Add and verify your domain**: `bookings.apoorvpathology.com`
+   ```bash
+   # In AWS SES Console > Verified identities > Create identity
+   # Choose "Domain" and enter: bookings.apoorvpathology.com
+   ```
+
+2. **Add DNS records** provided by AWS to your domain:
+   - CNAME record for domain verification
+   - TXT records for DKIM authentication
+   - SPF record: `"v=spf1 include:amazonses.com ~all"`
+   - DMARC record: `"v=DMARC1; p=quarantine; rua=mailto:postmaster@apoorvpathology.com"`
+
+#### Step 2.3: Production Access
+1. **Request Production Access**:
+   - Go to AWS SES Console → Account Dashboard
+   - Click "Request production access"
+   - Fill out the use case form (mention medical booking notifications)
+   - Typical approval time: 1-2 business days
+
+#### Step 2.4: IAM User Setup
+1. **Create IAM User** with SES permissions:
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Effect": "Allow",
+               "Action": [
+                   "ses:SendEmail",
+                   "ses:SendRawEmail",
+                   "ses:GetSendQuota",
+                   "ses:GetSendStatistics"
+               ],
+               "Resource": "*"
+           }
+       ]
+   }
+   ```
+
+2. **Generate Access Keys**:
+   - Save Access Key ID and Secret Access Key securely
+   - You'll need these for environment variables
 
 ### 3. Environment Variables
 
@@ -69,6 +116,10 @@ Add these environment variables to your Supabase Edge Functions:
 
 ```bash
 # In Supabase Dashboard > Settings > Edge Functions > Environment Variables
+AWS_ACCESS_KEY_ID=your_aws_access_key_id_here
+AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key_here
+AWS_REGION=us-east-2
+# Optional: Keep Resend as fallback
 RESEND_API_KEY=your_resend_api_key_here
 ```
 
@@ -77,7 +128,7 @@ RESEND_API_KEY=your_resend_api_key_here
 Deploy the three edge functions:
 
 ```bash
-# Deploy email sending function
+# Deploy email sending function (with AWS SES integration)
 npx supabase functions deploy send-booking-email
 
 # Deploy email verification function  
@@ -186,16 +237,28 @@ Change email addresses in:
 ### Email Not Sending (500 Error)
 **Most Common Issues:**
 
-1. **Missing RESEND_API_KEY** (Most Likely Cause)
+1. **Missing AWS Credentials** (Most Likely Cause)
    - Go to Supabase Dashboard → Settings → Edge Functions → Environment Variables
-   - Add: `RESEND_API_KEY=re_your_api_key_here`
+   - Add: `AWS_ACCESS_KEY_ID=AKIAXXXXXXXXXXXXXXXX`
+   - Add: `AWS_SECRET_ACCESS_KEY=your_secret_access_key_here`
+   - Add: `AWS_REGION=us-east-2` (or your preferred region)
    - Redeploy functions: `npm run email:deploy`
 
-2. **Database Tables Missing**
+2. **AWS SES Sandbox Mode**
+   - New AWS SES accounts start in sandbox mode
+   - Can only send to verified email addresses
+   - Request production access via AWS Console → SES → Account Dashboard
+
+3. **Domain Not Verified**
+   - Verify your sending domain in AWS SES Console
+   - Add required DNS records (DKIM, SPF, DMARC)
+   - Wait for verification to complete
+
+4. **Database Tables Missing**
    - Check if migration was applied: `npx supabase db push --linked`
    - If tables don't exist, run the migration SQL manually in Supabase SQL Editor
 
-3. **Function Logs Check**
+5. **Function Logs Check**
    - Go to Supabase Dashboard → Edge Functions → send-booking-email → Logs
    - Look for specific error messages
 
@@ -207,7 +270,13 @@ curl -X POST https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1/send-booking-
   -H "Content-Type: application/json" \
   -d '{"test": true}'
 
-# 2. Check if tables exist in Supabase SQL Editor:
+# 2. Check AWS SES service status
+aws ses get-send-quota --region us-east-2
+
+# 3. Verify domain status
+aws ses get-identity-verification-attributes --identities bookings.apoorvpathology.com --region us-east-2
+
+# 4. Check if tables exist in Supabase SQL Editor:
 SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public' AND table_name LIKE 'email_%';
 ```
@@ -240,24 +309,45 @@ WHERE table_schema = 'public' AND table_name LIKE 'email_%';
 
 ### Test Components Individually
 ```bash
-# Test email sending
+# Test email sending with AWS SES
 curl -X POST https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1/send-booking-email \
   -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY" \
-  -d '{"notificationId": "test", "verificationToken": "test-token", "emailData": {...}}'
+  -H "Content-Type: application/json" \
+  -d '{
+    "notificationId": "test", 
+    "verificationToken": "test-token", 
+    "emailData": {
+      "orderId": "test-order",
+      "recipientEmail": "test@example.com",
+      "emailType": "booking_notification",
+      "orderDetails": {
+        "orderNumber": "TEST-001",
+        "customerName": "Test Customer",
+        "customerEmail": "customer@example.com",
+        "totalAmount": 500,
+        "collectionType": "home",
+        "items": [{"name": "Blood Test", "price": 500}]
+      }
+    }
+  }'
 
 # Test escalation processing
 curl -X POST https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1/process-escalations \
   -H "Authorization: Bearer YOUR_SERVICE_ROLE_KEY"
+
+# Check AWS SES sending statistics
+aws ses get-send-statistics --region us-east-2
 ```
 
 ## 🎯 Next Steps
 
 1. **Apply database migration**
-2. **Set up Resend account and get API key**
-3. **Configure environment variables**
+2. **Set up AWS SES account and verify domain**
+3. **Configure AWS credentials in environment variables**
 4. **Deploy edge functions**
 5. **Set up cron job for escalations**
 6. **Test the complete flow**
 7. **Monitor email delivery and verification rates**
+8. **Request AWS SES production access for higher sending limits**
 
-The system is now ready to automatically notify the pathology team about new bookings and escalate if needed!
+The system is now ready to automatically notify the pathology team about new bookings using AWS SES and escalate if needed!

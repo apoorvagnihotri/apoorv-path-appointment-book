@@ -64,23 +64,41 @@ This project is built with:
 
 ## Email Notification System
 
-This application includes an automated email notification system for booking confirmations:
+This application includes a sophisticated automated email notification system for booking confirmations:
 
-### Features
-- **Instant Notifications**: Sends email to `apoorvpath@gmail.com` when bookings are confirmed
-- **Verification Tracking**: Tracks if emails are opened via verification links
+### 🎯 Features
+- **Instant Notifications**: Sends email to `office@bookings.apoorvpathology.com` when bookings are confirmed
+- **Verification Tracking**: Tracks if emails are opened via verification links  
 - **Auto-Escalation**: Escalates to `deepaagni@gmail.com` if not verified within 2 hours
-- **Professional Templates**: HTML email templates with booking details
+- **Professional Templates**: HTML email templates with complete booking details
+- **AWS SES Integration**: Reliable email delivery with 99%+ delivery rate
+- **Fallback System**: Resend backup if AWS SES unavailable
 
-### Setup
-See `EMAIL_NOTIFICATION_SETUP.md` for detailed setup instructions.
+### 📚 Documentation
+- **[EMAIL_SYSTEM_SUMMARY.md](./EMAIL_SYSTEM_SUMMARY.md)**: Quick overview and status
+- **[EMAIL_NOTIFICATION_SETUP.md](./EMAIL_NOTIFICATION_SETUP.md)**: Complete setup guide
+- **[AWS_SES_SETUP.md](./AWS_SES_SETUP.md)**: Detailed AWS SES configuration
 
-### Quick Setup
-1. Set up Resend account and get API key
-2. Add `RESEND_API_KEY` to Supabase environment variables
-3. Deploy edge functions: `supabase functions deploy`
-4. Apply database migration: `supabase db push`
-5. Set up cron job for escalations
+### 🚀 Quick Commands
+```bash
+# Deploy all email functions
+npm run email:deploy
+
+# Test email system
+npm run email:test
+
+# View function logs
+npm run email:logs
+
+# Manual escalation trigger
+npm run email:escalate
+```
+
+### 🔧 Setup Status
+- ✅ Edge functions implemented with AWS SES
+- ⚠️ AWS SES domain verification needed
+- ⚠️ Environment variables need configuration
+- ⚠️ Production access request required
 
 The system automatically sends notifications when bookings are confirmed on the payment page.
 

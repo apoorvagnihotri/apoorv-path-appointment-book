@@ -32,7 +32,7 @@ export class EmailNotificationService {
   private static readonly SUPABASE_EDGE_FUNCTION_URL = 'https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1';
 
   /**
-   * Send booking notification email
+   * Send booking notification email via AWS SES (primary) or Resend (fallback)
    */
   static async sendBookingNotification(data: EmailNotificationData): Promise<EmailVerificationResult> {
     try {
@@ -185,9 +185,9 @@ export class EmailNotificationService {
           emailType: 'escalation',
           orderDetails: {
             orderNumber: order.order_number || `ORD-${order.id.slice(0, 8)}`,
-            customerName: order.customer_details?.name || 'Customer',
-            customerEmail: order.customer_details?.email || '',
-            customerPhone: order.customer_details?.phone,
+            customerName: (order.customer_details as any)?.name || 'Customer',
+            customerEmail: (order.customer_details as any)?.email || '',
+            customerPhone: (order.customer_details as any)?.phone,
             totalAmount: order.total_amount,
             appointmentDate: order.appointment_date,
             appointmentTime: order.appointment_time,

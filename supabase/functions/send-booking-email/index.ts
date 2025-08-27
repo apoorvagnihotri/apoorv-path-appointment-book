@@ -245,11 +245,13 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Get Resend API key from environment (fallback while AWS SES is being configured)
-    const resendApiKey = Deno.env.get('RESEND_API_KEY')
+    // Get AWS SES credentials from environment
     const awsAccessKeyId = Deno.env.get('AWS_ACCESS_KEY_ID')
     const awsSecretAccessKey = Deno.env.get('AWS_SECRET_ACCESS_KEY')
     const awsRegion = Deno.env.get('AWS_REGION') || 'us-east-2'
+    
+    // Fallback to Resend if AWS credentials are not available
+    const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
     // Create email content
     const htmlContent = createBookingEmailTemplate({
@@ -267,38 +269,48 @@ serve(async (req) => {
     const fromEmail = 'office@bookings.apoorvpathology.com';
     console.log(`Sending email from: ${fromEmail} to: ${emailData.recipientEmail}`);
 
-    // Try AWS SES first, fallback to Resend if AWS credentials are not available
+    // Try AWS SES first (primary email service), fallback to Resend if needed
     if (awsAccessKeyId && awsSecretAccessKey) {
       console.log('Using AWS SES to send email');
       
-      // Use AWS SES REST API directly to avoid filesystem issues with SDK
-      const sesResponse = await sendEmailWithSESAPI({
-        accessKeyId: awsAccessKeyId,
-        secretAccessKey: awsSecretAccessKey,
-        region: awsRegion,
-        source: `Apoorv Pathology <${fromEmail}>`,
-        destination: emailData.recipientEmail,
-        subject: subject,
-        htmlBody: htmlContent,
-        tags: [
-          { Name: 'type', Value: emailData.emailType },
-          { Name: 'order_id', Value: emailData.orderId }
-        ]
-      });
+      try {
+        // Use AWS SES REST API directly to avoid filesystem issues with SDK
+        const sesResponse = await sendEmailWithSESAPI({
+          accessKeyId: awsAccessKeyId,
+          secretAccessKey: awsSecretAccessKey,
+          region: awsRegion,
+          source: `Apoorv Pathology <${fromEmail}>`,
+          destination: emailData.recipientEmail,
+          subject: subject,
+          htmlBody: htmlContent,
+          tags: [
+            { Name: 'type', Value: emailData.emailType },
+            { Name: 'order_id', Value: emailData.orderId }
+          ]
+        });
 
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          emailId: sesResponse.messageId,
-          message: 'Email sent successfully via AWS SES' 
-        }),
-        { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        },
-      )
+        return new Response(
+          JSON.stringify({ 
+            success: true, 
+            emailId: sesResponse.MessageId,
+            message: 'Email sent successfully via AWS SES' 
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+          },
+        )
+      } catch (sesError) {
+        console.error('AWS SES Error:', sesError);
+        // If AWS SES fails and Resend is available, fall back to Resend
+        if (resendApiKey) {
+          console.log('AWS SES failed, attempting Resend fallback...');
+        } else {
+          throw new Error(`AWS SES error: ${sesError.message}`);
+        }
+      }
     } else if (resendApiKey) {
-      console.log('AWS credentials not found, using Resend as fallback');
+      console.log('AWS credentials not found or AWS SES failed, using Resend as fallback');
       
       // Send email using Resend
       const emailResponse = await fetch('https://api.resend.com/emails', {
@@ -345,7 +357,7 @@ serve(async (req) => {
         },
       )
     } else {
-      throw new Error('No email service configured - missing both AWS SES and Resend credentials')
+      throw new Error('No email service configured - missing both AWS SES and Resend credentials. Please configure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for AWS SES, or RESEND_API_KEY for fallback.')
     }
   } catch (error) {
     console.error('Error in send-booking-email function:', error)

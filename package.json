@@ -13,10 +13,12 @@
     "cap:android": "npx cap add android",
     "cap:sync": "npx cap sync",
     "cap:run": "npx cap run android",
-    "email:deploy": "npx supabase functions deploy send-booking-email && npx supabase functions deploy verify-email && npx supabase functions deploy process-escalations",
-    "email:test": "tsx scripts/test-email-system.ts",
+    "email:deploy": "./scripts/deploy-email-functions.sh",
+    "email:test": "./scripts/test-email-system.sh",
     "email:check": "tsx scripts/test-email-system.ts check",
-    "email:escalate": "curl -X POST https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1/process-escalations -H \"Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY\""
+    "email:escalate": "curl -X POST https://wvjcpyijakskshhfyrkv.supabase.co/functions/v1/process-escalations -H \"Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY\"",
+    "email:logs": "npx supabase functions logs send-booking-email --follow",
+    "email:setup": "echo 'See EMAIL_NOTIFICATION_SETUP.md and AWS_SES_SETUP.md for setup instructions'"
   },
   "dependencies": {
     "@capacitor/android": "^5.0.0",
