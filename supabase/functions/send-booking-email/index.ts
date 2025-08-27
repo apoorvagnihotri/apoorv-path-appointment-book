@@ -150,6 +150,85 @@ function createBookingEmailTemplate(data: EmailData): string {
   `;
 }
 
+// AWS SES API helper function to avoid SDK filesystem issues
+async function sendEmailWithSESAPI(params: {
+  accessKeyId: string;
+  secretAccessKey: string;
+  region: string;
+  source: string;
+  destination: string;
+  subject: string;
+  htmlBody: string;
+  tags: Array<{ Name: string; Value: string }>;
+}) {
+  // Use the HTTPS email endpoint instead of SES endpoint
+  const endpoint = `https://email.${params.region}.amazonaws.com/`;
+  
+  const body = new URLSearchParams({
+    'Action': 'SendEmail',
+    'Source': params.source,
+    'Destination.ToAddresses.member.1': params.destination,
+    'Message.Subject.Data': params.subject,
+    'Message.Body.Html.Data': params.htmlBody,
+    'Version': '2010-12-01'
+  });
+
+  // AWS Signature V4
+  const service = 'ses';
+  const host = `email.${params.region}.amazonaws.com`;
+  const amzDate = new Date().toISOString().replace(/[:\-]|\.\d{3}/g, '');
+  const dateStamp = amzDate.substr(0, 8);
+  
+  const canonicalUri = '/';
+  const canonicalQuerystring = '';
+  const canonicalHeaders = `host:${host}\nx-amz-date:${amzDate}\n`;
+  const signedHeaders = 'host;x-amz-date';
+  const payloadHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body.toString())).then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join(''));
+  
+  const canonicalRequest = `POST\n${canonicalUri}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
+  
+  const algorithm = 'AWS4-HMAC-SHA256';
+  const credentialScope = `${dateStamp}/${params.region}/${service}/aws4_request`;
+  const stringToSign = `${algorithm}\n${amzDate}\n${credentialScope}\n${await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalRequest)).then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join(''))}`;
+  
+  // Create signing key
+  const getSignatureKey = async (key: string, dateStamp: string, regionName: string, serviceName: string) => {
+    const kDate = await crypto.subtle.importKey('raw', new TextEncoder().encode('AWS4' + key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(k => crypto.subtle.sign('HMAC', k, new TextEncoder().encode(dateStamp)));
+    const kRegion = await crypto.subtle.importKey('raw', kDate, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(k => crypto.subtle.sign('HMAC', k, new TextEncoder().encode(regionName)));
+    const kService = await crypto.subtle.importKey('raw', kRegion, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(k => crypto.subtle.sign('HMAC', k, new TextEncoder().encode(serviceName)));
+    return crypto.subtle.importKey('raw', kService, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(k => crypto.subtle.sign('HMAC', k, new TextEncoder().encode('aws4_request')));
+  };
+  
+  const signingKey = await getSignatureKey(params.secretAccessKey, dateStamp, params.region, service);
+  const signature = await crypto.subtle.importKey('raw', signingKey, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+    .then(k => crypto.subtle.sign('HMAC', k, new TextEncoder().encode(stringToSign)))
+    .then(sig => Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join(''));
+  
+  const authorizationHeader = `${algorithm} Credential=${params.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+  
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': authorizationHeader,
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+      'X-Amz-Date': amzDate,
+      'Host': host
+    },
+    body: body.toString()
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`AWS SES API error: ${response.status} - ${errorText}`);
+  }
+
+  const responseText = await response.text();
+  const messageIdMatch = responseText.match(/<MessageId>([^<]+)<\/MessageId>/);
+  const messageId = messageIdMatch ? messageIdMatch[1] : 'unknown';
+
+  return { MessageId: messageId };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -166,12 +245,11 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Get Resend API key from environment
+    // Get Resend API key from environment (fallback while AWS SES is being configured)
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    
-    if (!resendApiKey) {
-      throw new Error('RESEND_API_KEY not configured')
-    }
+    const awsAccessKeyId = Deno.env.get('AWS_ACCESS_KEY_ID')
+    const awsSecretAccessKey = Deno.env.get('AWS_SECRET_ACCESS_KEY')
+    const awsRegion = Deno.env.get('AWS_REGION') || 'us-east-2'
 
     // Create email content
     const htmlContent = createBookingEmailTemplate({
@@ -188,51 +266,87 @@ serve(async (req) => {
     // Verify domain is properly set
     const fromEmail = 'office@bookings.apoorvpathology.com';
     console.log(`Sending email from: ${fromEmail} to: ${emailData.recipientEmail}`);
-    
-    // Send email using Resend
-    const emailResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: `Apoorv Pathology <${fromEmail}>`,
-        to: [emailData.recipientEmail],
+
+    // Try AWS SES first, fallback to Resend if AWS credentials are not available
+    if (awsAccessKeyId && awsSecretAccessKey) {
+      console.log('Using AWS SES to send email');
+      
+      // Use AWS SES REST API directly to avoid filesystem issues with SDK
+      const sesResponse = await sendEmailWithSESAPI({
+        accessKeyId: awsAccessKeyId,
+        secretAccessKey: awsSecretAccessKey,
+        region: awsRegion,
+        source: `Apoorv Pathology <${fromEmail}>`,
+        destination: emailData.recipientEmail,
         subject: subject,
-        html: htmlContent,
+        htmlBody: htmlContent,
         tags: [
-          { name: 'type', value: emailData.emailType },
-          { name: 'order_id', value: emailData.orderId }
+          { Name: 'type', Value: emailData.emailType },
+          { Name: 'order_id', Value: emailData.orderId }
         ]
-      }),
-    })
-
-    if (!emailResponse.ok) {
-      const errorText = await emailResponse.text()
-      console.error('Resend API Error Details:', {
-        status: emailResponse.status,
-        statusText: emailResponse.statusText,
-        error: errorText,
-        from: fromEmail,
-        to: emailData.recipientEmail
       });
-      throw new Error(`Resend API error: ${errorText}`)
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          emailId: sesResponse.messageId,
+          message: 'Email sent successfully via AWS SES' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        },
+      )
+    } else if (resendApiKey) {
+      console.log('AWS credentials not found, using Resend as fallback');
+      
+      // Send email using Resend
+      const emailResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: `Apoorv Pathology <${fromEmail}>`,
+          to: [emailData.recipientEmail],
+          subject: subject,
+          html: htmlContent,
+          tags: [
+            { name: 'type', value: emailData.emailType },
+            { name: 'order_id', value: emailData.orderId }
+          ]
+        }),
+      })
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text()
+        console.error('Resend API Error Details:', {
+          status: emailResponse.status,
+          statusText: emailResponse.statusText,
+          error: errorText,
+          from: fromEmail,
+          to: emailData.recipientEmail
+        });
+        throw new Error(`Resend API error: ${errorText}`)
+      }
+
+      const emailResult = await emailResponse.json()
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          emailId: emailResult.id,
+          message: 'Email sent successfully via Resend (fallback)' 
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        },
+      )
+    } else {
+      throw new Error('No email service configured - missing both AWS SES and Resend credentials')
     }
-
-    const emailResult = await emailResponse.json()
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        emailId: emailResult.id,
-        message: 'Email sent successfully' 
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      },
-    )
   } catch (error) {
     console.error('Error in send-booking-email function:', error)
     
