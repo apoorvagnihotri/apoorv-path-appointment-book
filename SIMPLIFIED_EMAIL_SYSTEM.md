@@ -40,22 +40,19 @@ Replaced complex escalation system with a simple technician assignment system.
 
 ## New Pages to Build 📄
 
-### 1. Assignment Page (`/assign-booking/[token]`)
-- Verify token is valid and booking not already assigned
+### 1. ✅ Assignment Page (`/assign-booking/[token]`)
+- Verifies token is valid and booking not already assigned
 - Dropdown to select technician from `technicians` table  
 - Input field for "assigned by" name
 - Submit button to assign technician
 - Success/error messaging
 
-### 2. Dashboard Page (`/booking-dashboard`) 
-- Show all bookings from last 48 hours
-- Color coding:
-  - 🔴 Red: Pending (no technician assigned)
-  - 🟡 Yellow: Assigned (technician assigned but not completed)
-  - 🟢 Green: Completed
+### 2. ✅ Dashboard Page (`/booking-dashboard`) 
+- Shows all bookings from last 48 hours
+- Color coding for status: Pending, Assigned, Completed
 - Filters: All, Pending, Assigned, Completed
 - Search by order number or customer name
-- Quick assign functionality
+- Quick assign functionality via a dialog
 
 ## Functions to Update 🔧
 
