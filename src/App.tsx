@@ -32,55 +32,60 @@ import NotFound from "./pages/NotFound";
 import AdminLayout from "./layouts/AdminLayout";
 import AssignBooking from "./pages/AssignBooking";
 import BookingDashboard from "./pages/BookingDashboard";
+import RequireAuth from "./components/RequireAuth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <CartProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            <Toaster />
+            <Sonner />
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Welcome />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/home" element={<Home />} />
-              <Route path="/tests" element={<Tests />} />
-              <Route path="/packages" element={<Packages />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/prescription" element={<Prescription />} />
-              <Route path="/test/:testId" element={<TestDetails />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/address" element={<Address />} />
-              <Route path="/members" element={<Members />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/booking-confirmation" element={<BookingConfirmation />} />
-              <Route path="/booking-confirmation/:id" element={<BookingConfirmation />} />
-              <Route path="/bookings" element={<Bookings />} />
-              <Route path="/booking/:id" element={<BookingDetails />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/contact-support" element={<ContactSupport />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/manage-addresses" element={<ManageAddresses />} />
-              <Route path="/manage-members" element={<ManageMembers />} />
+
+              {/* Authenticated Routes */}
+              <Route path="/tests" element={<RequireAuth><Tests /></RequireAuth>} />
+              <Route path="/tests/:id" element={<RequireAuth><TestDetails /></RequireAuth>} />
+              <Route path="/packages" element={<RequireAuth><Packages /></RequireAuth>} />
+              <Route path="/services" element={<RequireAuth><Services /></RequireAuth>} />
+              <Route path="/upload-prescription" element={<RequireAuth><Prescription /></RequireAuth>} />
+              <Route path="/bookings" element={<RequireAuth><Bookings /></RequireAuth>} />
+              <Route path="/bookings/:id" element={<RequireAuth><BookingDetails /></RequireAuth>} />
+              <Route path="/cart" element={<RequireAuth><Cart /></RequireAuth>} />
+              <Route path="/address" element={<RequireAuth><Address /></RequireAuth>} />
+              <Route path="/schedule" element={<RequireAuth><Schedule /></RequireAuth>} />
+              <Route path="/payment" element={<RequireAuth><Payment /></RequireAuth>} />
+              <Route path="/booking-confirmation/:id" element={<RequireAuth><BookingConfirmation /></RequireAuth>} />
               
+              {/* Account Management */}
+              <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
+              <Route path="/account/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+              <Route path="/account/members" element={<RequireAuth><Members /></RequireAuth>} />
+              <Route path="/account/manage-members" element={<RequireAuth><ManageMembers /></RequireAuth>} />
+              <Route path="/account/addresses" element={<RequireAuth><ManageAddresses /></RequireAuth>} />
+              <Route path="/contact-support" element={<RequireAuth><ContactSupport /></RequireAuth>} />
+
               {/* Admin Routes */}
-              <Route element={<AdminLayout />}>
-                <Route path="/assign-booking/:token" element={<AssignBooking />} />
-                <Route path="/booking-dashboard" element={<BookingDashboard />} />
+              <Route path="/admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
+                <Route index element={<BookingDashboard />} />
+                <Route path="assign-booking/:id" element={<AssignBooking />} />
+                <Route path="booking-dashboard" element={<BookingDashboard />} />
               </Route>
 
-              {/* Not Found Route */}
+              {/* Not Found */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </CartProvider>
-      </AuthProvider>
+          </CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

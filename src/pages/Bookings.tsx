@@ -41,6 +41,8 @@ const Bookings = () => {
   useEffect(() => {
     if (user) {
       fetchFutureOrders();
+    } else {
+      setLoading(false); // Stop loading if there is no user
     }
   }, [user]);
 
@@ -194,15 +196,19 @@ const Bookings = () => {
     }
   };
 
-  // Redirect if not authenticated
-  if (!user) {
-    navigate('/signin');
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+    }
+  }, [user, navigate]);
 
   // Separate orders into active and cancelled
   const cancelledOrders = orders.filter(order => order.status === 'canceled');
   const activeOrders = orders.filter(order => order.status !== 'canceled');
+
+  if (!user) {
+    return null; // or a loading spinner while redirecting
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">

@@ -1,4 +1,4 @@
-
+// @refresh-reset
 import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,6 +26,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -34,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   const fetchProfile = useCallback(async (user: User | null) => {
+    console.log('[Auth] fetchProfile called for user:', user?.id);
     if (user) {
       const { data, error } = await supabase
         .from('profiles')
@@ -42,39 +51,56 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('[Auth] Error fetching profile:', error);
         setProfile(null);
       } else {
+        console.log('[Auth] Profile fetched successfully:', data);
         setProfile(data);
       }
     } else {
+      console.log('[Auth] No user, setting profile to null.');
       setProfile(null);
     }
   }, []);
 
   useEffect(() => {
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      await fetchProfile(session?.user ?? null);
-      setLoading(false);
+    console.log('[Auth] AuthProvider useEffect started.');
+    setLoading(true);
+
+    const getSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('[Auth] Initial session fetch completed.', { session });
+        setSession(session);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+
+        // Kick off profile fetch but DON'T block loading on it
+        fetchProfile(currentUser).catch((e) => console.error('[Auth] fetchProfile error (initial):', e));
+      } finally {
+        setLoading(false); // <- always flip it off, even if fetchProfile fails/hangs
+      }
     };
 
-    getInitialSession();
+    getSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        await fetchProfile(session?.user ?? null);
-        if (event !== 'INITIAL_SESSION') {
-          setLoading(false);
-        }
-      }
-    );
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log(`[Auth] onAuthStateChange event: ${_event}`, { session });
+      setSession(session);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
 
-    return () => subscription.unsubscribe();
+      // Fire-and-forget; never block loading on profile
+      fetchProfile(currentUser).catch((e) => console.error('[Auth] fetchProfile error (onAuth):', e));
+
+      // Always ensure loading = false after any auth event
+      setLoading(false);
+    });
+
+    return () => {
+      console.log('[Auth] Unsubscribing from onAuthStateChange.');
+      subscription.unsubscribe();
+    };
   }, [fetchProfile]);
 
   const isAdmin = profile?.role === 'admin';
@@ -185,26 +211,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  return (
-    <AuthContext.Provider value={{
-      user,
-      session,
-      loading,
-      signUp,
-      signIn,
-      signOut,
-      signInWithGoogle,
-      resetPassword,
-    }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const value = {
+    user,
+    session,
+    profile,
+    loading,
+    signUp,
+    signIn,
+    signOut,
+    signInWithGoogle,
+    resetPassword,
+    isAdmin,
+  };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

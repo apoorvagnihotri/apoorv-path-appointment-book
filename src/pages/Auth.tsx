@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +8,9 @@ import { useAuth } from "@/hooks/useAuth";
 import apoorvLogo from "@/assets/apoorv-logo.png";
 
 const Auth = () => {
+  console.log('[AuthPage] Component rendering.');
   const navigate = useNavigate();
-  const { signUp, signIn, signInWithGoogle, resetPassword, user } = useAuth();
+  const { signUp, signIn, signInWithGoogle, resetPassword, user, loading: authLoading } = useAuth();
   const [step, setStep] = useState<'method' | 'email' | 'forgot-password'>('method');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,15 +19,17 @@ const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showForgotSuggestion, setShowForgotSuggestion] = useState(false);
 
-  // Redirect if already authenticated
   useEffect(() => {
-    if (user) {
-      navigate('/home');
+    console.log(`[AuthPage] useEffect triggered. authLoading: ${authLoading}, user exists: ${!!user}`);
+    if (!authLoading && user) {
+      console.log('[AuthPage] Conditions met, navigating to /home.');
+      navigate('/home', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
-  // Show loading while redirecting authenticated users
-  if (user) {
+  console.log(`[AuthPage] Pre-return check. authLoading: ${authLoading}, user exists: ${!!user}`);
+  if (authLoading) {
+    console.log('[AuthPage] Displaying loading screen.');
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
@@ -37,6 +39,22 @@ const Auth = () => {
             className="w-20 h-20 object-contain mx-auto mb-4"
           />
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground mt-4">Checking session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user) {
+    console.log('[AuthPage] Displaying redirecting screen.');
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-center">
+          <img
+            src={apoorvLogo}
+            alt="Apoorv Pathology Lab"
+            className="w-20 h-20 object-contain mx-auto mb-4"
+          />
           <p className="text-muted-foreground mt-4">Redirecting...</p>
         </div>
       </div>
