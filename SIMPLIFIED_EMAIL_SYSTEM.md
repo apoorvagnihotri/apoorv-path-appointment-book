@@ -34,9 +34,9 @@ Replaced complex escalation system with a simple technician assignment system.
 2. **Internal Email Sent** to `apoorvpath@gmail.com` with two links:
    - **Assignment Link**: `/assign-booking/{assignment_token}`
    - **Dashboard Link**: `/booking-dashboard`
-<!-- 3. **External Email Sent** to patient's email: LATER TODO
+3. **External Email Sent** to customer's email:
    - **Booking Confirmation**: `/booking-confirmation/{booking_id}`
-   - **Assignment Confirmation**: `/assignment-confirmation/{assignment_token}` (when lab technician is assigned) -->
+   - **Assignment Confirmation**: `/assignment-confirmation/{assignment_token}` (when lab technician is assigned)
 
 ## New Pages to Build 📄
 
@@ -82,3 +82,23 @@ assign_technician_to_booking(token, technician_id, assigned_by)
 3. **Flexible**: Easy to add/remove technicians
 4. **Trackable**: Know who assigned what and when
 5. **Reliable**: No timed escalations that could fail
+
+## Security: Role-Based Access Control (RBAC) 🛡️
+
+To prevent unauthorized access to admin pages (`/booking-dashboard`, `/assign-booking/*`), a role-based access control system has been implemented.
+
+1.  **User Roles**:
+    *   A `role` column was added to the `profiles` table.
+    *   Default role for new users is `customer`.
+    *   Admin users can be assigned the `admin` role manually in the Supabase dashboard.
+
+2.  **Protected Routes**:
+    *   A new `AdminLayout` component wraps all administrative routes.
+    *   It checks if the logged-in user has the `admin` role.
+    *   If the user is not an admin, they are redirected to a "Not Found" page.
+
+3.  **Implementation Details**:
+    *   **Migration**: `supabase/migrations/20250830000002_add_role_to_profiles.sql`
+    *   **Auth Hook**: `src/hooks/useAuth.tsx` was updated to fetch the user's role.
+    *   **Layout Component**: `src/layouts/AdminLayout.tsx` contains the access control logic.
+    *   **Routing**: `src/App.tsx` was updated to use the `AdminLayout` for protected routes.

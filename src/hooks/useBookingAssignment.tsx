@@ -86,9 +86,9 @@ export function useBookingAssignment() {
 
     try {
       const { error: rpcError } = await supabase.rpc('assign_technician_to_booking', {
-        p_token: token,
-        p_technician_id: selectedTechnician,
-        p_assigned_by: assignedBy,
+        assignment_token_param: token,
+        technician_id_param: selectedTechnician,
+        assigned_by_param: assignedBy,
       });
 
       if (rpcError) {

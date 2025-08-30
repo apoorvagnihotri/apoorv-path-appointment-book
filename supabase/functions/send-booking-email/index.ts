@@ -9,7 +9,10 @@ const corsHeaders = {
 }
 
 // Simplified HTML Email Template
-function createBookingEmailTemplate(order: any, assignmentToken: string): string {
+function createBookingEmailTemplate({ order, assignmentToken }: { order: any; assignmentToken: string }): string {
+  if (!order) {
+    throw new Error('`order` object is missing in createBookingEmailTemplate');
+  }
   const orderDetails = {
     orderNumber: order.order_number || `ORD-${order.id.slice(0, 8)}`,
     customerName: order.customer_details?.name || 'N/A',
@@ -258,7 +261,7 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
     // Create email content
-    const htmlContent = createBookingEmailTemplate(order, assignmentToken);
+    const htmlContent = createBookingEmailTemplate({ order, assignmentToken });
 
     const subject = `✅ New Booking Received - Order #${order.order_number || `ORD-${order.id.slice(0, 8)}`}`;
     const fromEmail = 'office@bookings.apoorvpathology.com';

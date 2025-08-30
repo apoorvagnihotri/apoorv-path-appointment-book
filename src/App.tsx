@@ -29,6 +29,7 @@ import ManageAddresses from "./pages/ManageAddresses";
 import ManageMembers from "./pages/ManageMembers";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./layouts/AdminLayout";
 import AssignBooking from "./pages/AssignBooking";
 import BookingDashboard from "./pages/BookingDashboard";
 
@@ -43,6 +44,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<Welcome />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/onboarding" element={<Onboarding />} />
@@ -66,8 +68,14 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/manage-addresses" element={<ManageAddresses />} />
               <Route path="/manage-members" element={<ManageMembers />} />
-              <Route path="/assign-booking/:token" element={<AssignBooking />} />
-              <Route path="/booking-dashboard" element={<BookingDashboard />} />
+              
+              {/* Admin Routes */}
+              <Route element={<AdminLayout />}>
+                <Route path="/assign-booking/:token" element={<AssignBooking />} />
+                <Route path="/booking-dashboard" element={<BookingDashboard />} />
+              </Route>
+
+              {/* Not Found Route */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

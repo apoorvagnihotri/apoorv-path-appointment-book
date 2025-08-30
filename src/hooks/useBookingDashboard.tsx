@@ -82,12 +82,12 @@ export function useBookingDashboard() {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  const assignTechnician = async (assignmentId: string, technicianId: string, assignerName: string) => {
+    const assignTechnician = async (assignmentId: string, technicianId: string, assignerName: string) => {
     try {
-      const { error } = await supabase.rpc('assign_technician_to_booking_by_id', {
-        p_assignment_id: assignmentId,
-        p_technician_id: technicianId,
-        p_assigned_by: assignerName,
+      const { error } = await supabase.rpc('assign_technician_to_booking', {
+        assignment_token_param: assignmentId,
+        technician_id_param: technicianId,
+        assigned_by_param: assignerName,
       });
 
       if (error) {
