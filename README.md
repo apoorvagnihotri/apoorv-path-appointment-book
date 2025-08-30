@@ -168,3 +168,49 @@ Transfer the APK to an Android device and install it.
 - Ensure Android SDK is installed
 - Set `JAVA_HOME` environment variable
 - Minimum SDK version: 22 (set in `android/variables.gradle`)
+
+## Environment configuration (Vite + Vercel + Supabase)
+
+This project uses Vite, so any environment variables that must be accessible in the browser must be prefixed with VITE_. The Supabase client reads:
+- VITE_SUPABASE_URL from [const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;](src/integrations/supabase/client.ts:5)
+- VITE_SUPABASE_ANON_KEY from [const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;](src/integrations/supabase/client.ts:6)
+
+A runtime guard will throw a clear error if these are missing:
+- Guard: [if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {](src/integrations/supabase/client.ts:8)
+- Dev-only debug log (does not print the full key): [console.debug('[Supabase] Config ok. URL:', ...)](src/integrations/supabase/client.ts:21)
+
+Local development
+- Copy the example file and fill in values:
+  - cp .env.example .env.local
+- Required keys in [.env.example](.env.example):
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_ANON_KEY
+- Restart the dev server after changing env files (Vite reads at startup).
+- Note: [.gitignore](.gitignore:13) already ignores *.local and [.gitignore](.gitignore:31) ignores .env so your secrets won’t be committed.
+
+Vercel deployment (Production and Preview)
+- Vercel Dashboard → Your Project → Settings → Environment Variables:
+  - VITE_SUPABASE_URL = your Supabase project URL (e.g. https://xyzcompany.supabase.co)
+  - VITE_SUPABASE_ANON_KEY = your Supabase anon public key
+- Save for both Production and Preview scopes.
+- Redeploy to apply env changes (build-time):
+  - via UI: Deploy
+  - via CLI: npx vercel --prod
+
+Vercel CLI (optional)
+- vercel env ls
+- vercel env add VITE_SUPABASE_URL production
+- vercel env add VITE_SUPABASE_ANON_KEY production
+- (repeat for preview if needed)
+- npx vercel --prod
+
+Troubleshooting
+- Error “supabaseUrl is required” or “[Supabase] Missing environment variable(s)”:
+  - Ensure the VITE_ keys are defined (prefix is mandatory for browser-exposed vars).
+  - For local dev: ensure .env.local exists and you restarted the dev server.
+  - For Vercel: ensure keys exist in Project Settings and you redeployed.
+- In non-production, check the console for the debug log from [console.debug(...)](src/integrations/supabase/client.ts:21).
+
+Security notes
+- Never commit secrets. Keep .env.local untracked (see [.gitignore](.gitignore:13) and [.gitignore](.gitignore:31)).
+- Do not expose service role keys in the browser. If you need service operations, use server-side contexts (e.g., Supabase Edge Functions) instead of the frontend.

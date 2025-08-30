@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Mail, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Mail, Eye, EyeOff, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import apoorvLogo from "@/assets/apoorv-logo.png";
@@ -168,6 +168,16 @@ const Auth = () => {
                 </svg>
                 Continue with Google
               </Button>
+
+              <Button
+                className="w-full h-12 bg-[#25D366] hover:bg-[#1ebe5d] text-white"
+                size="lg"
+                onClick={() => window.open('https://wa.me/919993522579?text=REGISTER', '_blank')}
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                Continue on WhatsApp
+              </Button>
+
             </CardContent>
           </Card>
         )}

@@ -5,6 +5,23 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+// Early runtime guard to surface misconfiguration clearly (Vite + Vercel)
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  const missing: string[] = [];
+  if (!SUPABASE_URL) missing.push('VITE_SUPABASE_URL');
+  if (!SUPABASE_PUBLISHABLE_KEY) missing.push('VITE_SUPABASE_ANON_KEY');
+  const msg =
+    `[Supabase] Missing environment variable(s): ${missing.join(', ')}. ` +
+    `Define them in .env.local for local dev and in Vercel Project Settings (Production and Preview).`;
+  throw new Error(msg);
+}
+
+// Optional debug log in non-production (does not print the key)
+if (import.meta.env.MODE !== 'production') {
+  const partial = String(SUPABASE_PUBLISHABLE_KEY).slice(0, 6);
+  console.debug('[Supabase] Config ok. URL:', SUPABASE_URL, 'Anon key starts with:', partial);
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
