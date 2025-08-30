@@ -8,33 +8,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface BookingData {
-  orderId: string;
-  orderDetails: {
-    orderNumber: string;
-    customerName: string;
-    customerEmail: string;
-    customerPhone?: string;
-    totalAmount: number;
-    appointmentDate?: string;
-    appointmentTime?: string;
-    collectionType: string;
-    collectionAddress?: any;
-    items: Array<{
-      name: string;
-      price: number;
-      memberName?: string;
-    }>;
-  };
-}
-
 // Simplified HTML Email Template
-function createBookingEmailTemplate(data: BookingData, assignmentToken: string): string {
-  const { orderDetails } = data;
-  
-  if (!orderDetails) {
-    throw new Error('orderDetails is missing from the request data')
-  }
+function createBookingEmailTemplate(order: any, assignmentToken: string): string {
+  const orderDetails = {
+    orderNumber: order.order_number || `ORD-${order.id.slice(0, 8)}`,
+    customerName: order.customer_details?.name || 'N/A',
+    customerEmail: order.customer_details?.email || 'N/A',
+    customerPhone: order.customer_details?.phone,
+    totalAmount: order.total_amount,
+    appointmentDate: order.appointment_date,
+    appointmentTime: order.appointment_time,
+    collectionType: order.collection_type,
+    collectionAddress: order.collection_address,
+    items: order.order_items || [],
+  };
   
   const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:5173';
   const assignmentUrl = `${siteUrl}/assign-booking/${assignmentToken}`;
@@ -119,7 +106,7 @@ function createBookingEmailTemplate(data: BookingData, assignmentToken: string):
         <div class="footer">
             <p>🏥 Apoorv Pathology Lab</p>
             <p style="font-size: 12px;">This is an automated notification. Please do not reply to this email.</p>
-            <p style="font-size: 10px;">Booking ID: ${data.orderId}</p>
+            <p style="font-size: 10px;">Booking ID: ${order.id}</p>
         </div>
     </div>
 </body>
@@ -212,13 +199,11 @@ serve(async (req) => {
   }
 
   try {
-    const bookingData: BookingData = await req.json()
-    console.log('Received booking data:', JSON.stringify(bookingData, null, 2))
-    
-    const { orderId, orderDetails } = bookingData;
+    const { orderId } = await req.json()
+    console.log('Received orderId:', orderId)
 
-    if (!orderId || !orderDetails) {
-      throw new Error('Missing orderId or orderDetails in the request body');
+    if (!orderId) {
+      throw new Error('Missing orderId in the request body');
     }
 
     // Initialize Supabase client
@@ -226,10 +211,29 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // 1. Create a unique assignment token
+    // 1. Fetch order details from Supabase
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        order_items (
+          item_name,
+          item_price,
+          member_name
+        )
+      `)
+      .eq('id', orderId)
+      .single();
+
+    if (orderError || !order) {
+      console.error('Error fetching order:', orderError);
+      throw new Error(`Could not fetch order with ID ${orderId}`);
+    }
+
+    // 2. Create a unique assignment token
     const assignmentToken = crypto.randomUUID();
 
-    // 2. Create a new record in the booking_assignments table
+    // 3. Create a new record in the booking_assignments table
     const { error: insertError } = await supabase
       .from('booking_assignments')
       .insert({
@@ -254,9 +258,9 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
     // Create email content
-    const htmlContent = createBookingEmailTemplate(bookingData, assignmentToken);
+    const htmlContent = createBookingEmailTemplate(order, assignmentToken);
 
-    const subject = `✅ New Booking Received - Order #${orderDetails.orderNumber}`;
+    const subject = `✅ New Booking Received - Order #${order.order_number || `ORD-${order.id.slice(0, 8)}`}`;
     const fromEmail = 'office@bookings.apoorvpathology.com';
     const recipientEmail = 'apoorvpath@gmail.com'; // Hardcoded internal recipient
 

@@ -10,7 +10,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LAB_INFO } from "@/lib/constants";
-import { EmailNotificationService, type EmailNotificationData } from "@/lib/emailNotificationService";
 
 type PaymentMethod = 'online' | 'cash' | null;
 type OnlinePaymentType = 'upi' | 'card' | 'wallet' | null;
@@ -203,46 +202,19 @@ const Payment = () => {
 
       if (itemsError) throw itemsError;
 
-      // Send email notification to apoorvpath@gmail.com
+      // Send email notification using Supabase Edge Function
       try {
-        const emailData: EmailNotificationData = {
-          orderId: order.id,
-          recipientEmail: 'apoorvpath@gmail.com',
-          emailType: 'booking_notification',
-          orderDetails: {
-            orderNumber: order.order_number || `ORD-${order.id.slice(0, 8)}`,
-            customerName: orderData.customer_details.name,
-            customerEmail: orderData.customer_details.email,
-            customerPhone: orderData.customer_details.phone,
-            totalAmount: cartSummary.total,
-            appointmentDate: selectedDate,
-            appointmentTime: selectedTime,
-            collectionType: collectionType,
-            collectionAddress: selectedAddress,
-            items: filteredCartItems.map(item => {
-              const displayItem = item.test || item.package || item.service;
-              return {
-                name: displayItem!.name,
-                price: displayItem!.price,
-                memberName: item.memberInfo?.name || (item.memberId === 'self' ? 
-                  (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Patient') : 
-                  undefined)
-              };
-            })
-          }
-        };
+        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-booking-email', {
+          body: { orderId: order.id }
+        });
 
-        const emailResult = await EmailNotificationService.sendBookingNotification(emailData);
-        
-        if (emailResult.success) {
-          console.log('Email notification sent successfully');
+        if (emailError) {
+          console.error('Error sending booking email:', emailError);
         } else {
-          console.error('Failed to send email notification:', emailResult.error);
-          // Don't fail the entire order process for email issues
+          console.log('Booking email function invoked:', emailResponse);
         }
-      } catch (emailError) {
-        console.error('Email notification error:', emailError);
-        // Don't fail the entire order process for email issues
+      } catch (functionError) {
+        console.error('Error invoking email function:', functionError);
       }
 
       // Clear cart and session storage
