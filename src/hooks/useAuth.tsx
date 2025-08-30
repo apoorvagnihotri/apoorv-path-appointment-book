@@ -67,23 +67,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     console.log('[Auth] AuthProvider useEffect started.');
     setLoading(true);
 
-    const getSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log('[Auth] Initial session fetch completed.', { session });
-        setSession(session);
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-
-        // Kick off profile fetch but DON'T block loading on it
-        fetchProfile(currentUser).catch((e) => console.error('[Auth] fetchProfile error (initial):', e));
-      } finally {
-        setLoading(false); // <- always flip it off, even if fetchProfile fails/hangs
-      }
-    };
-
-    getSession();
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log(`[Auth] onAuthStateChange event: ${_event}`, { session });
       setSession(session);
