@@ -31,9 +31,12 @@ Replaced complex escalation system with a simple technician assignment system.
 ## Email Flow 🔄
 
 1. **Booking Created** → Create `booking_assignments` record with unique token
-2. **Email Sent** to `apoorvpath@gmail.com` with two links:
+2. **Internal Email Sent** to `apoorvpath@gmail.com` with two links:
    - **Assignment Link**: `/assign-booking/{assignment_token}`
    - **Dashboard Link**: `/booking-dashboard`
+<!-- 3. **External Email Sent** to patient's email: LATER TODO
+   - **Booking Confirmation**: `/booking-confirmation/{booking_id}`
+   - **Assignment Confirmation**: `/assignment-confirmation/{assignment_token}` (when lab technician is assigned) -->
 
 ## New Pages to Build 📄
 
@@ -56,7 +59,7 @@ Replaced complex escalation system with a simple technician assignment system.
 
 ## Functions to Update 🔧
 
-### 1. Simplified `send-booking-email` function
+### 1. ✅ Simplified `send-booking-email` function
 - Remove escalation logic
 - Change recipient to `apoorvpath@gmail.com`
 - Generate assignment token

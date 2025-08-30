@@ -1,3 +1,5 @@
+/// <reference types="https://deno.land/x/deno/cli/types/deno.d.ts" />
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -6,51 +8,37 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface EmailData {
-  notificationId: string;
-  verificationToken: string;
-  emailData: {
-    orderId: string;
-    recipientEmail: string;
-    emailType: 'booking_notification' | 'escalation';
-    orderDetails: {
-      orderNumber: string;
-      customerName: string;
-      customerEmail: string;
-      customerPhone?: string;
-      totalAmount: number;
-      appointmentDate?: string;
-      appointmentTime?: string;
-      collectionType: string;
-      collectionAddress?: any;
-      items: Array<{
-        name: string;
-        price: number;
-        memberName?: string;
-      }>;
-    };
+interface BookingData {
+  orderId: string;
+  orderDetails: {
+    orderNumber: string;
+    customerName: string;
+    customerEmail: string;
+    customerPhone?: string;
+    totalAmount: number;
+    appointmentDate?: string;
+    appointmentTime?: string;
+    collectionType: string;
+    collectionAddress?: any;
+    items: Array<{
+      name: string;
+      price: number;
+      memberName?: string;
+    }>;
   };
 }
 
-// HTML Email Template
-function createBookingEmailTemplate(data: EmailData): string {
-  console.log('Template function received data:', JSON.stringify(data, null, 2))
-  
-  const { verificationToken, emailData } = data;
-  
-  if (!emailData) {
-    throw new Error('emailData is missing from the request')
-  }
-  
-  const { orderDetails } = emailData;
+// Simplified HTML Email Template
+function createBookingEmailTemplate(data: BookingData, assignmentToken: string): string {
+  const { orderDetails } = data;
   
   if (!orderDetails) {
-    throw new Error('orderDetails is missing from emailData')
+    throw new Error('orderDetails is missing from the request data')
   }
   
-  const isEscalation = emailData.emailType === 'escalation';
-  
-  const verificationUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/verify-email?token=${verificationToken}`;
+  const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:5173';
+  const assignmentUrl = `${siteUrl}/assign-booking/${assignmentToken}`;
+  const dashboardUrl = `${siteUrl}/booking-dashboard`;
   
   return `
 <!DOCTYPE html>
@@ -58,38 +46,37 @@ function createBookingEmailTemplate(data: EmailData): string {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${isEscalation ? 'URGENT: Unverified' : 'New'} Booking Confirmation</title>
+    <title>New Booking Received</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; padding: 20px; border-radius: 10px 10px 0 0; margin: -20px -20px 20px -20px; }
-        .alert { background: ${isEscalation ? '#fef2f2' : '#f0f9ff'}; border: 1px solid ${isEscalation ? '#fecaca' : '#bae6fd'}; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .verification-btn { background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+        .header { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; padding: 20px; border-radius: 10px 10px 0 0; margin: -20px -20px 20px -20px; text-align: center; }
+        .alert { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .action-btn { background: #22c55e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px; }
+        .secondary-btn { background: #f1f5f9; color: #020617; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px; border: 1px solid #e2e8f0; }
         .details { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
         .item { border-bottom: 1px solid #eee; padding: 10px 0; }
         .item:last-child { border-bottom: none; }
-        .total { font-weight: bold; font-size: 18px; color: #dc2626; }
+        .total { font-weight: bold; font-size: 18px; color: #16a34a; }
         .footer { text-align: center; margin-top: 30px; color: #666; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>${isEscalation ? '🚨 URGENT: Unverified Booking' : '🧬 New Pathology Booking'}</h1>
+            <h1>🧬 New Pathology Booking</h1>
             <p>Order #${orderDetails.orderNumber}</p>
         </div>
 
-        ${isEscalation ? `
         <div class="alert">
-            <h3>⚠️ ESCALATION NOTICE</h3>
-            <p>This booking notification was sent to <strong>office@bookings.apoorvpathology.com</strong> but hasn't been verified. Please review and assign to a lab technician immediately.</p>
+            <h3>📋 New Booking Requires Assignment</h3>
+            <p>A new booking has been received and needs a lab technician to be assigned.</p>
         </div>
-        ` : `
-        <div class="alert">
-            <h3>📋 New Booking Received</h3>
-            <p>A new pathology test booking has been confirmed and requires your attention.</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="${assignmentUrl}" class="action-btn">Assign Technician</a>
+            <a href="${dashboardUrl}" class="secondary-btn">View Dashboard</a>
         </div>
-        `}
 
         <div class="details">
             <h3>👤 Customer Details</h3>
@@ -129,20 +116,10 @@ function createBookingEmailTemplate(data: EmailData): string {
             </div>
         </div>
 
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="${verificationUrl}" class="verification-btn">
-                ${isEscalation ? '✅ ACKNOWLEDGE & ASSIGN' : '✅ CONFIRM RECEIVED'}
-            </a>
-            <p style="font-size: 12px; color: #666;">
-                Click the button above to confirm you've received and reviewed this booking.
-                ${isEscalation ? ' This will prevent further escalations.' : ' If not confirmed within 2 hours, this will be escalated.'}
-            </p>
-        </div>
-
         <div class="footer">
             <p>🏥 Apoorv Pathology Lab</p>
             <p style="font-size: 12px;">This is an automated notification. Please do not reply to this email.</p>
-            <p style="font-size: 10px;">Booking ID: ${data.emailData.orderId}</p>
+            <p style="font-size: 10px;">Booking ID: ${data.orderId}</p>
         </div>
     </div>
 </body>
@@ -235,15 +212,38 @@ serve(async (req) => {
   }
 
   try {
-    const requestBody = await req.json()
-    console.log('Received request body:', JSON.stringify(requestBody, null, 2))
+    const bookingData: BookingData = await req.json()
+    console.log('Received booking data:', JSON.stringify(bookingData, null, 2))
     
-    const { notificationId, verificationToken, emailData }: EmailData = requestBody
+    const { orderId, orderDetails } = bookingData;
+
+    if (!orderId || !orderDetails) {
+      throw new Error('Missing orderId or orderDetails in the request body');
+    }
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // 1. Create a unique assignment token
+    const assignmentToken = crypto.randomUUID();
+
+    // 2. Create a new record in the booking_assignments table
+    const { error: insertError } = await supabase
+      .from('booking_assignments')
+      .insert({
+        order_id: orderId,
+        assignment_token: assignmentToken,
+        status: 'pending'
+      });
+
+    if (insertError) {
+      console.error('Error creating booking assignment:', insertError);
+      throw new Error(`Could not create booking assignment: ${insertError.message}`);
+    }
+
+    console.log(`Created booking assignment for order ${orderId} with token ${assignmentToken}`);
 
     // Get AWS SES credentials from environment
     const awsAccessKeyId = Deno.env.get('AWS_ACCESS_KEY_ID')
@@ -254,38 +254,30 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
     // Create email content
-    const htmlContent = createBookingEmailTemplate({
-      notificationId,
-      verificationToken,
-      emailData
-    })
+    const htmlContent = createBookingEmailTemplate(bookingData, assignmentToken);
 
-    const isEscalation = emailData.emailType === 'escalation';
-    const subject = isEscalation 
-      ? `🚨 URGENT: Unverified Booking - Order #${emailData.orderDetails.orderNumber}`
-      : `🧬 New Booking Confirmation - Order #${emailData.orderDetails.orderNumber}`;
-
-    // Verify domain is properly set
+    const subject = `✅ New Booking Received - Order #${orderDetails.orderNumber}`;
     const fromEmail = 'office@bookings.apoorvpathology.com';
-    console.log(`Sending email from: ${fromEmail} to: ${emailData.recipientEmail}`);
+    const recipientEmail = 'apoorvpath@gmail.com'; // Hardcoded internal recipient
+
+    console.log(`Sending email from: ${fromEmail} to: ${recipientEmail}`);
 
     // Try AWS SES first (primary email service), fallback to Resend if needed
     if (awsAccessKeyId && awsSecretAccessKey) {
       console.log('Using AWS SES to send email');
       
       try {
-        // Use AWS SES REST API directly to avoid filesystem issues with SDK
         const sesResponse = await sendEmailWithSESAPI({
           accessKeyId: awsAccessKeyId,
           secretAccessKey: awsSecretAccessKey,
           region: awsRegion,
           source: `Apoorv Pathology <${fromEmail}>`,
-          destination: emailData.recipientEmail,
+          destination: recipientEmail,
           subject: subject,
           htmlBody: htmlContent,
           tags: [
-            { Name: 'type', Value: emailData.emailType },
-            { Name: 'order_id', Value: emailData.orderId }
+            { Name: 'type', Value: 'booking_notification' },
+            { Name: 'order_id', Value: orderId }
           ]
         });
 
@@ -302,17 +294,17 @@ serve(async (req) => {
         )
       } catch (sesError) {
         console.error('AWS SES Error:', sesError);
-        // If AWS SES fails and Resend is available, fall back to Resend
         if (resendApiKey) {
           console.log('AWS SES failed, attempting Resend fallback...');
         } else {
           throw new Error(`AWS SES error: ${sesError.message}`);
         }
       }
-    } else if (resendApiKey) {
-      console.log('AWS credentials not found or AWS SES failed, using Resend as fallback');
+    } 
+    
+    if (resendApiKey) {
+      console.log('Using Resend to send email');
       
-      // Send email using Resend
       const emailResponse = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -321,12 +313,12 @@ serve(async (req) => {
         },
         body: JSON.stringify({
           from: `Apoorv Pathology <${fromEmail}>`,
-          to: [emailData.recipientEmail],
+          to: [recipientEmail],
           subject: subject,
           html: htmlContent,
           tags: [
-            { name: 'type', value: emailData.emailType },
-            { name: 'order_id', value: emailData.orderId }
+            { name: 'type', value: 'booking_notification' },
+            { name: 'order_id', value: orderId }
           ]
         }),
       })
@@ -338,7 +330,7 @@ serve(async (req) => {
           statusText: emailResponse.statusText,
           error: errorText,
           from: fromEmail,
-          to: emailData.recipientEmail
+          to: recipientEmail
         });
         throw new Error(`Resend API error: ${errorText}`)
       }
@@ -349,7 +341,7 @@ serve(async (req) => {
         JSON.stringify({ 
           success: true, 
           emailId: emailResult.id,
-          message: 'Email sent successfully via Resend (fallback)' 
+          message: 'Email sent successfully via Resend' 
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -357,7 +349,7 @@ serve(async (req) => {
         },
       )
     } else {
-      throw new Error('No email service configured - missing both AWS SES and Resend credentials. Please configure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY for AWS SES, or RESEND_API_KEY for fallback.')
+      throw new Error('No email service configured - missing both AWS SES and Resend credentials.')
     }
   } catch (error) {
     console.error('Error in send-booking-email function:', error)

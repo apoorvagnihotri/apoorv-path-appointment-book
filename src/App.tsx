@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -30,6 +29,8 @@ import ManageAddresses from "./pages/ManageAddresses";
 import ManageMembers from "./pages/ManageMembers";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import AssignBooking from "./pages/AssignBooking";
+import BookingDashboard from "./pages/BookingDashboard";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,8 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/manage-addresses" element={<ManageAddresses />} />
               <Route path="/manage-members" element={<ManageMembers />} />
+              <Route path="/assign-booking/:token" element={<AssignBooking />} />
+              <Route path="/booking-dashboard" element={<BookingDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
