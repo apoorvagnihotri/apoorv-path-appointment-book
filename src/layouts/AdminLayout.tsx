@@ -1,20 +1,54 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Toaster } from "@/components/ui/toaster"
 
 const AdminLayout: React.FC = () => {
-  const { isAdmin, loading, user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
 
-  if (loading) {
-    return <div>Loading...</div>; // Or a spinner component
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        console.log('AdminLayout - Profile data:', data);
+        console.log('AdminLayout - Profile error:', error);
+        
+        setUserProfile(data);
+      }
+      setProfileLoading(false);
+    };
+
+    if (!authLoading) {
+      fetchUserProfile();
+    }
+  }, [user, authLoading]);
+
+  const isAdmin = userProfile?.role === 'admin';
+
+  console.log('AdminLayout - User:', user);
+  console.log('AdminLayout - User Profile:', userProfile);
+  console.log('AdminLayout - Is Admin:', isAdmin);
+  console.log('AdminLayout - Auth Loading:', authLoading);
+  console.log('AdminLayout - Profile Loading:', profileLoading);
+
+  if (authLoading || profileLoading) {
+    return <div>Loading...</div>;
   }
 
   if (!user) {
-    return <Navigate to="/signin" replace />;
+    return <Navigate to="/auth" replace />;
   }
-  
+
   if (!isAdmin) {
+    console.log('AdminLayout - Redirecting to 404 because user is not admin');
     return <Navigate to="/404" replace />;
   }
 

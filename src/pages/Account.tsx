@@ -38,7 +38,7 @@ const Account = () => {
       icon: User,
       title: "My Profile",
       subtitle: "Personal information",
-      onClick: () => navigate('/profile')
+      onClick: () => navigate('/account/profile')
     },
     {
       icon: MapPin,

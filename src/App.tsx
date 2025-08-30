@@ -68,10 +68,10 @@ const App = () => (
               
               {/* Account Management */}
               <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
-              <Route path="/account/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-              <Route path="/account/members" element={<RequireAuth><Members /></RequireAuth>} />
-              <Route path="/account/manage-members" element={<RequireAuth><ManageMembers /></RequireAuth>} />
-              <Route path="/account/addresses" element={<RequireAuth><ManageAddresses /></RequireAuth>} />
+              <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+              <Route path="/members" element={<RequireAuth><Members /></RequireAuth>} />
+              <Route path="/manage-members" element={<RequireAuth><ManageMembers /></RequireAuth>} />
+              <Route path="/manage-addresses" element={<RequireAuth><ManageAddresses /></RequireAuth>} />
               <Route path="/contact-support" element={<RequireAuth><ContactSupport /></RequireAuth>} />
 
               {/* Admin Routes */}
