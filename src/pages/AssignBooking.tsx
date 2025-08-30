@@ -31,6 +31,23 @@ import { Link, useParams } from 'react-router-dom';
 
 export default function AssignBooking() {
   const { token } = useParams();
+
+  // Add token validation before using the hook
+  if (!token) {
+    return (
+      <div className="container mx-auto p-4 max-w-2xl">
+        <Alert variant="destructive">
+          <AlertCircle className="h-5 w-5" />
+          <AlertTitle>Invalid Link</AlertTitle>
+          <AlertDescription>
+            The assignment link is missing the required token. Please use the link
+            from the email.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   const {
     assignment,
     technicians,
@@ -43,7 +60,7 @@ export default function AssignBooking() {
     isSubmitting,
     assignmentSuccess,
     handleAssignTechnician,
-  } = useBookingAssignment();
+  } = useBookingAssignment(token); // Pass the token here
 
   if (loading) {
     return (
@@ -112,7 +129,7 @@ export default function AssignBooking() {
               </div>
               <div className="flex items-center text-sm text-gray-700">
                 <User className="w-4 h-4 mr-2" />
-                <strong>Customer:</strong>&nbsp;{assignment.orders.customer_name}
+                <strong>Customer:</strong>&nbsp;{assignment.orders.customer_details?.name || 'N/A'}
               </div>
               <div className="flex items-center text-sm text-gray-700">
                 <Calendar className="w-4 h-4 mr-2" />

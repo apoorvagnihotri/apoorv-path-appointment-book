@@ -85,7 +85,7 @@ assign_technician_to_booking(token, technician_id, assigned_by)
 
 ## Security: Role-Based Access Control (RBAC) 🛡️
 
-To prevent unauthorized access to admin pages (`/booking-dashboard`, `/assign-booking/*`), a role-based access control system has been implemented.
+To prevent unauthorized access to admin pages (`/booking-dashboard`), a role-based access control system has been implemented. The `/assign-booking/*` route is secured by a unique token.
 
 1.  **User Roles**:
     *   A `role` column was added to the `profiles` table.
@@ -93,9 +93,10 @@ To prevent unauthorized access to admin pages (`/booking-dashboard`, `/assign-bo
     *   Admin users can be assigned the `admin` role manually in the Supabase dashboard.
 
 2.  **Protected Routes**:
-    *   A new `AdminLayout` component wraps all administrative routes.
+    *   A new `AdminLayout` component wraps administrative routes like the dashboard.
     *   It checks if the logged-in user has the `admin` role.
     *   If the user is not an admin, they are redirected to a "Not Found" page.
+    *   The `/assign-booking/:token` route is publicly accessible but secured by the unique `token` in the URL, which acts as a one-time access key.
 
 3.  **Implementation Details**:
     *   **Migration**: `supabase/migrations/20250830000002_add_role_to_profiles.sql`

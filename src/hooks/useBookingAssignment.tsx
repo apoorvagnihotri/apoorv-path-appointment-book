@@ -31,7 +31,7 @@ export function useBookingAssignment() {
           *,
           orders:order_id (
             order_number,
-            customer_name,
+            customer_details,
             total_amount,
             appointment_date,
             appointment_time

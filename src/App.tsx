@@ -50,6 +50,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/home" element={<Home />} />
+              <Route path="/assign-booking/:token" element={<AssignBooking />} />
 
               {/* Authenticated Routes */}
               <Route path="/tests" element={<RequireAuth><Tests /></RequireAuth>} />
@@ -74,10 +75,8 @@ const App = () => (
               <Route path="/contact-support" element={<RequireAuth><ContactSupport /></RequireAuth>} />
 
               {/* Admin Routes */}
-              <Route path="/admin" element={<RequireAuth><AdminLayout /></RequireAuth>}>
-                <Route index element={<BookingDashboard />} />
-                <Route path="assign-booking/:id" element={<AssignBooking />} />
-                <Route path="booking-dashboard" element={<BookingDashboard />} />
+              <Route element={<RequireAuth><AdminLayout /></RequireAuth>}>
+                <Route path="/booking-dashboard" element={<BookingDashboard />} />
               </Route>
 
               {/* Not Found */}
