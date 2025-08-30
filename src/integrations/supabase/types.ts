@@ -59,6 +59,60 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_assignments: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          assignment_token: string
+          created_at: string
+          id: string
+          notes: string | null
+          order_id: string
+          status: string | null
+          technician_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          assignment_token?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id: string
+          status?: string | null
+          technician_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          assignment_token?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          order_id?: string
+          status?: string | null
+          technician_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_assignments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_assignments_technician_id_fkey"
+            columns: ["technician_id"]
+            isOneToOne: false
+            referencedRelation: "technicians"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -120,104 +174,6 @@ export type Database = {
           name?: string
         }
         Relationships: []
-      }
-      email_escalations: {
-        Row: {
-          created_at: string
-          escalated_at: string | null
-          escalation_notification_id: string | null
-          id: string
-          original_notification_id: string
-          verification_timeout_hours: number
-        }
-        Insert: {
-          created_at?: string
-          escalated_at?: string | null
-          escalation_notification_id?: string | null
-          id?: string
-          original_notification_id: string
-          verification_timeout_hours?: number
-        }
-        Update: {
-          created_at?: string
-          escalated_at?: string | null
-          escalation_notification_id?: string | null
-          id?: string
-          original_notification_id?: string
-          verification_timeout_hours?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "email_escalations_escalation_notification_id_fkey"
-            columns: ["escalation_notification_id"]
-            isOneToOne: false
-            referencedRelation: "email_notifications"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "email_escalations_original_notification_id_fkey"
-            columns: ["original_notification_id"]
-            isOneToOne: false
-            referencedRelation: "email_notifications"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      email_notifications: {
-        Row: {
-          created_at: string
-          email_body: string | null
-          email_type: string
-          failed_reason: string | null
-          id: string
-          order_id: string
-          recipient_email: string
-          sent_at: string | null
-          status: string
-          subject: string
-          updated_at: string
-          verification_token: string | null
-          verified_at: string | null
-        }
-        Insert: {
-          created_at?: string
-          email_body?: string | null
-          email_type: string
-          failed_reason?: string | null
-          id?: string
-          order_id: string
-          recipient_email: string
-          sent_at?: string | null
-          status?: string
-          subject: string
-          updated_at?: string
-          verification_token?: string | null
-          verified_at?: string | null
-        }
-        Update: {
-          created_at?: string
-          email_body?: string | null
-          email_type?: string
-          failed_reason?: string | null
-          id?: string
-          order_id?: string
-          recipient_email?: string
-          sent_at?: string | null
-          status?: string
-          subject?: string
-          updated_at?: string
-          verification_token?: string | null
-          verified_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "email_notifications_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       family_members: {
         Row: {
@@ -521,6 +477,36 @@ export type Database = {
         }
         Relationships: []
       }
+      technicians: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       test_categories: {
         Row: {
           category_id: string
@@ -589,18 +575,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_emails_needing_escalation: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          notification_id: string
-          order_id: string
-          recipient_email: string
-          sent_at: string
-          timeout_hours: number
-        }[]
-      }
-      mark_email_as_verified: {
-        Args: { token: string }
+      assign_technician_to_booking: {
+        Args: {
+          assigned_by_param: string
+          assignment_token_param: string
+          technician_id_param: string
+        }
         Returns: boolean
       }
     }
