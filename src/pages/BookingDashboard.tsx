@@ -156,11 +156,11 @@ export default function BookingDashboard() {
               <TableBody>
                 {bookings.map((booking) => (
                   <TableRow key={booking.id}>
-                    <TableCell className="font-medium">#{booking.order.order_number}</TableCell>
-                    <TableCell>{booking.order.customer_name}</TableCell>
+                    <TableCell className="font-medium">#{booking.order_info.order_number}</TableCell>
+                    <TableCell>{booking.order_info.customer_name}</TableCell>
                     <TableCell>
-                        <div className="flex items-center text-sm"><Calendar className="w-3 h-3 mr-1.5" /> {booking.order.appointment_date || 'N/A'}</div>
-                        <div className="flex items-center text-sm"><Clock className="w-3 h-3 mr-1.5" /> {booking.order.appointment_time || 'N/A'}</div>
+                        <div className="flex items-center text-sm"><Calendar className="w-3 h-3 mr-1.5" /> {booking.order_info.appointment_date || 'N/A'}</div>
+                        <div className="flex items-center text-sm"><Clock className="w-3 h-3 mr-1.5" /> {booking.order_info.appointment_time || 'N/A'}</div>
                     </TableCell>
                     <TableCell>
                       <Badge className={statusColors[booking.status as BookingStatus | 'completed']}>{booking.status}</Badge>

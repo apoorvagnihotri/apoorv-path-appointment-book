@@ -19,35 +19,16 @@ export function useBookingDashboard() {
       // Get the timestamp for 48 hours ago
       const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
-      // Base query
+      // Base query: fetch assignments without nested order join to avoid REST/select encoding issues
       let query = supabase
         .from('booking_assignments')
-        .select(`
-          id,
-          status,
-          assigned_at,
-          assigned_by,
-          notes,
-          technician:technician_id ( name ),
-          order:order_id (
-            order_number,
-            customer_name,
-            appointment_date,
-            appointment_time,
-            total_amount
-          )
-        `)
+        .select('id,status,assigned_at,assigned_by,notes,technician:technician_id(name),order_id')
         .gte('created_at', fortyEightHoursAgo)
         .order('created_at', { ascending: false });
 
       // Apply status filter
       if (statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
-      }
-      
-      // Apply search term
-      if (searchTerm) {
-        query = query.or(`order_number.ilike.%${searchTerm}%,customer_name.ilike.%${searchTerm}%`, { referencedTable: 'orders' });
       }
 
       const { data: bookingsData, error: bookingsError } = await query;
@@ -56,7 +37,44 @@ export function useBookingDashboard() {
         throw new Error(`Failed to fetch bookings: ${bookingsError.message}`);
       }
 
-      setBookings(bookingsData || []);
+      // bookingsData are assignments; fetch their orders in a second query and merge as order_info
+      const assignments = bookingsData || [];
+      const orderIds = Array.from(new Set(assignments.map((a: any) => a.order_id).filter(Boolean)));
+
+      let ordersMap: Record<string, any> = {};
+      if (orderIds.length > 0) {
+        const { data: ordersData, error: ordersError } = await supabase
+          .from('orders')
+          .select('id,order_number,customer_name,appointment_date,appointment_time,total_amount')
+          .in('id', orderIds as any[]);
+
+        if (ordersError) {
+          console.warn('Failed to fetch related orders:', ordersError);
+        } else if (Array.isArray(ordersData)) {
+          ordersMap = ordersData.reduce((acc: Record<string, any>, o: any) => {
+            acc[o.id] = o;
+            return acc;
+          }, {} as Record<string, any>);
+        }
+      }
+
+      const assignmentsWithOrders = assignments.map((a: any) => ({
+        ...a,
+        order_info: a.order_id ? ordersMap[a.order_id] ?? null : null,
+      }));
+
+      // Apply client-side search on order_info
+      if (searchTerm && Array.isArray(assignmentsWithOrders)) {
+        const term = searchTerm.toLowerCase();
+        const filtered = assignmentsWithOrders.filter((b: any) => {
+          const orderNumber = (b?.order_info?.order_number ?? '').toString().toLowerCase();
+          const customerName = (b?.order_info?.customer_name ?? '').toString().toLowerCase();
+          return orderNumber.includes(term) || customerName.includes(term);
+        });
+        setBookings(filtered);
+      } else {
+        setBookings(assignmentsWithOrders);
+      }
 
       // Fetch technicians for the assignment dropdown
       const { data: techniciansData, error: techniciansError } = await supabase
