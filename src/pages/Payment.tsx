@@ -231,7 +231,7 @@ const Payment = () => {
       toast.success("Booking confirmed successfully!");
 
       // Navigate to booking confirmation page
-      navigate(`/booking-confirmation?orderId=${order.id}`);
+      navigate(`/booking-confirmation/${order.id}`);
       
     } catch (error) {
       console.error('Error creating order:', error);
