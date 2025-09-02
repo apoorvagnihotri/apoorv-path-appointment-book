@@ -5,10 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Mail, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import logger from "@/lib/logger";
 import apoorvLogo from "@/assets/apoorv-logo.png";
 
 const Auth = () => {
-  console.log('[AuthPage] Component rendering.');
+  logger.debug('[AuthPage] Component rendering.');
   const navigate = useNavigate();
   const { signUp, signIn, signInWithGoogle, resetPassword, user, loading: authLoading } = useAuth();
   const [step, setStep] = useState<'method' | 'email' | 'forgot-password'>('method');
@@ -20,16 +21,16 @@ const Auth = () => {
   const [showForgotSuggestion, setShowForgotSuggestion] = useState(false);
 
   useEffect(() => {
-    console.log(`[AuthPage] useEffect triggered. authLoading: ${authLoading}, user exists: ${!!user}`);
+    logger.debug(`[AuthPage] useEffect triggered. authLoading: ${authLoading}, user exists: ${!!user}`);
     if (!authLoading && user) {
-      console.log('[AuthPage] Conditions met, navigating to /home.');
+      logger.debug('[AuthPage] Conditions met, navigating to /home.');
       navigate('/home', { replace: true });
     }
   }, [user, authLoading, navigate]);
 
-  console.log(`[AuthPage] Pre-return check. authLoading: ${authLoading}, user exists: ${!!user}`);
+  logger.debug(`[AuthPage] Pre-return check. authLoading: ${authLoading}, user exists: ${!!user}`);
   if (authLoading) {
-    console.log('[AuthPage] Displaying loading screen.');
+    logger.debug('[AuthPage] Displaying loading screen.');
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">
@@ -46,7 +47,7 @@ const Auth = () => {
   }
 
   if (user) {
-    console.log('[AuthPage] Displaying redirecting screen.');
+    logger.debug('[AuthPage] Displaying redirecting screen.');
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <div className="text-center">

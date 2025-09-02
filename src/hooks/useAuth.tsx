@@ -1,5 +1,6 @@
 // @refresh-reset
 import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import logger from '@/lib/logger';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   const fetchProfile = useCallback(async (user: User | null) => {
-    console.log('[Auth] fetchProfile called for user:', user?.id);
+    logger.debug('[Auth] fetchProfile called for user:', user?.id);
     if (user) {
       const { data, error } = await supabase
         .from('profiles')
@@ -51,37 +52,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        console.error('[Auth] Error fetching profile:', error);
+        logger.error('[Auth] Error fetching profile:', error);
         setProfile(null);
       } else {
-        console.log('[Auth] Profile fetched successfully:', data);
+        logger.debug('[Auth] Profile fetched successfully:', data);
         setProfile(data);
       }
     } else {
-      console.log('[Auth] No user, setting profile to null.');
+      logger.debug('[Auth] No user, setting profile to null.');
       setProfile(null);
     }
   }, []);
 
   useEffect(() => {
-    console.log('[Auth] AuthProvider useEffect started.');
+    logger.debug('[Auth] AuthProvider useEffect started.');
     setLoading(true);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log(`[Auth] onAuthStateChange event: ${_event}`, { session });
+      logger.debug(`[Auth] onAuthStateChange event: ${_event}`, { session });
       setSession(session);
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
       // Fire-and-forget; never block loading on profile
-      fetchProfile(currentUser).catch((e) => console.error('[Auth] fetchProfile error (onAuth):', e));
+      fetchProfile(currentUser).catch((e) => logger.error('[Auth] fetchProfile error (onAuth):', e));
 
       // Always ensure loading = false after any auth event
       setLoading(false);
     });
 
     return () => {
-      console.log('[Auth] Unsubscribing from onAuthStateChange.');
+      logger.debug('[Auth] Unsubscribing from onAuthStateChange.');
       subscription.unsubscribe();
     };
   }, [fetchProfile]);
