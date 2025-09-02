@@ -17,6 +17,7 @@ interface AuthContextType {
   profile: Profile | null; // Add profile to the context
   loading: boolean;
   isAdmin: boolean;
+  setAuth: (user: User | null, session: Session | null) => void;
   signUp: (email: string, password: string, metadata?: any) => Promise<{ error: any; userExists?: boolean }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -85,6 +86,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       subscription.unsubscribe();
     };
   }, [fetchProfile]);
+
+  const setAuth = (user: User | null, session: Session | null) => {
+    setSession(session);
+    setUser(user);
+    fetchProfile(user);
+  };
 
   const isAdmin = profile?.role === 'admin';
 
@@ -199,6 +206,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     session,
     profile,
     loading,
+    setAuth,
     signUp,
     signIn,
     signOut,
