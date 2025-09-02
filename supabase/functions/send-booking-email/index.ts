@@ -1,7 +1,12 @@
+// @ts-nocheck
 /// <reference types="https://deno.land/x/deno/cli/types/deno.d.ts" />
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+// Ambient declaration so TypeScript in non-Deno tooling doesn't error locally
+// (Supabase Edge Functions run in Deno and provide this at runtime.)
+declare const Deno: { env: { get(name: string): string | undefined } };
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +18,14 @@ function createBookingEmailTemplate({ order, assignmentToken }: { order: any; as
   if (!order) {
     throw new Error('`order` object is missing in createBookingEmailTemplate');
   }
+  // Normalize items so the template can reliably use name/price/memberName
+  const normalizedItems = Array.isArray(order.order_items)
+    ? order.order_items.map((it: any) => ({
+        name: it?.item_name ?? it?.name ?? 'Unnamed Test',
+        price: it?.item_price ?? it?.price ?? null,
+        memberName: it?.member_name ?? it?.memberName ?? null,
+      }))
+    : [];
   const orderDetails = {
     orderNumber: order.order_number || `ORD-${order.id.slice(0, 8)}`,
     customerName: order.customer_details?.name || 'N/A',
@@ -23,10 +36,11 @@ function createBookingEmailTemplate({ order, assignmentToken }: { order: any; as
     appointmentTime: order.appointment_time,
     collectionType: order.collection_type,
     collectionAddress: order.collection_address,
-    items: order.order_items || [],
+    items: normalizedItems,
   };
   
-  const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:5173';
+  // Default to 8080 locally unless SITE_URL is provided
+  const siteUrl = Deno.env.get('SITE_URL') || 'http://localhost:8080';
   const assignmentUrl = `${siteUrl}/assign-booking/${assignmentToken}`;
   const dashboardUrl = `${siteUrl}/booking-dashboard`;
   
@@ -94,11 +108,11 @@ function createBookingEmailTemplate({ order, assignmentToken }: { order: any; as
 
         <div class="details">
             <h3>🧪 Tests Ordered</h3>
-            ${orderDetails.items.map(item => `
+      ${orderDetails.items.map(item => `
             <div class="item">
                 <strong>${item.name}</strong>
                 ${item.memberName ? `<br><small>For: ${item.memberName}</small>` : ''}
-                <span style="float: right;">₹${item.price}</span>
+        ${item.price != null ? `<span style="float: right;">₹${item.price}</span>` : ''}
             </div>
             `).join('')}
             <div class="item total">
