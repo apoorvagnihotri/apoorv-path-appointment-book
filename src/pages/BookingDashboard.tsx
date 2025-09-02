@@ -154,13 +154,19 @@ export default function BookingDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {bookings.map((booking) => (
+                {bookings.map((booking) => {
+                  const order = booking.order_info;
+                  const orderNumber = order?.order_number ? `#${order.order_number}` : '—';
+                  const customerName = order?.customer_name || order?.customer_details?.name || 'Unknown';
+                  const apptDate = order?.appointment_date || 'N/A';
+                  const apptTime = order?.appointment_time || 'N/A';
+                  return (
                   <TableRow key={booking.id}>
-                    <TableCell className="font-medium">#{booking.order_info.order_number}</TableCell>
-                    <TableCell>{booking.order_info.customer_name}</TableCell>
+                    <TableCell className="font-medium">{orderNumber}</TableCell>
+                    <TableCell>{customerName}</TableCell>
                     <TableCell>
-                        <div className="flex items-center text-sm"><Calendar className="w-3 h-3 mr-1.5" /> {booking.order_info.appointment_date || 'N/A'}</div>
-                        <div className="flex items-center text-sm"><Clock className="w-3 h-3 mr-1.5" /> {booking.order_info.appointment_time || 'N/A'}</div>
+                        <div className="flex items-center text-sm"><Calendar className="w-3 h-3 mr-1.5" /> {apptDate}</div>
+                        <div className="flex items-center text-sm"><Clock className="w-3 h-3 mr-1.5" /> {apptTime}</div>
                     </TableCell>
                     <TableCell>
                       <Badge className={statusColors[booking.status as BookingStatus | 'completed']}>{booking.status}</Badge>
@@ -184,7 +190,8 @@ export default function BookingDashboard() {
                       )}
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           )}

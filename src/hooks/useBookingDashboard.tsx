@@ -45,14 +45,19 @@ export function useBookingDashboard() {
       if (orderIds.length > 0) {
         const { data: ordersData, error: ordersError } = await supabase
           .from('orders')
-          .select('id,order_number,customer_name,appointment_date,appointment_time,total_amount')
+          .select('id,order_number,customer_details,appointment_date,appointment_time,total_amount')
           .in('id', orderIds as any[]);
 
         if (ordersError) {
           console.warn('Failed to fetch related orders:', ordersError);
         } else if (Array.isArray(ordersData)) {
           ordersMap = ordersData.reduce((acc: Record<string, any>, o: any) => {
-            acc[o.id] = o;
+            // Normalize a customer_name for easy display/search
+            const normalized = {
+              ...o,
+              customer_name: o.customer_name ?? o.customer_details?.name ?? '',
+            };
+            acc[o.id] = normalized;
             return acc;
           }, {} as Record<string, any>);
         }
@@ -68,7 +73,9 @@ export function useBookingDashboard() {
         const term = searchTerm.toLowerCase();
         const filtered = assignmentsWithOrders.filter((b: any) => {
           const orderNumber = (b?.order_info?.order_number ?? '').toString().toLowerCase();
-          const customerName = (b?.order_info?.customer_name ?? '').toString().toLowerCase();
+          const customerName = (
+            b?.order_info?.customer_name ?? b?.order_info?.customer_details?.name ?? ''
+          ).toString().toLowerCase();
           return orderNumber.includes(term) || customerName.includes(term);
         });
         setBookings(filtered);
