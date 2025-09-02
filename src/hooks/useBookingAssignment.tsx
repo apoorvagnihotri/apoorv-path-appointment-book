@@ -8,7 +8,6 @@ export function useBookingAssignment() {
   const [technicians, setTechnicians] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [assignedBy, setAssignedBy] = useState('');
   const [selectedTechnician, setSelectedTechnician] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assignmentSuccess, setAssignmentSuccess] = useState(false);
@@ -53,7 +52,7 @@ export function useBookingAssignment() {
       // Fetch active technicians
       const { data: techniciansData, error: techniciansError } = await supabase
         .from('technicians')
-        .select('id, name')
+        .select('id, name, phone')
         .eq('is_active', true)
         .order('name');
 
@@ -76,8 +75,8 @@ export function useBookingAssignment() {
 
   const handleAssignTechnician = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTechnician || !assignedBy) {
-      setError('Please select a technician and enter your name.');
+    if (!selectedTechnician) {
+      setError('Please select a technician.');
       return;
     }
 
@@ -88,7 +87,7 @@ export function useBookingAssignment() {
       const { error: rpcError } = await supabase.rpc('assign_technician_to_booking', {
         assignment_token_param: token,
         technician_id_param: selectedTechnician,
-        assigned_by_param: assignedBy,
+        assigned_by_param: null,
       });
 
       if (rpcError) {
@@ -109,8 +108,6 @@ export function useBookingAssignment() {
     technicians,
     loading,
     error,
-    assignedBy,
-    setAssignedBy,
     selectedTechnician,
     setSelectedTechnician,
     isSubmitting,

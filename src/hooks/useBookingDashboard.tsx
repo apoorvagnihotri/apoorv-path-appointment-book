@@ -22,7 +22,7 @@ export function useBookingDashboard() {
       // Base query: fetch assignments without nested order join to avoid REST/select encoding issues
       let query = supabase
         .from('booking_assignments')
-        .select('id,status,assigned_at,assigned_by,notes,technician:technician_id(name),order_id')
+        .select('id,status,assigned_at,assigned_by,notes,technician:technician_id(name),order_id,assignment_token')
         .gte('created_at', fortyEightHoursAgo)
         .order('created_at', { ascending: false });
 
@@ -86,7 +86,7 @@ export function useBookingDashboard() {
       // Fetch technicians for the assignment dropdown
       const { data: techniciansData, error: techniciansError } = await supabase
         .from('technicians')
-        .select('id, name')
+        .select('id, name, phone')
         .eq('is_active', true)
         .order('name');
       
@@ -107,12 +107,12 @@ export function useBookingDashboard() {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-    const assignTechnician = async (assignmentId: string, technicianId: string, assignerName: string) => {
+  const assignTechnician = async (assignmentToken: string, technicianId: string) => {
     try {
       const { error } = await supabase.rpc('assign_technician_to_booking', {
-        assignment_token_param: assignmentId,
+    assignment_token_param: assignmentToken,
         technician_id_param: technicianId,
-        assigned_by_param: assignerName,
+    assigned_by_param: null,
       });
 
       if (error) {
@@ -123,7 +123,7 @@ export function useBookingDashboard() {
       fetchDashboardData();
       return { success: true };
     } catch (e: any) {
-      return { success: false, error: e.message };
+  return { success: false, error: e.message };
     }
   };
   

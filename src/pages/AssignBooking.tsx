@@ -53,14 +53,12 @@ export default function AssignBooking() {
     technicians,
     loading,
     error,
-    assignedBy,
-    setAssignedBy,
     selectedTechnician,
     setSelectedTechnician,
     isSubmitting,
     assignmentSuccess,
     handleAssignTechnician,
-  } = useBookingAssignment(token); // Pass the token here
+  } = useBookingAssignment();
 
   if (loading) {
     return (
@@ -158,26 +156,19 @@ export default function AssignBooking() {
                   <SelectValue placeholder="Choose a technician..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {technicians.map((tech) => (
-                    <SelectItem key={tech.id} value={tech.id}>
-                      {tech.name}
-                    </SelectItem>
-                  ))}
+                  {technicians.map((tech) => {
+                    const first = (tech.name || '').trim().split(/\s+/)[0] || '';
+                    const label = first ? first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() : '';
+                    return (
+                      <SelectItem key={tech.id} value={tech.id}>
+                        {label}{tech.phone ? ` — ${tech.phone}` : ''}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <label htmlFor="assignedBy" className="font-semibold">
-                Your Name (Assigner)
-              </label>
-              <Input
-                id="assignedBy"
-                placeholder="Enter your full name"
-                value={assignedBy}
-                onChange={(e) => setAssignedBy(e.target.value)}
-                required
-              />
-            </div>
+            {/* Assigner name input removed as requested */}
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full" disabled={isSubmitting}>

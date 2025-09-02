@@ -25,20 +25,26 @@ const statusColors: { [key in BookingStatus | 'completed']: string } = {
   completed: 'bg-green-100 text-green-800',
 };
 
-function QuickAssignDialog({ assignmentId, technicians, onAssign }: { assignmentId: string, technicians: any[], onAssign: (techId: string, assigner: string) => Promise<any> }) {
+function formatFirstName(name?: string) {
+  if (!name) return '';
+  const first = name.trim().split(/\s+/)[0] || '';
+  const lower = first.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+function QuickAssignDialog({ assignmentToken, technicians, onAssign }: { assignmentToken: string, technicians: any[], onAssign: (techId: string) => Promise<any> }) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTechnician, setSelectedTechnician] = useState('');
-    const [assignedBy, setAssignedBy] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { toast } = useToast();
 
     const handleSubmit = async () => {
-        if (!selectedTechnician || !assignedBy) {
-            toast({ title: "Error", description: "Please select a technician and enter your name.", variant: "destructive" });
+    if (!selectedTechnician) {
+      toast({ title: "Error", description: "Please select a technician.", variant: "destructive" });
             return;
         }
         setIsSubmitting(true);
-        const result = await onAssign(selectedTechnician, assignedBy);
+    const result = await onAssign(selectedTechnician);
         if (result.success) {
             toast({ title: "Success", description: "Technician assigned successfully." });
             setIsOpen(false);
@@ -62,10 +68,13 @@ function QuickAssignDialog({ assignmentId, technicians, onAssign }: { assignment
                     <Select onValueChange={setSelectedTechnician}>
                         <SelectTrigger><SelectValue placeholder="Select a technician..." /></SelectTrigger>
                         <SelectContent>
-                            {technicians.map(tech => <SelectItem key={tech.id} value={tech.id}>{tech.name}</SelectItem>)}
+                            {technicians.map(tech => (
+                              <SelectItem key={tech.id} value={tech.id}>
+                                {formatFirstName(tech.name)}{tech.phone ? ` — ${tech.phone}` : ''}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
-                    <Input placeholder="Your Name (Assigner)" value={assignedBy} onChange={e => setAssignedBy(e.target.value)} />
                 </div>
                 <DialogFooter>
                     <Button variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
@@ -173,14 +182,14 @@ export default function BookingDashboard() {
                     </TableCell>
                     <TableCell>
                         {booking.technician ? (
-                            <div className="flex items-center text-sm"><User className="w-3 h-3 mr-1.5" /> {booking.technician.name}</div>
+                            <div className="flex items-center text-sm"><User className="w-3 h-3 mr-1.5" /> {formatFirstName(booking.technician.name)}</div>
                         ) : (
                             <span className="text-xs text-gray-500">Not Assigned</span>
                         )}
                     </TableCell>
                     <TableCell>
                       {booking.status === 'pending' && (
-                        <QuickAssignDialog assignmentId={booking.id} technicians={technicians} onAssign={(techId, assigner) => assignTechnician(booking.id, techId, assigner)} />
+                        <QuickAssignDialog assignmentToken={booking.assignment_token} technicians={technicians} onAssign={(techId) => assignTechnician(booking.assignment_token, techId)} />
                       )}
                       {booking.status === 'assigned' && (
                         <Button size="sm" variant="outline" onClick={() => handleComplete(booking.id)}>
